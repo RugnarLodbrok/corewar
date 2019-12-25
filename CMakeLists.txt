@@ -14,8 +14,11 @@ target_link_libraries(corewar_test
         )
 
 add_executable(corewar_vm
+        vm/vm_main.c
         vm/vm.c
         vm/proc.c
+        vm/operation.c
+        vm/loader.c
         resources/op.c)
 target_link_libraries(corewar_vm
         LINK_PRIVATE ${CMAKE_SOURCE_DIR}/libft/libft.a

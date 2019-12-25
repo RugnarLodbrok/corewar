@@ -87,6 +87,7 @@ typedef struct		s_op
 	char				*comment;
 	int					a; //to be defined
 	int					b; //to be defined
+	void				(*f)();
 }					t_op;
 
 #endif
