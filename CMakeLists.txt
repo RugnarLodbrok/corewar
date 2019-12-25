@@ -11,11 +11,16 @@ set(CMAKE_C_STANDARD 90)
 
 add_executable(corewar_test
         src/main.c)
+add_executable(corewar_vm
+        vm/vm.c)
 
 include_directories(.)
 include_directories(headers)
 include_directories(libft)
 
 target_link_libraries(corewar_test
+        LINK_PRIVATE ${CMAKE_SOURCE_DIR}/libft/libft.a
+        )
+target_link_libraries(corewar_vm
         LINK_PRIVATE ${CMAKE_SOURCE_DIR}/libft/libft.a
         )
