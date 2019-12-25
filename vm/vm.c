@@ -59,7 +59,7 @@ void t_vm_step(t_vm *vm)
 		if (proc->delay)
 		{
 			proc->delay--;
-			return;
+			continue;
 		}
 		t_op_exec(proc->op, proc, vm);
 		proc->op = 0;
