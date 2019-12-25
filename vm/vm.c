@@ -1,4 +1,5 @@
 #include "libft.h"
+#include "headers/vm.h"
 
 int main(void)
 {
