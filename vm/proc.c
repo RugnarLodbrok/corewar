@@ -1,37 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vm.h                                               :+:      :+:    :+:   */
+/*   proc.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ksticks <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/12/25 16:12:17 by ksticks           #+#    #+#             */
-/*   Updated: 2019/12/25 16:12:18 by ksticks          ###   ########.fr       */
+/*   Created: 2019/12/25 16:28:39 by ksticks           #+#    #+#             */
+/*   Updated: 2019/12/25 16:28:41 by ksticks          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef VM_H
-# define VM_H
+#include "vm.h"
+#include "libft.h"
 
-#include "libft_compat.h"
-#include "op.h"
-
-typedef struct {
-	uint pc;
-	uint reg[REG_NUMBER];
-	uint carry;
-	uint live;
-	uint delay;
-} t_proc;
-
-typedef struct
+void t_proc_init(t_proc *proc, int n)
 {
-	uint i;
-	void *mem;
-	t_proc *proc;
-	int shutdown;
-} t_vm;
-
-void t_proc_init(t_proc *proc, int n);
-
-#endif
+	ft_bzero(proc, sizeof(t_proc));
+	proc->reg[0] = n;
+}

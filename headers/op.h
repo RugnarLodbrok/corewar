@@ -77,4 +77,16 @@ typedef struct		s_header
 	char				comment[COMMENT_LENGTH + 1];
 }					t_header;
 
+typedef struct		s_op
+{
+	char				*name;
+	unsigned char		args_num;
+	unsigned char		args_types[3];
+	unsigned char		code;
+	unsigned int		delay;
+	char				*comment;
+	int					a; //to be defined
+	int					b; //to be defined
+}					t_op;
+
 #endif
