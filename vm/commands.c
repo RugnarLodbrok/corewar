@@ -58,6 +58,7 @@ int 	and(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	uint b;
 	uint c;
 
+<<<<<<< HEAD
 	a = read_uint(vm->host_endian, arg1, 4);
 	b = read_uint(vm->host_endian, arg2, 4);
 	c = a & b;
@@ -70,6 +71,9 @@ int 	and(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 }
 
 int 	or(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+=======
+int		op_ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+>>>>>>> a384b508d62428738f8b6e07bbf8f263dce67424
 {
 	uint a;
 	uint b;
@@ -120,6 +124,7 @@ int 	ldi(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	ft_memcpy(arg3, proc->pc + n1 + n2, 4);
 	return (1);
 }
+<<<<<<< HEAD
 
 int 	sti(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
@@ -158,6 +163,10 @@ int 	lld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 }
 
 int		aff(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+=======
+*/
+int		op_aff(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+>>>>>>> a384b508d62428738f8b6e07bbf8f263dce67424
 {
 	write(1, &arg1, 1);
 	return (1);

@@ -85,9 +85,10 @@ typedef struct		s_op
 	unsigned char		code;
 	unsigned int		delay;
 	char				*comment;
+	int					(*f)();
+	int					need_types;
 	int					a; //to be defined
 	int					b; //to be defined
-	int					(*f)();
 }					t_op;
 
 #endif

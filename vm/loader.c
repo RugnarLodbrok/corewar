@@ -35,7 +35,7 @@ void load_bytecode(const char *f_name, char *ptr, t_champ *champ)
 	fd_read_uint(fd, &buff, f_name);
 	ft_assert(buff == COREWAR_EXEC_MAGIC, "magic mismatch");
 	//name - 128b;
-	ft_assert(read(fd, &champ->name, PROG_NAME_LENGTH) == PROG_NAME_LENGTH,
+	ft_assert(read(fd, champ->name, PROG_NAME_LENGTH) == PROG_NAME_LENGTH,
 			  "can't read '%s'", f_name);
 	//null 4b
 	fd_read_uint(fd, &buff, f_name);
@@ -43,7 +43,7 @@ void load_bytecode(const char *f_name, char *ptr, t_champ *champ)
 	//code size 4b
 	fd_read_uint(fd, &code_size, f_name);
 	//comment 2048b
-	ft_assert(read(fd, &champ->comment, COMMENT_LENGTH) == COMMENT_LENGTH,
+	ft_assert(read(fd, champ->comment, COMMENT_LENGTH) == COMMENT_LENGTH,
 			  "can't read '%s'", f_name);
 	//null 4b
 	fd_read_uint(fd, &buff, f_name);
