@@ -18,6 +18,7 @@ add_executable(corewar_vm
         vm/vm.c
         vm/proc.c
         vm/operation.c
+        vm/commands.c
         vm/loader.c
         resources/op.c)
 target_link_libraries(corewar_vm
