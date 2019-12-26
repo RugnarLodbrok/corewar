@@ -18,6 +18,7 @@ void t_vm_init(t_vm *vm, int n_champs)
 	ft_bzero(vm, sizeof(t_vm));
 	vm->n_champs = n_champs;
 	vm->mem = ft_calloc(MEM_SIZE, sizeof(char));
+	vm->host_endian = endian();
 	t_arrayp_init(&vm->procs);
 }
 
@@ -30,8 +31,8 @@ void t_vm_add_champ(t_vm *vm, const char *f_name)
 	n = vm->procs.count;
 	champ_offset = (MEM_SIZE / vm->n_champs) * n;
 	load_bytecode(f_name, vm->mem + champ_offset,
-			&vm->champs[n].name, &vm->champs[n].comment);
-	t_proc_init(&proc, n);
+			&vm->champs[n]);
+	t_proc_init(&proc, vm, n);
 	t_arrayp_push(&vm->procs, &proc);
 }
 

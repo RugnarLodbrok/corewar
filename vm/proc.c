@@ -13,9 +13,9 @@
 #include "vm.h"
 #include "libft.h"
 
-void t_proc_init(t_proc *proc, int n)
+void t_proc_init(t_proc *proc, t_vm *vm, int n)
 {
 	proc->champ_id = n;
 	ft_bzero(proc, sizeof(t_proc));
-	proc->reg[0] = n;
+	write_uint(vm->host_endian, (uint)0 - n, &proc->reg[0][0], 4);
 }
