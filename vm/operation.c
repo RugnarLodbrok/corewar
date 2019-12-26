@@ -26,13 +26,13 @@ t_op *read_op(const byte *ptr)
 	return (0);
 }
 
-void t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
+int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 {
 	int i;
 	byte args_types_byte;
 	byte *args_ptr;
 	byte arg_types[3];
-	uint args[3];
+	byte *args[3];
 
 	args_ptr = vm->mem + proc->pc + 2;
 	args_types_byte = *(args_ptr - 1);
@@ -41,21 +41,23 @@ void t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 		arg_types[i] = (args_types_byte >> (2 * i)) & (byte)0x3;
 		if (arg_types[i] == DIR_CODE)
 		{
-			ft_memcpy(&args[i], args_ptr, DIR_SIZE); //reverse because if endian
+			args[i] = args_ptr;
 			args_ptr += DIR_SIZE;
 		}
 		else if (arg_types[i] == IND_CODE)
 		{
-			ft_memcpy(&args[i], args_ptr, IND_SIZE);
-			ft_memcpy(&args[i], vm->mem + proc->pc + args[i], DIR_SIZE);
-			args_ptr += IND_SIZE; //size of IND value?
+			args[i] = vm->mem + proc->pc +
+					  read_uint(vm->host_endian, args_ptr, IND_SIZE);
+			args_ptr += IND_SIZE;
 		}
 		else if (arg_types[i] == REG_CODE)
 		{
-			ft_memcpy(&args[i], args_ptr, REG_SIZE);
+			args[i] = &proc->reg[read_uint(vm->host_endian, args_ptr,
+										   REG_SIZE)][0];
 			args_ptr += REG_SIZE;
 		}
 		else
-			;
+			return 0;
 	}
+	return op->f(vm, proc, &args[0], &args[1], &args[2]);
 }

@@ -1,8 +1,16 @@
 #include "libft.h"
 #include "vm.h"
 
+uint read_uint(int host_endian, byte *mem, byte len);
+
 int main(int ac, char **av)
 {
+	uint v;
+	byte mem[4] = {0, 0, 0, 0xff};
+
+	v = read_uint(endian(), &mem[0], 4);
+	ft_printf("%08x\t%u\n", v, v);
+	return 0;
 	int i;
 	t_vm vm;
 	int n_champs;
