@@ -1,12 +1,12 @@
 #include "libft.h"
 #include "vm.h"
 
-void	live(t_vm *vm, t_proc *proc, uint *arg1, uint *arg2, uint *arg3)
+void	op_live(t_vm *vm, t_proc *proc, uint *arg1, uint *arg2, uint *arg3)
 {
 
 }
 
-int		ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int		op_ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	uint v;
 
@@ -16,13 +16,13 @@ int		ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int		st(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int		op_st(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	ft_memcpy(arg2, arg1, 4 * sizeof(char));
 	return (1);
 }
 
-int 	add(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int 	op_add(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	int a;
 	int b;
@@ -37,7 +37,7 @@ int 	add(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int		sub(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int		op_sub(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	int a;
 	int b;
@@ -52,13 +52,12 @@ int		sub(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int 	and(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int 	op_and(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	uint a;
 	uint b;
 	uint c;
 
-<<<<<<< HEAD
 	a = read_uint(vm->host_endian, arg1, 4);
 	b = read_uint(vm->host_endian, arg2, 4);
 	c = a & b;
@@ -70,10 +69,7 @@ int 	and(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int 	or(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
-=======
-int		op_ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
->>>>>>> a384b508d62428738f8b6e07bbf8f263dce67424
+int 	op_or(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	uint a;
 	uint b;
@@ -90,7 +86,7 @@ int		op_ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int 	xor(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int 	op_xor(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	uint a;
 	uint b;
@@ -107,14 +103,14 @@ int 	xor(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int 	zjmp(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int 	op_zjmp(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	if (proc->carry == 1)
 		proc->pc += read_uint(vm->host_endian, arg1, 4);
 	return (1);
 }
 
-int 	ldi(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int 	op_ldi(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	int n1;
 	int n2;
@@ -124,9 +120,8 @@ int 	ldi(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	ft_memcpy(arg3, proc->pc + n1 + n2, 4);
 	return (1);
 }
-<<<<<<< HEAD
 
-int 	sti(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int 	op_sti(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	int n2;
 	int n3;
@@ -137,7 +132,7 @@ int 	sti(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int		f_fork(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int		op_fork(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	t_proc	new;
 	int		i;
@@ -157,16 +152,12 @@ int		f_fork(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int 	lld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int 	op_lld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 
 }
 
-int		aff(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
-=======
-*/
 int		op_aff(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
->>>>>>> a384b508d62428738f8b6e07bbf8f263dce67424
 {
 	write(1, &arg1, 1);
 	return (1);
