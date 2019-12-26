@@ -23,7 +23,7 @@ void	live(t_vm *vm, t_proc *proc, uint *arg1, uint *arg2, uint *arg3)
 
 //	vm->mem + proc->pc
 
-int		ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int		op_ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	uint v;
 
@@ -44,7 +44,8 @@ void	st(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 		ft_memcpy(vm->mem + proc->pc + *(int*)rev_byte(arg2), arg1, 4 * sizeof(char) * 2);
 }
 */
-int		aff(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int		op_aff(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	write(1, &arg1, 1);
+	return (1);
 }

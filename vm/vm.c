@@ -25,15 +25,17 @@ void t_vm_init(t_vm *vm, int n_champs)
 void t_vm_add_champ(t_vm *vm, const char *f_name)
 {
 	uint champ_offset;
-	t_proc proc;
+	t_proc *proc;
 	int n;
 
 	n = vm->procs.count;
 	champ_offset = (MEM_SIZE / vm->n_champs) * n;
 	load_bytecode(f_name, vm->mem + champ_offset,
 			&vm->champs[n]);
-	t_proc_init(&proc, vm, n);
-	t_arrayp_push(&vm->procs, &proc);
+	proc = malloc(sizeof(t_proc));
+	t_proc_init(proc, vm, n);
+	t_arrayp_push(&vm->procs, proc);
+//	proc = *(t_proc*)(vm->procs.data[0]);
 }
 
 void t_vm_up(t_vm *vm)
@@ -54,7 +56,12 @@ void t_vm_step(t_vm *vm)
 		proc = vm->procs.data[i];
 		if (!proc->op)
 		{
-			proc->op = read_op(&vm->mem[proc->pc]);
+			if (!(proc->op = read_op(&vm->mem[proc->pc])))
+			{
+				ft_printf("can't read op\n");
+				vm->shutdown = 1;
+				break;
+			}
 			proc->delay = proc->op->delay;
 		}
 		if (proc->delay)
@@ -62,7 +69,11 @@ void t_vm_step(t_vm *vm)
 			proc->delay--;
 			continue;
 		}
-		t_op_exec(proc->op, proc, vm);
+		if (!t_op_exec(proc->op, proc, vm))
+		{
+			ft_printf("invalid op\n");
+			vm->shutdown = 1;
+		}
 		proc->op = 0;
 	}
 	vm->i++;

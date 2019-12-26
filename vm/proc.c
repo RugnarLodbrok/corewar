@@ -17,5 +17,5 @@ void t_proc_init(t_proc *proc, t_vm *vm, int n)
 {
 	proc->champ_id = n;
 	ft_bzero(proc, sizeof(t_proc));
-	write_uint(vm->host_endian, (uint)0 - n, &proc->reg[0][0], 4);
+	write_uint(vm->host_endian, UINT_MAX - n - 1, &proc->reg[0][0], 4);
 }

@@ -33,12 +33,21 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	byte *args_ptr;
 	byte arg_types[3];
 	byte *args[3];
+	uint reg_number;
 
-	args_ptr = vm->mem + proc->pc + 2;
-	args_types_byte = *(args_ptr - 1);
+	if (op->need_types)
+	{
+		args_ptr = vm->mem + proc->pc + 2;
+		args_types_byte = *(args_ptr - 1);
+	}
+	else
+	{
+		args_ptr = vm->mem + proc->pc + 1;
+		args_types_byte = REG_CODE; //todo: take from op;
+	}
 	for (i = 0; i < op->args_num; ++i)
 	{
-		arg_types[i] = (args_types_byte >> (2 * i)) & (byte)0x3;
+		arg_types[i] = (args_types_byte >> (2 * (3 - i))) & (byte)0x3;
 		if (arg_types[i] == DIR_CODE)
 		{
 			args[i] = args_ptr;
@@ -52,12 +61,17 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 		}
 		else if (arg_types[i] == REG_CODE)
 		{
-			args[i] = &proc->reg[read_uint(vm->host_endian, args_ptr,
-										   REG_SIZE)][0];
-			args_ptr += REG_SIZE;
+			reg_number = read_uint(vm->host_endian, args_ptr, 1);
+			args[i] = &proc->reg[reg_number][0];
+			args_ptr += 1;
 		}
 		else
 			return 0;
 	}
-	return op->f(vm, proc, &args[0], &args[1], &args[2]);
+	if (op->f(vm, proc, &args[0], &args[1], &args[2]))
+	{
+		proc->pc = args_ptr - (byte*)vm->mem;
+		return (1);
+	}
+	return (0);
 }
