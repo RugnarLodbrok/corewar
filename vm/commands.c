@@ -23,29 +23,16 @@ void	live(t_vm *vm, t_proc *proc, uint *arg1, uint *arg2, uint *arg3)
 
 //	vm->mem + proc->pc
 
-void	ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+int		ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
-	int status;
-	int tmp1;
-	int tmp2;
-	int tmp3;
+	uint v;
 
-	tmp1 = (int)arg1;
-	tmp2 = (int)arg2;
-	status = check_tdir_tind(arg1);
-	if (status == 1)
-	{
-		tmp2 = tmp1;
-		if (tmp1 == 0)
-			proc->carry = 1;
-		else
-			proc->carry = 0;
-	}
-	else{
-		tmp1 = (int)(rev_byte(arg1));
-	}
+	ft_memcpy(arg2, arg1, DIR_SIZE * sizeof(char));
+	v = read_uint(vm->host_endian, arg2, 4);
+	proc->carry = (v != 0);
+	return (1);
 }
-
+/*
 void	st(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	int status;
@@ -55,4 +42,9 @@ void	st(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 		ft_memcpy(arg2, arg1, 4 * sizeof(char) * 2);
 	else
 		ft_memcpy(vm->mem + proc->pc + *(int*)rev_byte(arg2), arg1, 4 * sizeof(char) * 2);
+}
+*/
+int		aff(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
+{
+	write(1, &arg1, 1);
 }
