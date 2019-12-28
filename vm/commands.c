@@ -1,9 +1,11 @@
 #include "libft.h"
 #include "vm.h"
 
-void	op_live(t_vm *vm, t_proc *proc, uint *arg1, uint *arg2, uint *arg3)
+int		op_live(t_vm *vm, t_proc *proc, void *arg1, void *arg2, uint *arg3)
 {
-
+	if (read_uint(vm->host_endian, arg1, 4) == proc->champ_id)
+		vm->champs->live = 0;
+	return (1);
 }
 
 int		op_ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)

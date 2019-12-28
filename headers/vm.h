@@ -22,6 +22,7 @@ typedef struct
 {
 	char *name;
 	char *comment;
+	uint live;
 } t_champ;
 
 typedef struct
