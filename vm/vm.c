@@ -49,7 +49,7 @@ void t_vm_step(t_vm *vm)
 	int i;
 	t_proc *proc;
 
-	ft_printf("cycle %u\n", vm->i);
+//	ft_printf("cycle %u\n", vm->i);
 	i = -1;
 	while(++i < vm->procs.count)
 	{

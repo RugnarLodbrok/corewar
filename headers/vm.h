@@ -20,6 +20,11 @@
 
 typedef struct
 {
+	byte args[3];
+} t_arg_types;
+
+typedef struct
+{
 	char *name;
 	char *comment;
 	uint live;

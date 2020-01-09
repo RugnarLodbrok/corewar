@@ -12,7 +12,7 @@ int		op_ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	uint v;
 
-	ft_memcpy(arg2, arg1, DIR_SIZE * sizeof(char));
+	ft_memcpy(arg2, arg1, sizeof(char) * REG_SIZE);
 	v = read_uint(vm->host_endian, arg2, 4);
 	proc->carry = (v != 0);
 	return (1);
@@ -180,6 +180,9 @@ int		op_lfork(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 
 int		op_aff(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
-	write(1, &arg1, 1);
+	byte c;
+
+	c = (byte)read_uint(vm->host_endian, arg1, REG_SIZE);
+	write(1, &c, 1);
 	return (1);
 }
