@@ -10,6 +10,8 @@ let socket;
 
 let main_div = document.getElementById('sketch');
 main_div.appendChild(button('start vm', function (e) {
+    if (socket)
+        socket.close(1000, "re-connecting");
     socket = new WebSocket('ws://localhost:8765/somesocket');
 
     socket.onopen = function () {
@@ -21,7 +23,12 @@ main_div.appendChild(button('start vm', function (e) {
     };
 }));
 
+main_div.appendChild(button('send hello', function (e) {
+    console.log("send");
+    socket.send("hello from browser!");
+}));
+
 main_div.appendChild(button('stop vm', function (e) {
     console.log('close!');
-    socket.close();
+    socket.close(1000, "stopping");
 }));
