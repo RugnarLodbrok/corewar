@@ -183,6 +183,9 @@ int		op_aff(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	byte c;
 
 	c = (byte)read_uint(vm->host_endian, arg1, REG_SIZE);
-	write(1, &c, 1);
+	if (vm->mode == MODE_VIS)
+		write_proc_stdout(vm, proc->id, c);
+	if (vm->mode == MODE_DEFAULT)
+		write(1, &c, 1);
 	return (1);
 }

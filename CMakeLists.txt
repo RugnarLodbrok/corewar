@@ -21,6 +21,7 @@ add_executable(corewar_vm
         vm/commands.c
         vm/loader.c
         vm/endian_conversion.c
+        vm/state_writer.c
         resources/op.c)
 target_link_libraries(corewar_vm
         LINK_PRIVATE ${CMAKE_SOURCE_DIR}/libft/libft.a

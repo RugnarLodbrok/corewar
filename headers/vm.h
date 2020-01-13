@@ -17,6 +17,8 @@
 # include "op.h"
 
 # define VM_ENDIAN BIG_ENDIAN
+# define MODE_VIS 1
+# define MODE_DEFAULT 0
 
 typedef struct
 {
@@ -32,6 +34,7 @@ typedef struct
 
 typedef struct
 {
+	uint id;
 	uint champ_id;
 	uint pc;
 	byte reg[REG_NUMBER][4];
@@ -43,6 +46,7 @@ typedef struct
 
 typedef struct
 {
+	uint mode;
 	int n_champs;
 	t_champ champs[4];
 	uint i;
@@ -52,15 +56,21 @@ typedef struct
 	int host_endian;
 } t_vm;
 
-void load_bytecode(const char *f_name, char *ptr, t_champ *champ);
+size_t load_bytecode(const char *f_name, char *ptr, t_champ *champ);
 void t_proc_init(t_proc *proc, t_vm *vm, int n);
 int t_op_exec(t_op *op, t_proc *proc, t_vm *vm);
 t_op *read_op(const byte *ptr);
 void t_vm_init(t_vm *vm, int n_champs);
 void t_vm_add_champ(t_vm *vm, const char *f_name);
-void t_vm_up(t_vm *vm);
 void t_vm_step(t_vm *vm);
 void t_vm_destruct(t_vm *vm);
+void t_vm_print(t_vm *vm, const char *format, ...);
+
+void write_memory(t_vm *vm);
+void write_proc_pos_update(t_vm *vm, int proc_num);
+void write_proc_stdout(t_vm *vm, int proc_num, char c);
+void write_new_proc(int id, int pc);
+void write_mem(byte *mem, int pc, size_t len);
 
 uint read_uint(int host_endian, byte *mem, byte len);
 void write_uint(int host_endian, uint v, byte *mem, byte len);
