@@ -1,6 +1,12 @@
 import asyncio
 import datetime
 import random
+from subprocess import Popen, PIPE
+import locale
+import yaml
+import json
+import io
+
 import websockets
 from time import sleep
 
@@ -8,16 +14,38 @@ HOSTNAME = 'localhost'
 PORT = 8765
 
 
+def yaml_to_json(msg):
+    buff = io.StringIO(msg)
+    try:
+        return json.dumps(yaml.load(buff, Loader=yaml.BaseLoader))
+    except:
+        print(f"can't encode:`\n{msg}`")
+        raise
+
+
 class VM:
     def __init__(self):
-        pass
+        self.p = Popen(["cmake-build-debug/corewar_vm", "-v", "asm/hello.cor"], stdout=PIPE)
+
+    def __iter__(self):
+        encoding = locale.getpreferredencoding(False)
+        msg = ""
+        for line in self.p.stdout:
+            if isinstance(line, bytes):
+                line = line.decode(encoding=encoding)
+            print(f"stdout line: `{line}`")
+            if not line.strip():
+                yield yaml_to_json(msg)
+                msg = ""
+            else:
+                msg += line
 
 
 async def on_message(message):
     print(f"got message: {message}")
 
 
-async def consumer_handler(ws: websockets.WebSocketServerProtocol, path):
+async def consumer_handler(ws: websockets.WebSocketServerProtocol, vm):
     print("*start consuming*")
     try:
         async for message in ws:
@@ -28,18 +56,18 @@ async def consumer_handler(ws: websockets.WebSocketServerProtocol, path):
         print("*CONSUMING SOUNDS STOP*")
 
 
-async def producer_handler(ws: websockets.WebSocketServerProtocol, path):
+async def producer_handler(ws: websockets.WebSocketServerProtocol, vm):
     i = 0
-    while True:
-        print(f"send i = {i}")
-        await ws.send(str(i))
-        await asyncio.sleep(1)
+    for message in vm:
+        print(f"send `{message}`")
+        await ws.send(message)
         i += 1
 
 
 async def handler(ws: websockets.WebSocketServerProtocol, path):
-    consumer_task = asyncio.ensure_future(consumer_handler(ws, path))
-    producer_task = asyncio.ensure_future(producer_handler(ws, path))
+    vm = VM()
+    consumer_task = asyncio.ensure_future(consumer_handler(ws, vm))
+    producer_task = asyncio.ensure_future(producer_handler(ws, vm))
     done, pending = await asyncio.wait(
         [consumer_task, producer_task],
         return_when=asyncio.FIRST_COMPLETED,

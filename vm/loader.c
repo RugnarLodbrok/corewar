@@ -21,7 +21,7 @@ static void fd_read_uint(int fd, uint *buff, const char* f_name)
 		ft_memrev((void *)buff, 4);
 }
 
-void load_bytecode(const char *f_name, char *ptr, t_champ *champ)
+size_t load_bytecode(const char *f_name, char *ptr, t_champ *champ)
 {
 	int fd;
 	uint buff;
@@ -51,4 +51,5 @@ void load_bytecode(const char *f_name, char *ptr, t_champ *champ)
 	//code xb
 	ft_assert(read(fd, ptr, code_size) == code_size,
 			  "can't read '%s'", f_name);
+	return (code_size);
 }
