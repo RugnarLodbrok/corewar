@@ -29,7 +29,7 @@ void write_memory(t_vm *vm)
 		ft_printf("data: \"");
 		for (i = 0; i < MEM_SIZE; ++i)
 		{
-			put_hex(*(byte *)&vm->mem[i], 2);
+			put_hex(*&vm->mem[i], 2);
 		}
 		ft_printf("\"\n\n");
 	}

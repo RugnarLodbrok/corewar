@@ -14,6 +14,7 @@
 # define VM_H
 
 # include "libft.h"
+# include "libft_compat.h"
 # include "op.h"
 
 # define VM_ENDIAN BIG_ENDIAN
@@ -50,13 +51,13 @@ typedef struct
 	int n_champs;
 	t_champ champs[4];
 	uint i;
-	void *mem;
+	byte *mem;
 	t_arrayp procs;
 	int shutdown;
 	int host_endian;
 } t_vm;
 
-size_t load_bytecode(const char *f_name, char *ptr, t_champ *champ);
+size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ);
 void t_proc_init(t_proc *proc, t_vm *vm, int n);
 int t_op_exec(t_op *op, t_proc *proc, t_vm *vm);
 t_op *read_op(const byte *ptr);

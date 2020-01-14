@@ -21,7 +21,7 @@ static void fd_read_uint(int fd, uint *buff, const char* f_name)
 		ft_memrev((void *)buff, 4);
 }
 
-size_t load_bytecode(const char *f_name, char *ptr, t_champ *champ)
+size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ)
 {
 	int fd;
 	uint buff;
