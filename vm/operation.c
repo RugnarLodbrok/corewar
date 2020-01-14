@@ -77,7 +77,7 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	}
 	if (op->f(vm, proc, args[0], args[1], args[2]))
 	{
-		proc->pc = args_ptr - (byte *)vm->mem;
+		proc->pc = args_ptr - vm->mem;
 		return (1);
 	}
 	return (0);
