@@ -20,7 +20,7 @@ int		op_ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 
 int		op_st(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
-	ft_memcpy(arg2, arg1, 4 * sizeof(char));
+	ft_memcpy(arg2, arg1, sizeof(char) * REG_SIZE);
 	return (1);
 }
 
@@ -107,8 +107,9 @@ int 	op_xor(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 
 int 	op_zjmp(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
+	//printf("%d\n", proc->carry);
 	if (proc->carry == 1)
-		proc->pc += read_uint(vm->host_endian, arg1, 4);
+		proc->pc += read_uint(vm->host_endian, arg1, 4) + 5;
 	return (1);
 }
 
@@ -176,6 +177,7 @@ int		op_lldi(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 int		op_lfork(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	op_fork(vm, proc, arg1, arg2, arg3);
+	return (1);
 }
 
 int		op_aff(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
