@@ -9,13 +9,13 @@ class Proc {
         this.color = "#bb0000";
     }
 
-    move(sketch, vm, pc) {
-        this.pc = pc;
+    draw(vm) {
+        let sketch = vm.sketch;
         sketch.push();
         sketch.fill(0, 0);
         sketch.strokeWeight(1);
         sketch.stroke(this.color);
-        sketch.rect(...vm.byte_coors(pc), BYTE_W, BYTE_H);
+        sketch.rect(...vm.byte_coors(this.pc), BYTE_W, BYTE_H);
         sketch.pop();
     }
 }
@@ -26,7 +26,11 @@ class Byte {
         this.bg = "#888888";
     }
 
-    draw(sketch, x, y) {
+    draw(vm, pc) {
+        let sketch = vm.sketch;
+        let x, y;
+
+        [x, y] = vm.byte_coors(pc);
         sketch.push();
         sketch.strokeWeight(0);
         sketch.fill(this.bg);
@@ -70,7 +74,7 @@ class VM {
         this.h = this.rows * BYTE_H;
         console.log(this.rows, this.cols);
         for (let i = 0; i < this.mem.length; ++i)
-            this.draw_byte(i);
+            this.mem[i].draw(this, i);
         console.log("done");
     }
 
@@ -78,7 +82,8 @@ class VM {
         let proc = this.procs[id];
         if (!proc)
             return console.error(`proc ${id} does not exist`);
-        proc.move(this.sketch, this, pc);
+        proc.pc = pc;
+        proc.draw(this);
     }
 
     new_proc(id, pc) {
@@ -86,7 +91,7 @@ class VM {
             console.error(`bad new proc id: ${id}, procs.len: ${this.procs.length}`);
         else
             this.procs[id] = new Proc(id, pc);
-        this.proc_move(id, pc);
+        this.procs[id].draw(this);
     }
 
     byte_coors(i) {
@@ -107,7 +112,7 @@ class VM {
     write_mem(pc, data) {
         for (let i = 0; i < data.length; ++i) {
             this.mem[pc + i].v = data[i];
-            this.draw_byte(pc + i);
+            this.mem[pc + i].draw(this, pc + i);
         }
     }
 
