@@ -1,6 +1,6 @@
-BYTE_W = 16;
-BYTE_H = 10;
-ASPECT = 1.3;
+BYTE_W = 22;
+BYTE_H = 20;
+ASPECT = .7;
 
 function proc_div(id, name, color) {
     let delay_div = div(`delay: ${0}`);
@@ -38,39 +38,16 @@ class Proc {
         document.getElementById("sidebar").appendChild(this.elements.e)
     }
 
-    draw(vm) {
-        let sketch = vm.sketch;
-        sketch.push();
-        sketch.fill(0, 0);
-        sketch.strokeWeight(1);
-        sketch.stroke(this.color);
-        sketch.rect(...vm.byte_coors(this.pc), BYTE_W, BYTE_H);
-        sketch.pop();
+    move(vm, pc) {
+        let byte = vm.mem[this.pc];
+        byte.e.style.borderColor = "#00000000";
+        this.pc = pc;
+        byte = vm.mem[pc];
+        byte.e.style.borderColor = this.color;
     }
 
     destructor() {
         this.elements.e.remove();
-    }
-}
-
-class Byte {
-    constructor(v) {
-        this.v = v;
-        this.bg = "#888888";
-    }
-
-    draw(vm, pc) {
-        let sketch = vm.sketch;
-        let x, y;
-
-        [x, y] = vm.byte_coors(pc);
-        sketch.push();
-        sketch.strokeWeight(0);
-        sketch.fill(this.bg);
-        sketch.rect(x, y, BYTE_W, BYTE_H);
-        sketch.fill(220);
-        sketch.text(this.v, x, y, BYTE_W, BYTE_H);
-        sketch.pop();
     }
 }
 
@@ -85,6 +62,12 @@ class VM {
         this.w = 0;
         this.h = 0;
         this.procs = [];
+        this.e = document.getElementById('memory_view');
+        this.e.innerHTML = '';
+        this.e.className = "memory";
+    }
+
+    show_cycle() {
     }
 
     destructor(sketch) {
@@ -107,38 +90,28 @@ class VM {
 
     mem_init(data) {
         this.mem = [];
-        for (let datum of data)
-            this.mem.push(new Byte(datum));
-        [this.rows, this.cols] = this.choose_row_cols(this.mem.length);
-        this.w = this.cols * BYTE_W;
-        this.h = this.rows * BYTE_H;
-        this.sketch.createCanvas(this.w, this.h);
-        console.log(this.rows, this.cols);
-        for (let i = 0; i < this.mem.length; ++i)
-            this.mem[i].draw(this, i);
-        console.log("done");
-    }
-
-    show_cycle() {
-        let s = this.sketch;
-        let rect = [this.w + 10, 100, 100, 50];
-
-        s.push();
-        s.strokeWeight(0);
-        s.textSize(20);
-        s.fill(0);
-        s.rect(...rect);
-        s.fill(220);
-        s.text(`cycle: [${this.cycle}]`, ...rect);
-        s.pop();
+        [this.cols, this.rows] = this.choose_row_cols(data.length);
+        console.log(this.rows, this.cols, this.rows * this.cols, data.length);
+        let table = document.createElement('table');
+        table.className = "byte_table";
+        this.e.appendChild(table);
+        for (let i = 0; i < this.rows; ++i) {
+            let row = document.createElement('tr');
+            table.appendChild(row);
+            for (let j = 0; j < this.cols; ++j) {
+                let n = i * this.cols + j;
+                let byte = new Byte(data[n]);
+                this.mem.push(byte);
+                row.appendChild(byte.e);
+            }
+        }
     }
 
     proc_move(id, pc) {
         let proc = this.procs[id];
         if (!proc)
             return console.error(`proc ${id} does not exist`);
-        proc.pc = pc;
-        proc.draw(this);
+        proc.move(this, pc);
     }
 
     new_proc(id, name, pc) {
@@ -146,28 +119,13 @@ class VM {
             console.error(`bad new proc id: ${id}, procs.len: ${this.procs.length}`);
         else
             this.procs[id] = new Proc(id, name, pc);
-        this.procs[id].draw(this);
-    }
-
-    byte_coors(i) {
-        return [
-            (BYTE_W * (i % this.cols)),
-            (BYTE_H * Math.floor(i / this.cols))];
-    }
-
-    draw_byte(i) {
-        let x;
-        let y;
-        let sketch = this.sketch;
-
-        [x, y] = this.byte_coors(i);
-        this.mem[i].draw(this.sketch, x, y)
+        this.procs[id].move(this, pc);
     }
 
     write_mem(pc, data) {
         for (let i = 0; i < data.length; ++i) {
             this.mem[pc + i].v = data[i];
-            this.mem[pc + i].draw(this, pc + i);
+            this.mem[pc + i].draw();
         }
     }
 
@@ -190,7 +148,7 @@ class VM {
     }
 }
 
-new p5(function (sketch) {
+window.onload = function (e) {
     let socket;
     let vm;
 
@@ -204,56 +162,41 @@ new p5(function (sketch) {
         vm.destructor()
     });
     stop_button.disabled = true;
-    sketch.setup = () => {
-        document.getElementById("buttons_bar").appendChild(div(button('start vm', function (e) {
-                vm = new VM(sketch);
-                stop_button.disabled = false;
-                if (socket)
-                    stop("re-connecting");
-                socket = new WebSocket('ws://localhost:8765/somesocket');
+    document.getElementById("buttons_bar").appendChild(div(button('start vm', function (e) {
+            vm = new VM();
+            stop_button.disabled = false;
+            if (socket)
+                stop("re-connecting");
+            socket = new WebSocket('ws://localhost:8765/somesocket');
 
-                socket.onopen = function () {
-                    socket.send('hello');
-                };
-                socket.onmessage = function (s) {
-                    let data = s.data;
-                    let msg = JSON.parse(data);
-                    if (!data)
-                        return console.error("empty message");
-                    if (!msg)
-                        return console.error(`can't parse data: "${data}"`);
-                    vm.update(msg);
-                    if (vm.stopped)
-                        stop_button.disabled = true;
-                };
-            }),
-            button('send hello', function (e) {
-                console.log("send");
-                socket.send("hello from browser!");
-            }),
-            stop_button,
-            button("step", function (e) {
-                console.log("send step");
-                vm.cycle += 1;
-                vm.show_cycle();
-                socket.send(`{"type": "step"}`);
-            }),
-            button("run until end", function (e) {
-                socket.send(`{"type": "run_until_end"}`)
-            })
-        ));
-        vm_div = div();
-        vm_div.id = 'vm_div';
-
-        // sketch.createCanvas(1200, 800);
-        sketch.background(0);
-        sketch.stroke(220);
-        sketch.fill(220);
-        sketch.textSize(BYTE_H);
-        sketch.textFont('Courier New');
-        // sketch.textAlign(sketch.CENTER, sketch.TOP);
-        sketch.translate(10, 10);
-    };
-    sketch.draw = () => {
-    };
-}, document.getElementById("memory_view"));
+            socket.onopen = function () {
+                socket.send('hello');
+            };
+            socket.onmessage = function (s) {
+                let data = s.data;
+                let msg = JSON.parse(data);
+                if (!data)
+                    return console.error("empty message");
+                if (!msg)
+                    return console.error(`can't parse data: "${data}"`);
+                vm.update(msg);
+                if (vm.stopped)
+                    stop_button.disabled = true;
+            };
+        }),
+        button('send hello', function (e) {
+            console.log("send");
+            socket.send("hello from browser!");
+        }),
+        stop_button,
+        button("step", function (e) {
+            console.log("send step");
+            vm.cycle += 1;
+            vm.show_cycle();
+            socket.send(`{"type": "step"}`);
+        }),
+        button("run until end", function (e) {
+            socket.send(`{"type": "run_until_end"}`)
+        })
+    ));
+};

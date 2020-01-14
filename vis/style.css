@@ -31,3 +31,23 @@
     margin-left: 4px;
     margin-right: 4px;
 }
+
+
+.memory {
+    font-family: "Courier New", monospace;
+    background-color: #222222;
+    color: #dddddd
+}
+.byte_table {
+    border-spacing: 0;
+    border-width: 0;
+}
+
+.byte {
+    border-width: 1px;
+    border-radius: 2px;
+    border-color: #00000000;
+    border-style: solid;
+    background-color: #00000000;
+    padding: 0;
+}
