@@ -72,6 +72,7 @@ void write_proc_pos_update(t_vm *vm, int proc_num);
 void write_proc_stdout(t_vm *vm, int proc_num, char c);
 void write_new_proc(int id, int pc);
 void write_mem(byte *mem, int pc, size_t len);
+void write_end(void);
 
 uint read_uint(int host_endian, byte *mem, byte len);
 void write_uint(int host_endian, uint v, byte *mem, byte len);

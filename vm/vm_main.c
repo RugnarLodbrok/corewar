@@ -1,9 +1,37 @@
 #include "libft.h"
+#include "get_next_line.h"
 #include "vm.h"
 
-uint read_uint(int host_endian, byte *mem, byte len);
+void main_loop(t_vm* vm)
+{
+	int status;
+	char* line;
+	int steps;
 
-int main(int ac, char **av)
+	if (vm->mode == MODE_DEFAULT)
+	{
+		while (!vm->shutdown)
+			t_vm_step(vm);
+	}
+	if (vm->mode == MODE_VIS)
+	{
+		while ((status = get_next_line(STDIN_FILENO, &line)))
+		{
+			steps = ft_atoi(line);
+			free(line);
+			while (steps--)
+			{
+				if (vm->shutdown)
+					return;
+				t_vm_step(vm);
+			}
+		}
+		if (status < 0)
+			ft_error_exit("can't read stdin");
+	}
+}
+
+int main(int ac, char** av)
 {
 	int i;
 	t_vm vm;
@@ -12,7 +40,7 @@ int main(int ac, char **av)
 	n_champs = ac - 1;
 	t_vm_init(&vm, n_champs);
 	i = 1;
-	while(i < ac)
+	while (i < ac)
 	{
 		if (!ft_strcmp("-v", av[i]))
 			vm.mode = MODE_VIS;
@@ -20,14 +48,15 @@ int main(int ac, char **av)
 	}
 	write_memory(&vm);
 	i = 1;
-	while(i < ac)
+	while (i < ac)
 	{
 		if (!ft_startswith(av[i], "-"))
-			t_vm_add_champ(&vm, (const char *)av[i]);
+			t_vm_add_champ(&vm, (const char*)av[i]);
 		++i;
 	}
-	while (!vm.shutdown)
-		t_vm_step(&vm);
+	main_loop(&vm);
 	t_vm_destruct(&vm);
+	if (vm.mode == MODE_VIS)
+		write_end();
 	return (0);
 }

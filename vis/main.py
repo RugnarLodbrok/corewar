@@ -25,7 +25,9 @@ def yaml_to_json(msg):
 
 class VM:
     def __init__(self):
-        self.p = Popen(["cmake-build-debug/corewar_vm", "-v", "asm/hello.cor"], stdout=PIPE)
+        self.p = Popen(
+            ["cmake-build-debug/corewar_vm", "-v", "asm/hello.cor"],
+            stdout=PIPE)
 
     def __iter__(self):
         encoding = locale.getpreferredencoding(False)
@@ -39,6 +41,7 @@ class VM:
                 msg = ""
             else:
                 msg += line
+        yield json.dumps({"type": "end"})
 
 
 async def on_message(message):

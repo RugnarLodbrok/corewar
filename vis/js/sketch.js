@@ -44,6 +44,7 @@ class Byte {
 class VM {
     constructor(sketch) {
         this.sketch = sketch;
+        this.stopped = false;
         this.mem = null;
         this.rows = 0;
         this.cols = 0;
@@ -126,7 +127,13 @@ class VM {
         else if (msg.type === "write_mem")
             this.write_mem(msg.pc - 0, chunks(msg.data, 2));
         else if (msg.type === "proc_move")
-            this.proc_move(msg.id, msg.pc)
+            this.proc_move(msg.id, msg.pc);
+        else if (msg.type === "end") {
+            this.stopped = true;
+            console.log('command: end')
+        }
+        else
+            console.error(`unknown command ${msg.type}`);
     }
 }
 
@@ -141,9 +148,15 @@ new p5(function (sketch) {
     main_div.appendChild(buttons_div);
     main_div.appendChild(vm_div);
 
+    let stop_button = button('stop vm', function (e) {
+        console.log('close!');
+        socket.close(1000, "stopping");
+    });
+    stop_button.disabled = true;
     sketch.setup = () => {
         buttons_div.appendChild(div(button('start vm', function (e) {
                 vm = new VM(sketch);
+                stop_button.disabled = false;
                 if (socket)
                     socket.close(1000, "re-connecting");
                 socket = new WebSocket('ws://localhost:8765/somesocket');
@@ -159,15 +172,20 @@ new p5(function (sketch) {
                     if (!msg)
                         return console.error(`can't parse data: "${data}"`);
                     vm.update(msg);
+                    if (vm.stopped)
+                        stop_button.disabled = true;
                 };
             }),
             button('send hello', function (e) {
                 console.log("send");
                 socket.send("hello from browser!");
             }),
-            button('stop vm', function (e) {
-                console.log('close!');
-                socket.close(1000, "stopping");
+            stop_button,
+            button("step", function (e) {
+                socket.send(`{"type": "step"}`)
+            }),
+            button("run until end", function (e) {
+                socket.send(`{"type": "run_until_end"}`)
             })
         ));
         vm_div = div();

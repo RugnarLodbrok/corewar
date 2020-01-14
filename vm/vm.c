@@ -77,7 +77,6 @@ void t_vm_step(t_vm* vm)
 		{
 			if (!(proc->op = read_op(&vm->mem[proc->pc])))
 			{
-				ft_printf("can't read op\n");
 				vm->shutdown = 1;
 				break;
 			}

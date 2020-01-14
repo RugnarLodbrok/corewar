@@ -72,3 +72,8 @@ void write_mem(byte *mem, int pc, size_t len)
 		put_hex(mem[pc + i], 2);
 	ft_printf("\"\n\n");
 }
+
+void write_end(void)
+{
+	ft_printf("type: end\n\n");
+}
