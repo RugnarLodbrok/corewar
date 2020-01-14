@@ -1,4 +1,5 @@
 import asyncio
+import asyncio.subprocess as aiosp
 import datetime
 import random
 from subprocess import Popen, PIPE
@@ -25,14 +26,28 @@ def yaml_to_json(msg):
 
 class VM:
     def __init__(self):
-        self.p = Popen(
-            ["cmake-build-debug/corewar_vm", "-v", "asm/hello.cor"],
-            stdout=PIPE)
+        self._p_coro = aiosp.create_subprocess_exec(
+            "cmake-build-debug/corewar_vm", "-v", "asm/hello.cor",
+            stdin=aiosp.PIPE,
+            stdout=aiosp.PIPE)
+        self.p = None
 
-    def __iter__(self):
+    async def stop(self):
+        if not self.p:
+            self.p = await self._p_coro
+        self.p.terminate()
+        ret = await self.p.wait()
+        print(f"proc killed; ret = {ret}")
+
+    async def __aiter__(self):
+        if not self.p:
+            self.p = await self._p_coro
         encoding = locale.getpreferredencoding(False)
         msg = ""
-        for line in self.p.stdout:
+        while True:
+            line = await self.p.stdout.readline()
+            if not line and self.p.returncode is not None:
+                break
             if isinstance(line, bytes):
                 line = line.decode(encoding=encoding)
             if not line.strip():
@@ -46,9 +61,9 @@ class VM:
 async def on_message(vm, msg):
     print(f"got message: {msg}")
     if msg['type'] == "step":
-        vm.p.stdin.write("1\n")
+        vm.p.stdin.write(b"1\n")
     elif msg['type'] == "run_until_end":
-        vm.p.stdin.write("999999\n")
+        vm.p.stdin.write(b"999999\n")
     else:
         print(f"ERROR: unknwon command {msg['type']}")
 
@@ -68,11 +83,13 @@ async def consumer_handler(ws: websockets.WebSocketServerProtocol, vm):
         print(f"conn closed, code: {e.code}, reason: {e.reason}")
     else:
         print("*CONSUMING SOUNDS STOP*")
+    finally:
+        await vm.stop()
 
 
 async def producer_handler(ws: websockets.WebSocketServerProtocol, vm):
     i = 0
-    for message in vm:
+    async for message in vm:
         print(f"send `{message}`")
         await ws.send(message)
         i += 1
@@ -88,6 +105,11 @@ async def handler(ws: websockets.WebSocketServerProtocol, path):
     )
     for task in pending:
         task.cancel()
+    for task in done:
+        try:
+            await task
+        except websockets.ConnectionClosedOK:
+            print("client disconnected")
 
 
 if __name__ == '__main__':

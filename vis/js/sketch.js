@@ -45,6 +45,7 @@ class VM {
     constructor(sketch) {
         this.sketch = sketch;
         this.stopped = false;
+        this.cycle = 0;
         this.mem = null;
         this.rows = 0;
         this.cols = 0;
@@ -77,6 +78,21 @@ class VM {
         for (let i = 0; i < this.mem.length; ++i)
             this.mem[i].draw(this, i);
         console.log("done");
+    }
+
+    show_cycle()
+    {
+        let s = this.sketch;
+        let rect =[this.w + 10, 100, 100, 50];
+
+        s.push();
+        s.strokeWeight(0);
+        s.textSize(20);
+        s.fill(0);
+        s.rect(...rect);
+        s.fill(220);
+        s.text(`cycle: [${this.cycle}]`, ...rect);
+        s.pop();
     }
 
     proc_move(id, pc) {
@@ -182,7 +198,10 @@ new p5(function (sketch) {
             }),
             stop_button,
             button("step", function (e) {
-                socket.send(`{"type": "step"}`)
+                console.log("send step");
+                vm.cycle += 1;
+                vm.show_cycle();
+                socket.send(`{"type": "step"}`);
             }),
             button("run until end", function (e) {
                 socket.send(`{"type": "run_until_end"}`)
@@ -197,7 +216,7 @@ new p5(function (sketch) {
         sketch.fill(220);
         sketch.textSize(BYTE_H);
         sketch.textFont('Courier New');
-        sketch.textAlign(sketch.CENTER, sketch.TOP);
+        // sketch.textAlign(sketch.CENTER, sketch.TOP);
         sketch.translate(10, 10);
     };
     sketch.draw = () => {
