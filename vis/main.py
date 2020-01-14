@@ -35,7 +35,6 @@ class VM:
         for line in self.p.stdout:
             if isinstance(line, bytes):
                 line = line.decode(encoding=encoding)
-            print(f"stdout line: `{line}`")
             if not line.strip():
                 yield yaml_to_json(msg)
                 msg = ""
@@ -44,15 +43,27 @@ class VM:
         yield json.dumps({"type": "end"})
 
 
-async def on_message(message):
-    print(f"got message: {message}")
+async def on_message(vm, msg):
+    print(f"got message: {msg}")
+    if msg['type'] == "step":
+        vm.p.stdin.write("1\n")
+    elif msg['type'] == "run_until_end":
+        vm.p.stdin.write("999999\n")
+    else:
+        print(f"ERROR: unknwon command {msg['type']}")
 
 
 async def consumer_handler(ws: websockets.WebSocketServerProtocol, vm):
     print("*start consuming*")
     try:
         async for message in ws:
-            await on_message(message)
+            try:
+                msg = json.loads(message)
+            except:
+                print("message:", message)
+            else:
+                await on_message(vm, msg)
+
     except websockets.ConnectionClosed as e:
         print(f"conn closed, code: {e.code}, reason: {e.reason}")
     else:
