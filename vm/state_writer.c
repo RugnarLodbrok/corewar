@@ -43,6 +43,7 @@ void write_proc_pos_update(t_vm *vm, int proc_num)
 		proc = vm->procs.data[proc_num];
 		ft_printf("type: proc_move\n");
 		ft_printf("id: %d\n", proc_num);
+		ft_printf("delay: %d\n", proc->delay);
 		ft_printf("pc: %d\n\n", proc->pc);
 	}
 }
@@ -54,10 +55,11 @@ void write_proc_stdout(t_vm *vm, int proc_num, char c)
 	ft_printf("char: %c\n\n", c);
 }
 
-void write_new_proc(int id, int pc)
+void write_new_proc(int id, char *name, int pc)
 {
 	ft_printf("type: new_proc\n");
 	ft_printf("id: %d\n", id);
+	ft_printf("name: %s\n", name);
 	ft_printf("pc: %d\n\n", pc);
 }
 

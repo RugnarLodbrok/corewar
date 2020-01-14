@@ -1,0 +1,33 @@
+.flex {
+    display: flex;
+}
+
+.sidebar {
+    display: flex;
+}
+
+.proc {
+    border: 1px solid black;
+    width: 150px;
+    font-family: "Courier New", monospace;
+    color: #ffffff;
+    background-color: #888888;
+}
+
+.register {
+    display: flex;
+}
+
+.register_label {
+    flex-grow: 1;
+    text-align: right;
+}
+
+.register_val {
+    background-color: #bbbbbb;
+    margin: 1px;
+    padding-left: 2px;
+    padding-right: 4px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
