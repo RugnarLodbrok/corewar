@@ -35,16 +35,27 @@ void write_memory(t_vm *vm)
 	}
 }
 
-void write_proc_pos_update(t_vm *vm, int proc_num)
+void write_proc_update(t_vm *vm, int proc_num)
 {
+	int i;
 	t_proc *proc;
 	if (vm->mode == MODE_VIS)
 	{
 		proc = vm->procs.data[proc_num];
-		ft_printf("type: proc_move\n");
+		ft_printf("type: proc_update\n");
 		ft_printf("id: %d\n", proc_num);
+		if (proc->op)
+			ft_printf("op: %s\n", proc->op->name);
+		else
+			ft_printf("op: %s\n", "null");
 		ft_printf("delay: %d\n", proc->delay);
-		ft_printf("pc: %d\n\n", proc->pc);
+		ft_printf("pc: %d\n", proc->pc);
+		ft_printf("registers:\n");
+		for (i = 0; i < REG_NUMBER; ++i)
+			ft_printf("  - \"%02hhx%02hhx%02hhx%02hhx\"\n",
+					proc->reg[i][0], proc->reg[i][1],
+					proc->reg[i][2], proc->reg[i][3]);
+		ft_printf("\n");
 	}
 }
 

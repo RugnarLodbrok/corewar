@@ -68,7 +68,6 @@ void t_vm_step(t_vm* vm)
 	int i;
 	t_proc* proc;
 
-//	ft_printf("cycle %u\n", vm->i);
 	i = -1;
 	while (++i < vm->procs.count)
 	{
@@ -81,6 +80,7 @@ void t_vm_step(t_vm* vm)
 				break;
 			}
 			proc->delay = proc->op->delay;
+			write_proc_update(vm, i);
 		}
 		if (proc->delay)
 		{
@@ -92,8 +92,8 @@ void t_vm_step(t_vm* vm)
 			ft_printf("invalid op\n");
 			vm->shutdown = 1;
 		}
-		write_proc_pos_update(vm, i);
 		proc->op = 0;
+		write_proc_update(vm, i);
 	}
 	vm->i++;
 	if (vm->i > 1024)

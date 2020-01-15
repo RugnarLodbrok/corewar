@@ -2,55 +2,6 @@ BYTE_W = 22;
 BYTE_H = 20;
 ASPECT = .7;
 
-function proc_div(id, name, color) {
-    let delay_div = div(`delay: ${0}`);
-    let op_div = div(`op: ${null}`);
-    let registers_div = div();
-    registers_div.className = "registers";
-    let d = div(div(`name: ${name}`), div(`id: ${id}`), op_div, delay_div, registers_div);
-    d.className = "proc";
-    let registers = [];
-    for (let i = 0; i < 16; ++i) {
-        let reg_label = div(`r${i + 1}`);
-        reg_label.className = "register_label";
-        let reg_value = div(`0x00000000`);
-        reg_value.className = "register_val";
-        let reg = div(reg_label, reg_value);
-        reg.className = "register";
-        registers_div.appendChild(reg);
-        registers.push(reg_value)
-    }
-    return {
-        e: d,
-        delay_div: delay_div,
-        op_div: op_div,
-        registers: registers
-    }
-}
-
-class Proc {
-    constructor(id, name, pc) {
-        this.name = name;
-        this.id = id;
-        this.pc = pc;
-        this.color = "#bb0000";
-        this.elements = proc_div(id, name, this.color);
-        document.getElementById("sidebar").appendChild(this.elements.e)
-    }
-
-    move(vm, pc) {
-        let byte = vm.mem[this.pc];
-        byte.e.style.borderColor = "#00000000";
-        this.pc = pc;
-        byte = vm.mem[pc];
-        byte.e.style.borderColor = this.color;
-    }
-
-    destructor() {
-        this.elements.e.remove();
-    }
-}
-
 class VM {
     constructor(sketch) {
         this.sketch = sketch;
@@ -63,16 +14,20 @@ class VM {
         this.h = 0;
         this.procs = [];
         this.e = document.getElementById('memory_view');
-        this.e.innerHTML = '';
         this.e.className = "memory";
     }
 
-    show_cycle() {
+    step(n) {
+        if (n === undefined)
+            n = 1;
+        for (let proc of this.procs)
+            proc.update_delay(proc.delay - 1)
     }
 
-    destructor(sketch) {
+    destructor() {
         for (let proc of this.procs)
             proc.destructor();
+        this.e.innerHTML = '';
     }
 
     choose_row_cols(len) {
@@ -107,19 +62,19 @@ class VM {
         }
     }
 
-    proc_move(id, pc) {
+    proc_update(id, kwargs) {
         let proc = this.procs[id];
         if (!proc)
             return console.error(`proc ${id} does not exist`);
-        proc.move(this, pc);
+        proc.update(kwargs);
     }
 
     new_proc(id, name, pc) {
         if (id !== this.procs.length)
             console.error(`bad new proc id: ${id}, procs.len: ${this.procs.length}`);
         else
-            this.procs[id] = new Proc(id, name, pc);
-        this.procs[id].move(this, pc);
+            this.procs[id] = new Proc(this, id, name, pc);
+        this.procs[id].move(pc);
     }
 
     write_mem(pc, data) {
@@ -133,13 +88,13 @@ class VM {
         if (msg.type === "mem_init")
             this.mem_init(chunks(msg.data, 2));
         else if (msg.type === "new_proc")
-            this.new_proc(msg.id - 0, msg.name, msg.pc);
+            this.new_proc(msg.id, msg.name, msg.pc);
         else if (msg.type === "arr")
             console.log('STDOUT:', msg.char);
         else if (msg.type === "write_mem")
-            this.write_mem(msg.pc - 0, chunks(msg.data, 2));
-        else if (msg.type === "proc_move")
-            this.proc_move(msg.id, msg.pc);
+            this.write_mem(msg.pc, chunks(msg.data, 2));
+        else if (msg.type === "proc_update")
+            this.proc_update(msg.id, msg);
         else if (msg.type === "end") {
             this.stopped = true;
             console.log('command: end')
@@ -153,20 +108,19 @@ window.onload = function (e) {
     let vm;
 
     let stop = function (msg) {
-        console.log('close!');
         socket.close(1000, msg);
+        vm.destructor()
     };
 
     let stop_button = button('stop vm', function (e) {
         stop("stop button");
-        vm.destructor()
     });
     stop_button.disabled = true;
     document.getElementById("buttons_bar").appendChild(div(button('start vm', function (e) {
-            vm = new VM();
             stop_button.disabled = false;
             if (socket)
                 stop("re-connecting");
+            vm = new VM();
             socket = new WebSocket('ws://localhost:8765/somesocket');
 
             socket.onopen = function () {
@@ -191,8 +145,7 @@ window.onload = function (e) {
         stop_button,
         button("step", function (e) {
             console.log("send step");
-            vm.cycle += 1;
-            vm.show_cycle();
+            vm.step(1);
             socket.send(`{"type": "step"}`);
         }),
         button("run until end", function (e) {

@@ -68,7 +68,7 @@ void t_vm_destruct(t_vm *vm);
 void t_vm_print(t_vm *vm, const char *format, ...);
 
 void write_memory(t_vm *vm);
-void write_proc_pos_update(t_vm *vm, int proc_num);
+void write_proc_update(t_vm *vm, int proc_num);
 void write_proc_stdout(t_vm *vm, int proc_num, char c);
 void write_new_proc(int id, char *name, int pc);
 void write_mem(byte *mem, int pc, size_t len);

@@ -16,10 +16,9 @@ PORT = 8765
 
 
 def yaml_to_json(msg):
-    buff = io.StringIO(msg)
     try:
-        return json.dumps(yaml.load(buff, Loader=yaml.BaseLoader))
-    except:
+        return json.dumps(yaml.safe_load(io.StringIO(msg)))
+    except Exception:
         print(f"can't encode:`\n{msg}`")
         raise
 
