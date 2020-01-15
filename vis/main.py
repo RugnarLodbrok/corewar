@@ -26,7 +26,7 @@ def yaml_to_json(msg):
 class VM:
     def __init__(self):
         self._p_coro = aiosp.create_subprocess_exec(
-            "cmake-build-debug/corewar_vm", "-v", "asm/hello.cor",
+            "cmake-build-debug/corewar_vm", "-v", "asm/write_mem.cor",
             stdin=aiosp.PIPE,
             stdout=aiosp.PIPE)
         self.p = None
