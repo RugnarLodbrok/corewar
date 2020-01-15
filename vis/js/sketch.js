@@ -38,10 +38,20 @@ window.onload = function (e) {
             socket.send("hello from browser!");
         }),
         stop_button,
-        button("step", function (e) {
-            console.log("send step");
+        button("step cycle", function (e) {
             vm.step(1);
             socket.send(`{"type": "step"}`);
+        }),
+        button("step op", function (e) {
+            let steps = 1000;
+            for (let proc of vm.procs)
+                if (steps > proc.delay)
+                    steps = proc.delay;
+            if (steps === 0)
+                steps = 1;
+            vm.step(steps);
+            console.log(`step op: ${steps} steps`);
+            socket.send(`{"type": "step", "steps": ${steps}}`);
         }),
         button("run until end", function (e) {
             socket.send(`{"type": "run_until_end"}`)

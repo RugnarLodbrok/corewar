@@ -21,7 +21,7 @@ class VM {
             n = 1;
         this.cycle += n;
         for (let proc of this.procs)
-            proc.update_delay(proc.delay - 1)
+            proc.update_delay(proc.delay - n)
     }
 
     destructor() {

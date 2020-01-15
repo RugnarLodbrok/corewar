@@ -19,7 +19,7 @@ void main_loop(t_vm* vm)
 		{
 			steps = ft_atoi(line);
 			free(line);
-			while (steps--)
+			while (steps-- > 0)
 			{
 				if (vm->shutdown)
 					return;

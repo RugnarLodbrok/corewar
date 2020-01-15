@@ -36,8 +36,9 @@ class VM:
             self.p = await self._p_coro
         if self.p.returncode is None:
             self.p.terminate()
+            print(f"proc killed")
         ret = await self.p.wait()
-        print(f"proc killed; ret = {ret}")
+        print(f"proc finished; ret = {ret}")
 
     async def __aiter__(self):
         if not self.p:
@@ -61,7 +62,7 @@ class VM:
 async def on_message(vm, msg):
     print(f"got message: {msg}")
     if msg['type'] == "step":
-        vm.p.stdin.write(b"1\n")
+        vm.p.stdin.write(f"{msg.get('steps', 1)}\n".encode())
     elif msg['type'] == "run_until_end":
         vm.p.stdin.write(b"999999\n")
     else:
