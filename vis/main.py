@@ -34,7 +34,8 @@ class VM:
     async def stop(self):
         if not self.p:
             self.p = await self._p_coro
-        self.p.terminate()
+        if self.p.returncode is None:
+            self.p.terminate()
         ret = await self.p.wait()
         print(f"proc killed; ret = {ret}")
 

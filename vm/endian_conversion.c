@@ -12,6 +12,17 @@
 
 #include "vm.h"
 
+short int read_short_int(int host_endian, byte *mem)
+{
+	short int ret;
+
+	ret = 0;
+	ft_memcpy(&ret, mem, sizeof(short int));
+	if (VM_ENDIAN != host_endian)
+		ft_memrev(&ret, sizeof(short int));
+	return (ret);
+}
+
 uint read_uint(int host_endian, byte *mem, byte len)
 {
 	uint ret;

@@ -66,7 +66,7 @@ void write_proc_stdout(t_vm *vm, int proc_num, char c)
 	ft_printf("char: %c\n\n", c);
 }
 
-void write_new_proc(int id, char *name, int pc)
+void write_new_proc(int id, char *name, int pc) //todo: merge with write_proc_update
 {
 	ft_printf("type: new_proc\n");
 	ft_printf("id: %d\n", id);
@@ -82,7 +82,7 @@ void write_mem(byte *mem, int pc, size_t len)
 	ft_printf("pc: %d\n", pc);
 	ft_printf("data: \"");
 	for (i = 0; i < len; ++i)
-		put_hex(mem[pc + i], 2);
+		put_hex(mem[i], 2);
 	ft_printf("\"\n\n");
 }
 

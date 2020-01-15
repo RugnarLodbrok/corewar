@@ -33,7 +33,7 @@ typedef struct
 	uint id;
 	uint champ_id;
 	uint pc;
-	byte reg[REG_NUMBER][4];
+	byte reg[REG_NUMBER][REG_SIZE];
 	uint carry;
 	uint live;
 	uint delay;
@@ -58,6 +58,8 @@ typedef struct
 	t_vm *vm;
 	t_proc *proc;
 	uint cursor;
+	int ind_arg;
+	byte ind_val[REG_SIZE];
 } t_op_context;
 
 size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ);
@@ -77,6 +79,7 @@ void write_new_proc(int id, char *name, int pc);
 void write_mem(byte *mem, int pc, size_t len);
 void write_end(void);
 
+short int read_short_int(int host_endian, byte *mem);
 uint read_uint(int host_endian, byte *mem, byte len);
 void write_uint(int host_endian, uint v, byte *mem, byte len);
 
