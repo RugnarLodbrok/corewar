@@ -26,67 +26,71 @@ t_op *read_op(const byte *ptr)
 	return (0);
 }
 
-uint t_op_parse_arg_types(t_op *op, const byte *args_ptr, byte *arg_types)
+void t_op_parse_arg_types(t_op_context *c, byte *arg_types)
 {
 	uint i;
-	uint offset;
+	byte *pc;
 
-	offset = 0;
 	ft_bzero(arg_types, sizeof(byte) * 3);
-	if (!op->need_types)
-		ft_memcpy(arg_types, &op->args_types[0], sizeof(byte) * op->args_num);
+	if (!c->op->need_types)
+		ft_memcpy(arg_types, &c->op->args_types[0],
+				  sizeof(byte) * c->op->args_num);
 	else
 	{
-		for (i = 0; i < op->args_num; ++i)
-			arg_types[i] = (*(args_ptr + offset) >> (2 * (3 - i))) & (byte)0x3;
-		offset++;
+		pc = c->vm->mem + c->proc->pc;
+		for (i = 0; i < c->op->args_num; ++i)
+			arg_types[i] = (*(pc + c->cursor) >> (2 * (3 - i))) & (byte)0x3;
+		c->cursor++;
 	}
-	return (offset);
 }
 
-uint t_op_parse_args(t_op *op, t_vm *vm, t_proc *proc, byte **args)
+void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 {
 	int i;
-	byte arg_types[3];
-	uint offset;
 	uint reg_number;
 	byte *p;
 
-	p = vm->mem + proc->pc;
-	offset = 1;
-	offset += t_op_parse_arg_types(op, p + offset, &arg_types[0]);
-	for (i = 0; i < op->args_num; ++i)
+	p = c->vm->mem + c->proc->pc;
+	for (i = 0; i < c->op->args_num; ++i)
 	{
 		if (arg_types[i] == DIR_CODE)
 		{
-			args[i] = p + offset;
-			offset += op->dir_size;
+			args[i] = p + c->cursor;
+			c->cursor += c->op->dir_size;
 		}
 		else if (arg_types[i] == IND_CODE)
 		{
-			args[i] = p + read_uint(vm->host_endian, p + offset, IND_ARG_SIZE);
-			offset += IND_ARG_SIZE;
+			args[i] = p + read_uint(
+					c->vm->host_endian, p + c->cursor, IND_SIZE);
+			c->cursor += IND_SIZE;
 		}
 		else if (arg_types[i] == REG_CODE)
 		{
-			reg_number = read_uint(vm->host_endian, p + offset, REG_ARG_SIZE);
-			args[i] = &proc->reg[reg_number][0];
-			offset += REG_ARG_SIZE;
+			reg_number = read_uint(c->vm->host_endian, p + c->cursor,
+								   REG_ARG_SIZE);
+			args[i] = &c->proc->reg[reg_number][0];
+			c->cursor += REG_ARG_SIZE;
 		}
 	}
-	return offset;
 }
 
 int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 {
+	t_op_context c;
 	uint old_pc;
-	uint new_pc;
-	byte *args[3]; //pointers that will be passed to op function
+	byte *args[3];
+	byte arg_types[3];
 
+	c.op = op;
+	c.proc = proc;
+	c.vm = vm;
+	c.cursor = 1;
+	ft_bzero(&args[0], 3);
 	old_pc = proc->pc;
-	new_pc = proc->pc + t_op_parse_args(op, vm, proc, &args[0]);
+	t_op_parse_arg_types(&c, &arg_types[0]);
+	t_op_parse_args(&c, &arg_types[0], &args[0]);
 	op->f(vm, proc, args[0], args[1], args[2]);
 	if (proc->pc == old_pc)
-		proc->pc = new_pc;
-	return (0);
+		proc->pc += c.cursor;
+	return (1);
 }

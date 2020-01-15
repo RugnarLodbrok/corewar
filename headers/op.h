@@ -22,7 +22,6 @@
 # define REG_SIZE				4
 # define DIR_SIZE				REG_SIZE  // why?
 
-# define IND_ARG_SIZE			2
 # define REG_ARG_SIZE			1
 
 # define REG_CODE				1
