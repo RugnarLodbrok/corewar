@@ -26,55 +26,67 @@ t_op *read_op(const byte *ptr)
 	return (0);
 }
 
-t_arg_types t_op_parse_arg_types(t_op *op, byte **args_ptr)
+uint t_op_parse_arg_types(t_op *op, const byte *args_ptr, byte *arg_types)
 {
-	t_arg_types ret;
-	int i;
+	uint i;
+	uint offset;
 
-	ft_bzero(&ret, sizeof(t_arg_types));
+	offset = 0;
+	ft_bzero(arg_types, sizeof(byte) * 3);
 	if (!op->need_types)
-		ft_memcpy(&ret.args, &op->args_types, sizeof(byte)*op->args_num);
+		ft_memcpy(arg_types, &op->args_types[0], sizeof(byte) * op->args_num);
 	else
 	{
 		for (i = 0; i < op->args_num; ++i)
-			ret.args[i] = (**args_ptr >> (2 * (3 - i))) & (byte)0x3;
-		(*args_ptr)++;
+			arg_types[i] = (*(args_ptr + offset) >> (2 * (3 - i))) & (byte)0x3;
+		offset++;
 	}
-	return (ret);
+	return (offset);
+}
+
+uint t_op_parse_args(t_op *op, t_vm *vm, t_proc *proc, byte **args)
+{
+	int i;
+	byte arg_types[3];
+	uint offset;
+	uint reg_number;
+	byte *p;
+
+	p = vm->mem + proc->pc;
+	offset = 1;
+	offset += t_op_parse_arg_types(op, p + offset, &arg_types[0]);
+	for (i = 0; i < op->args_num; ++i)
+	{
+		if (arg_types[i] == DIR_CODE)
+		{
+			args[i] = p + offset;
+			offset += op->dir_size;
+		}
+		else if (arg_types[i] == IND_CODE)
+		{
+			args[i] = p + read_uint(vm->host_endian, p + offset, IND_ARG_SIZE);
+			offset += IND_ARG_SIZE;
+		}
+		else if (arg_types[i] == REG_CODE)
+		{
+			reg_number = read_uint(vm->host_endian, p + offset, REG_ARG_SIZE);
+			args[i] = &proc->reg[reg_number][0];
+			offset += REG_ARG_SIZE;
+		}
+	}
+	return offset;
 }
 
 int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 {
-	int i;
-	byte *args_ptr;
-	t_arg_types arg_types;
+	uint old_pc;
+	uint new_pc;
 	byte *args[3]; //pointers that will be passed to op function
-	uint reg_number;
 
-	args_ptr = vm->mem + proc->pc + 1;
-	arg_types = t_op_parse_arg_types(op, &args_ptr);
-	for (i = 0; i < op->args_num; ++i)
-	{
-		if (arg_types.args[i] == DIR_CODE)
-		{
-			args[i] = args_ptr;
-			args_ptr += op->dir_size;
-		}
-		else if (arg_types.args[i] == IND_CODE)
-		{
-			args[i] = vm->mem + proc->pc +
-					  read_uint(vm->host_endian, args_ptr, IND_ARG_SIZE);
-			args_ptr += IND_ARG_SIZE;
-		}
-		else if (arg_types.args[i] == REG_CODE)
-		{
-			reg_number = read_uint(vm->host_endian, args_ptr, REG_ARG_SIZE);
-			args[i] = &proc->reg[reg_number][0];
-			args_ptr += REG_ARG_SIZE;
-		}
-		else
-			return 0;
-	}
-	proc->pc = args_ptr - vm->mem;
-	return op->f(vm, proc, args[0], args[1], args[2]);
+	old_pc = proc->pc;
+	new_pc = proc->pc + t_op_parse_args(op, vm, proc, &args[0]);
+	op->f(vm, proc, args[0], args[1], args[2]);
+	if (proc->pc == old_pc)
+		proc->pc = new_pc;
+	return (0);
 }
