@@ -1,18 +1,24 @@
+import os
 import asyncio
 import asyncio.subprocess as aiosp
-import datetime
-import random
-from subprocess import Popen, PIPE
 import locale
 import yaml
 import json
 import io
-
+from threading import Thread
 import websockets
-from time import sleep
 
 HOSTNAME = 'localhost'
-PORT = 8765
+WSS_PORT = 8765
+HTTP_PORT = 8888
+ASM_DIR = 'asm'
+
+STDIN_F_NAME = 'stdin.txt'
+
+
+def append_file(data):
+    with open(STDIN_F_NAME, 'at') as f:
+        f.write(data)
 
 
 def yaml_to_json(msg):
@@ -25,15 +31,9 @@ def yaml_to_json(msg):
 
 class VM:
     def __init__(self):
-        self._p_coro = aiosp.create_subprocess_exec(
-            "cmake-build-debug/corewar_vm", "-v", "asm/write_mem.cor",
-            stdin=aiosp.PIPE,
-            stdout=aiosp.PIPE)
         self.p = None
 
     async def stop(self):
-        if not self.p:
-            self.p = await self._p_coro
         if self.p.returncode is None:
             self.p.terminate()
             print(f"proc killed")
@@ -41,8 +41,11 @@ class VM:
         print(f"proc finished; ret = {ret}")
 
     async def __aiter__(self):
-        if not self.p:
-            self.p = await self._p_coro
+        self.p = await aiosp.create_subprocess_exec(
+            "cmake-build-debug/corewar_vm", "-v", "asm/write_mem.cor",
+            stdin=aiosp.PIPE,
+            stdout=aiosp.PIPE)
+        print(f"pid: {self.p.pid}")
         encoding = locale.getpreferredencoding(False)
         msg = ""
         while True:
@@ -52,6 +55,9 @@ class VM:
             if isinstance(line, bytes):
                 line = line.decode(encoding=encoding)
             if not line.strip():
+                if not msg:
+                    await asyncio.sleep(.1)
+                    continue
                 yield yaml_to_json(msg)
                 msg = ""
             else:
@@ -62,11 +68,15 @@ class VM:
 async def on_message(vm, msg):
     print(f"got message: {msg}")
     if msg['type'] == "step":
-        vm.p.stdin.write(f"{msg.get('steps', 1)}\n".encode())
+        l = f"{msg.get('steps', 1)}\n"
     elif msg['type'] == "run_until_end":
-        vm.p.stdin.write(b"999999\n")
+        l = "999999\n"
     else:
         print(f"ERROR: unknwon command {msg['type']}")
+        return
+    append_file(l)
+    vm.p.stdin.write(l.encode())
+    await vm.p.stdin.drain()
 
 
 async def consumer_handler(ws: websockets.WebSocketServerProtocol, vm):
@@ -113,9 +123,37 @@ async def handler(ws: websockets.WebSocketServerProtocol, path):
             print("client disconnected")
 
 
-if __name__ == '__main__':
-    ws_address = f"wss://{HOSTNAME}:{PORT}/WebSocket"
-    start_server = websockets.serve(handler, "localhost", 8765)
+def wss_server():
+    ws_address = f"wss://{HOSTNAME}:{WSS_PORT}/WebSocket"
+    loop = asyncio.new_event_loop()
+    asyncio.get_child_watcher()._loop = loop
+    start_server = websockets.serve(handler, "localhost", WSS_PORT, loop=loop)
+    loop.run_until_complete(start_server)
+    loop.run_forever()
 
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
+
+if __name__ == '__main__':
+    Thread(name='wss', target=wss_server, daemon=True).start()
+
+    from flask import Flask, Response
+
+    app = Flask(__name__)
+
+
+    @app.route('/champions')
+    def hello_world():
+        response = Response(json.dumps([f for f in os.listdir(ASM_DIR)
+                                        if os.path.isfile(os.path.join(ASM_DIR, f))
+                                        and f.endswith('.cor')]))
+        header = response.headers
+        header['Access-Control-Allow-Origin'] = '*'
+        return response
+
+
+    @app.route('/')
+    def index():
+        with open(os.path.join('vis', 'index.html')) as f:
+            return f.read()
+
+
+    app.run(port=HTTP_PORT)
