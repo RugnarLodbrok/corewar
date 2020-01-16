@@ -107,7 +107,7 @@ int 	op_xor(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 
 int 	op_zjmp(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
-	//printf("%d\n", proc->carry);
+	printf("carry: %d\n", proc->carry);
 	if (proc->carry == 1)
 		proc->pc += read_uint(vm->host_endian, arg1, 4) + 5;
 	return (1);

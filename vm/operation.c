@@ -62,7 +62,7 @@ void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 		{
 			c->ind_arg = read_short_int(c->vm->host_endian, p + c->cursor);
 			args[i] = p + c->ind_arg;
-			ft_memcpy(&c->ind_val[0], c->vm->mem + c->ind_arg, REG_SIZE);
+			ft_memcpy(&c->ind_val[0], p + c->ind_arg, REG_SIZE);
 			c->cursor += IND_SIZE;
 		}
 		else if (arg_types[i] == REG_CODE)
@@ -95,7 +95,7 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	if (c.ind_arg != INT_MAX)
 		if (ft_memcmp(&c.ind_val[0], vm->mem + proc->pc + c.ind_arg, REG_SIZE))
 			if (vm->mode == MODE_VIS)
-				write_mem(vm->mem + proc->pc + c.ind_arg, c.ind_arg, REG_SIZE);
+				write_mem(vm->mem + proc->pc + c.ind_arg, proc->pc + c.ind_arg, REG_SIZE);
 	if (proc->pc == old_pc)
 		proc->pc += c.cursor;
 	return (1);
