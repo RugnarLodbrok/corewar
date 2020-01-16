@@ -1,6 +1,8 @@
-.name           "hello_asm"
+.name           "Jumper !"
 .comment        "hello asm"
 
-    ld %72,r1
-    st r1,20
-
+start: ld %72,r1
+    st r1,0
+    ld %0,r2
+live:	live	%1
+    zjmp %:start
