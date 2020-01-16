@@ -63,8 +63,14 @@ class VM {
     }
 
     proc_update(id, kwargs) {
-        let proc = this.procs[id];
-        if (!proc)
+        let proc;
+        if (id < this.procs.length)
+            proc = this.procs[id];
+        else if (id === this.procs.length) {
+            console.log("new proc!");
+            proc = new Proc(this, id, kwargs.name, kwargs.pc);
+            this.procs.push(proc);
+        } else
             return console.error(`proc ${id} does not exist`);
         proc.update(kwargs);
     }
@@ -87,8 +93,6 @@ class VM {
     update(msg) {
         if (msg.type === "mem_init")
             this.mem_init(chunks(msg.data, 2));
-        else if (msg.type === "new_proc")
-            this.new_proc(msg.id, msg.name, msg.pc);
         else if (msg.type === "arr")
             console.log('STDOUT:', msg.char);
         else if (msg.type === "write_mem")

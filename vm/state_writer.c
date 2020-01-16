@@ -35,7 +35,7 @@ void write_memory(t_vm *vm)
 	}
 }
 
-void write_proc_update(t_vm *vm, int proc_num)
+void write_proc_update(t_vm *vm, int proc_num, const char *name)
 {
 	int i;
 	t_proc *proc;
@@ -44,6 +44,8 @@ void write_proc_update(t_vm *vm, int proc_num)
 		proc = vm->procs.data[proc_num];
 		ft_printf("type: proc_update\n");
 		ft_printf("id: %d\n", proc_num);
+		if (name)
+			ft_printf("name: %s\n", name);
 		if (proc->op)
 			ft_printf("op: %s\n", proc->op->name);
 		else
@@ -63,15 +65,7 @@ void write_proc_stdout(t_vm *vm, int proc_num, char c)
 {
 	ft_printf("type: arr\n");
 	ft_printf("id: %d\n", proc_num);
-	ft_printf("char: %c\n\n", c);
-}
-
-void write_new_proc(int id, char *name, int pc) //todo: merge with write_proc_update
-{
-	ft_printf("type: new_proc\n");
-	ft_printf("id: %d\n", id);
-	ft_printf("name: %s\n", name);
-	ft_printf("pc: %d\n\n", pc);
+	ft_printf("char: \"%c\"\n\n", c);
 }
 
 void write_mem(byte *mem, int pc, size_t len)

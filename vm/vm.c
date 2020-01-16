@@ -50,9 +50,10 @@ void t_vm_add_champ(t_vm* vm, const char* f_name)
 	len = load_bytecode(f_name, (byte*)vm->mem + champ_offset, &vm->champs[n]);
 	proc = malloc(sizeof(t_proc));
 	t_proc_init(proc, vm, n);
+	t_arrayp_push(&vm->procs, proc);
 	if (vm->mode == MODE_VIS)
 	{
-		write_new_proc(proc->id, vm->champs[n].name, proc->pc);
+		write_proc_update(vm, n, vm->champs[n].name);
 		write_mem(vm->mem, proc->pc, len);
 	}
 	else if (vm->mode == MODE_DEFAULT)
@@ -60,7 +61,6 @@ void t_vm_add_champ(t_vm* vm, const char* f_name)
 		ft_printf("champ: %s\n", vm->champs[n].name);
 		ft_printf("champ comment: %s\n", vm->champs[n].comment);
 	}
-	t_arrayp_push(&vm->procs, proc);
 }
 
 void t_vm_step(t_vm* vm)
@@ -80,7 +80,7 @@ void t_vm_step(t_vm* vm)
 				break;
 			}
 			proc->delay = proc->op->delay;
-			write_proc_update(vm, i);
+			write_proc_update(vm, i, 0);
 		}
 		if (proc->delay)
 		{
@@ -93,7 +93,7 @@ void t_vm_step(t_vm* vm)
 			vm->shutdown = 1;
 		}
 		proc->op = 0;
-		write_proc_update(vm, i);
+		write_proc_update(vm, i, 0);
 	}
 	vm->i++;
 	if (vm->i > 1024)

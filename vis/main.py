@@ -140,7 +140,7 @@ if __name__ == '__main__':
 
     from flask import Flask, Response
 
-    app = Flask(__name__)
+    app = Flask("corewar")
 
 
     @app.route('/champions')
