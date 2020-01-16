@@ -12,7 +12,9 @@ class Byte {
         this.e = byte_div();
     }
 
-    draw() {
+    draw(kwargs) {
+        if (kwargs.bg)
+            this.e.style.backgroundColor = kwargs.bg;
         this.e.innerText = this.v;
     }
 }

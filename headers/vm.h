@@ -75,7 +75,7 @@ void t_vm_print(t_vm *vm, const char *format, ...);
 void write_memory(t_vm *vm);
 void write_proc_update(t_vm *vm, int proc_num, const char *name);
 void write_proc_stdout(t_vm *vm, int proc_num, char c);
-void write_mem(byte *mem, int pc, size_t len);
+void write_mem(byte *mem, int pc, size_t len, int proc_id);
 void write_end(void);
 
 short int read_short_int(int host_endian, byte *mem);

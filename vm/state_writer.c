@@ -68,12 +68,14 @@ void write_proc_stdout(t_vm *vm, int proc_num, char c)
 	ft_printf("char: \"%c\"\n\n", c);
 }
 
-void write_mem(byte *mem, int pc, size_t len)
+void write_mem(byte *mem, int pc, size_t len, int proc_id)
 {
 	size_t i;
 
 	ft_printf("type: write_mem\n");
 	ft_printf("pc: %d\n", pc);
+	if (proc_id >= 0)
+		ft_printf("proc_id: %d\n", proc_id);
 	ft_printf("data: \"");
 	for (i = 0; i < len; ++i)
 		put_hex(mem[i], 2);
