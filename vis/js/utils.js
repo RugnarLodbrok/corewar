@@ -11,16 +11,27 @@ function chunks(s, size) {
 }
 
 
-function ajax_get(path, callback) {
+function ajax_get(path, callback, err_callback) {
     let req = new XMLHttpRequest();
-    req.onreadystatechange = function() {
+    req.onreadystatechange = function () {
         if (req.readyState === 4) {
             if (req.status === 200)
                 callback(JSON.parse(req.responseText));
+            else if (err_callback !== undefined)
+                err_callback(req.status, req.responseText);
             else
                 console.error(req.status, req.responseText);
         }
     };
+    if (err_callback !== undefined)
+        req.onerror = function (e) {
+            err_callback(0, "can't connect to the server");
+        };
     req.open("GET", `http://${HOST}:${PORT}/${path}`, true);
     req.send();
+}
+
+function remove_children(e) {
+    while (e.firstChild)
+        e.removeChild(e.firstChild);
 }

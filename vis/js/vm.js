@@ -27,7 +27,7 @@ class VM {
     destructor() {
         for (let proc of this.procs)
             proc.destructor();
-        this.e.innerHTML = '';
+        remove_children(this.e);
     }
 
     choose_row_cols(len) {
