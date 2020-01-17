@@ -18,13 +18,13 @@ CFLAGS := -Wall -Wextra -Werror -O3
 REMOVE := /bin/rm -rf
 DIR_BIN := bin
 DIR_INCLUDE := -I include
-DIR_LIBFT := src/libft
+DIR_LIBFT := ../libft
 DIR_SRC := src/$(NAME)
 
 vpath %.c $(DIR_SRC)
 vpath %.o $(DIR_BIN)/$(NAME)
 vpath %.h $(DIR_INCLUDE)
-vpath %.a $(DIR_LIBFT)
+#vpath %.a $(DIR_LIBFT)
 
 SRC_NAME := asm.c\
 			read_input.c\
