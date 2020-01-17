@@ -1,5 +1,5 @@
 HOST = "localhost";
-PORT = 8888;
+HTTP_PORT = 8888;
 
 function chunks(s, size) {
     const numChunks = Math.ceil(s.length / size);
@@ -27,7 +27,7 @@ function ajax_get(path, callback, err_callback) {
         req.onerror = function (e) {
             err_callback(0, "can't connect to the server");
         };
-    req.open("GET", `http://${HOST}:${PORT}/${path}`, true);
+    req.open("GET", `http://${HOST}:${HTTP_PORT}/${path}`, true);
     req.send();
 }
 

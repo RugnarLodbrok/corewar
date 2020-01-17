@@ -139,24 +139,44 @@ if __name__ == '__main__':
     Thread(name='wss', target=wss_server, daemon=True).start()
 
     from flask import Flask, Response
+    from werkzeug.exceptions import NotFound
 
     app = Flask("corewar")
+
+
+    def serve_file(*path):
+        print('get', path)
+        f_name = os.path.join('vis', *path)
+        if not os.path.exists(f_name):
+            raise NotFound()
+        with open(f_name) as f:
+            return f.read()
 
 
     @app.route('/champions')
     def hello_world():
         response = Response(json.dumps([f for f in os.listdir(ASM_DIR)
-                                        if os.path.isfile(os.path.join(ASM_DIR, f))
+                                        if
+                                        os.path.isfile(os.path.join(ASM_DIR, f))
                                         and f.endswith('.cor')]))
         header = response.headers
         header['Access-Control-Allow-Origin'] = '*'
         return response
 
 
+    @app.route('/<string:path>')
+    def static_file(path):
+        return serve_file(path)
+
+
+    @app.route('/js/<string:path>')
+    def static_js(path):
+        return serve_file('js', path)
+
+
     @app.route('/')
     def index():
-        with open(os.path.join('vis', 'index.html')) as f:
-            return f.read()
+        return serve_file('index.html')
 
 
     app.run(port=HTTP_PORT)

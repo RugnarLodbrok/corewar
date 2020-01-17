@@ -1,3 +1,5 @@
+WSS_PORT = 8765;
+
 class Client {
     constructor() {
         let self = this;
@@ -59,7 +61,7 @@ class Client {
             this.vm = null;
         }
         this.vm = new VM();
-        this.socket = new WebSocket(`ws://localhost:8765/${this.cor_selector.value}`);
+        this.socket = new WebSocket(`ws://localhost:${WSS_PORT}/${this.cor_selector.value}`);
         this.socket.onopen = function () {
         };
         this.socket.onmessage = function (s) {
@@ -101,7 +103,5 @@ class Client {
 }
 
 window.onload = function (e) {
-    let client;
-
-    client = new Client();
+    new Client();
 };
