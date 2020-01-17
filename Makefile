@@ -19,6 +19,8 @@ OBJ_VM = $(SRC_VM:.c=.o)
 
 all : $(VM)
 
+vm : $(VM)
+
 $(VM) : libft/libft.a $(OBJ_VM)
 	$(CC) -o $(VM) $(OBJ_VM) $(OPTION) -L libft/ -lft
 
