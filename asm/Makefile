@@ -13,7 +13,7 @@
 NAME := asm
 LIBFT := libft.a
 HEADERS := libft.h asm.h op.h
-CC := clang
+CC := gcc
 CFLAGS := -Wall -Wextra -Werror -O3
 REMOVE := /bin/rm -rf
 DIR_BIN := bin

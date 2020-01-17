@@ -83,7 +83,8 @@ void				translate_in_byte_code(t_champ *champ)
 	ft_strncpy((char *)tmp, champ->comment, COMMENT_LENGTH + ASM_NULL_SIZE);
 	tmp += COMMENT_LENGTH + ASM_NULL_SIZE;
 	translate_opers(tmp, champ->first_oper);
-	write(fd, byte_code, size_byte_code);
+	if (!write(fd, byte_code, size_byte_code))
+		error("can't write");
 	free(byte_code);
 	close(fd);
 }

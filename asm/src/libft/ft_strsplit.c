@@ -38,11 +38,9 @@ static size_t	ft_count_symbols(const char *s, char c)
 static int		ft_malloc_mas(char **mas, char const *s, char c, size_t count)
 {
 	size_t		i;
-	size_t		j;
 	size_t		len;
 
 	i = 0;
-	j = 0;
 	while (count--)
 	{
 		while (*s == c)
