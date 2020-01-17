@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   read_data.c                                       :+:      :+:    :+:   */
+/*   read_input.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cormund <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/23 17:06:28 by cormund           #+#    #+#             */
-/*   Updated: 2019/12/26 12:29:13 by cormund          ###   ########.fr       */
+/*   Updated: 2020/01/17 10:09:16 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void		clean_comments(char *data)
 	{
 		if (*data == '"')
 			in ^= 1;
-		if (!in && *data == '#')
+		if (!in && (*data == COMMENT_CHAR || *data == ALT_COMMENT_CHAR))
 			while (*data && *data != '\n')
 				*data++ = ' ';
 		++data;
@@ -31,27 +31,28 @@ void		clean_comments(char *data)
 char		*read_data(char *file)
 {
 	char	buf[ASM_SIZE_BUF + 1];
-	char	*data;
 	char	*tmp;
 	int		count_read;
 	int		fd;
+	int		n;
 
-	fd = open(file, O_RDONLY);
-	if (fd == ASM_ERROR)
+	if ((fd = open(file, O_RDONLY)) == ASM_ERROR)
 		error(strerror(errno));
-	data = ft_strnew(0);
-	if (!data)
+	if (!(ASM_DATA = ft_strnew(1)))
 		error(strerror(errno));
-	while((count_read = read(fd, buf, ASM_SIZE_BUF)) > 0)
+	n = 0;
+	while ((count_read = read(fd, buf, ASM_SIZE_BUF)) > 0)
 	{
 		buf[count_read] = ASM_END_OF_STR;
-		tmp = data;
-		if ((data = ft_strjoin(data, buf)) == 0)
+		tmp = ASM_DATA;
+		ASM_DATA = ft_memnjoin(ASM_DATA, buf, ASM_SIZE_BUF * n, count_read + 1);
+		if (!ASM_DATA)
 			error(strerror(errno));
 		free(tmp);
+		++n;
 	}
 	if (count_read == ASM_ERROR)
 		error(strerror(errno));
 	close(fd);
-	return (data);
+	return (ASM_DATA);
 }
