@@ -13,7 +13,6 @@
 #include "libft.h"
 #include "libft_compat.h"
 #include "vm.h"
-#include "stdarg.h"
 #include "stdio.h"
 
 void t_vm_init(t_vm* vm, int n_champs)
@@ -26,15 +25,17 @@ void t_vm_init(t_vm* vm, int n_champs)
 	t_arrayp_init(&vm->procs);
 }
 
-void t_vm_print(t_vm* vm, const char* format, ...)
+void t_vm_print(t_vm* vm)
 {
-	va_list ap;
+	int i;
 
-	if (vm->mode == MODE_DEFAULT)
+	for (i = 0; i < MEM_SIZE; ++i)
 	{
-				va_start(ap, format);
-		ft_printf_ap(STDOUT_FILENO, format, ap);
-				va_end(ap);
+		put_hex(vm->mem[i], 2);
+		if ((i + 1) % 64)
+			ft_printf(" ");
+		else
+			ft_printf("\n");
 	}
 }
 

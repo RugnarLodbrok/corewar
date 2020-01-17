@@ -1,7 +1,7 @@
 #include "libft.h"
 #include "vm.h"
 
-static void put_hex(uint v, int digits)
+void put_hex(uint v, int digits)
 {
 	unsigned int a;
 	unsigned int b;
