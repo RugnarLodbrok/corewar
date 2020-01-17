@@ -12,7 +12,7 @@ SRC_VM = \
 	vm/loader.c \
 	vm/endian_conversion.c \
 	vm/state_writer.c \
-	resources/op.c
+	vm/op.c
 
 OPTION = -Iheaders -Ilibft
 OBJ_VM = $(SRC_VM:.c=.o)
