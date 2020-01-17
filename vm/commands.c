@@ -1,8 +1,10 @@
 #include "libft.h"
 #include "vm.h"
 
-int		op_live(t_vm *vm, t_proc *proc, void *arg1, void *arg2, uint *arg3)
+int		op_live(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
+	(void)arg2;
+	(void)arg3;
 	if (read_uint(vm->host_endian, arg1, 4) == proc->champ_id)
 		vm->champs->live = 0;
 	return (1);
@@ -12,6 +14,7 @@ int		op_ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	uint v;
 
+	(void)arg3;
 	ft_memcpy(arg2, arg1, sizeof(char) * REG_SIZE);
 	v = read_uint(vm->host_endian, arg2, 4);
 	proc->carry = (v != 0);
@@ -20,6 +23,9 @@ int		op_ld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 
 int		op_st(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
+	(void)vm;
+	(void)proc;
+	(void)arg3;
 	ft_memcpy(arg2, arg1, sizeof(char) * REG_SIZE);
 	return (1);
 }
@@ -107,7 +113,9 @@ int 	op_xor(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 
 int 	op_zjmp(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
-	printf("carry: %d\n", proc->carry);
+	(void)arg2;
+	(void)arg3;
+	ft_printf("carry: %d\n", proc->carry);
 	if (proc->carry == 1)
 		proc->pc += read_uint(vm->host_endian, arg1, 4) + 5;
 	return (1);
@@ -118,6 +126,7 @@ int 	op_ldi(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	int n1;
 	int n2;
 
+	(void)proc;
 	n1 = read_uint(vm->host_endian, arg1, 4);
 	n2 = read_uint(vm->host_endian, arg2, 4);
 	write_uint(vm->host_endian, n1 + n2, arg3, 4);
@@ -129,6 +138,7 @@ int 	op_sti(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	int n2;
 	int n3;
 
+	(void)proc;
 	n2 = read_uint(vm->host_endian, arg2, 4);
 	n3 = read_uint(vm->host_endian, arg3, 4);
 	write_uint(vm->host_endian, n3 + n2, arg1, 4);
@@ -141,6 +151,9 @@ int		op_fork(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	int		i;
 	int 	j;
 
+	(void)vm;
+	(void)arg2;
+	(void)arg3;
 	new = (t_proc*)malloc(sizeof(t_proc));
 	i = -1;
 	j = -1;
@@ -159,6 +172,9 @@ int		op_fork(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 
 int 	op_lld(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
+	(void)vm;
+	(void)proc;
+	(void)arg3;
 	ft_memcpy(arg2, arg1, DIR_SIZE * sizeof(char));
 	return (1);
 }
@@ -168,6 +184,7 @@ int		op_lldi(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 	int	n1;
 	int	n2;
 
+	(void)proc;
 	n1 = read_uint(vm->host_endian, arg1, 4);
 	n2 = read_uint(vm->host_endian, arg2, 4);
 	write_uint(vm->host_endian, n1 + n2, arg3, 4);
@@ -184,6 +201,8 @@ int		op_aff(t_vm *vm, t_proc *proc, void *arg1, void *arg2, void *arg3)
 {
 	byte c;
 
+	(void)arg2;
+	(void)arg3;
 	c = (byte)read_uint(vm->host_endian, arg1, REG_SIZE);
 	if (vm->mode == MODE_VIS)
 		write_proc_stdout(vm, proc->id, c);

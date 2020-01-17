@@ -63,6 +63,7 @@ void write_proc_update(t_vm *vm, int proc_num, const char *name)
 
 void write_proc_stdout(t_vm *vm, int proc_num, char c)
 {
+	(void)vm;
 	ft_printf("type: arr\n");
 	ft_printf("id: %d\n", proc_num);
 	ft_printf("char: \"%c\"\n\n", c);

@@ -69,7 +69,7 @@ void t_vm_step(t_vm* vm)
 	t_proc* proc;
 
 	i = -1;
-	while (++i < vm->procs.count)
+	while (++i < (int)vm->procs.count)
 	{
 		proc = vm->procs.data[i];
 		if (!proc->op)
