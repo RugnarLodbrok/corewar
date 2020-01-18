@@ -44,6 +44,11 @@ void write_proc_update(t_vm *vm, int proc_num, const char *name)
 		proc = vm->procs.data[proc_num];
 		ft_printf("type: proc_update\n");
 		ft_printf("id: %d\n", proc_num);
+		if (proc->dead)
+		{
+			ft_printf("dead : 1\n\n");
+			return;
+		}
 		if (name)
 			ft_printf("name: %s\n", name);
 		if (proc->op)

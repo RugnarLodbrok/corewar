@@ -36,8 +36,9 @@ typedef struct
 	uint pc;
 	byte reg[REG_NUMBER][REG_SIZE];
 	uint carry;
-	uint live;
+	uint last_live;
 	uint delay;
+	int dead;
 	t_op *op;
 } t_proc;
 
@@ -49,6 +50,9 @@ typedef struct
 	uint i;
 	byte *mem;
 	t_arrayp procs;
+	uint cycles_to_die;
+	uint i_before_check;
+	uint live_ops_since_check;
 	int shutdown;
 	int host_endian;
 } t_vm;

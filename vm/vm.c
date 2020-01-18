@@ -22,6 +22,8 @@ void t_vm_init(t_vm* vm, int n_champs)
 	vm->n_champs = n_champs;
 	vm->mem = ft_calloc(MEM_SIZE, sizeof(char));
 	vm->host_endian = endian();
+	vm->cycles_to_die = CYCLE_TO_DIE;
+	vm->i_before_check = vm->cycles_to_die;
 	t_arrayp_init(&vm->procs);
 }
 
@@ -73,6 +75,8 @@ void t_vm_step(t_vm* vm)
 	while (++i < (int)vm->procs.count)
 	{
 		proc = vm->procs.data[i];
+		if (proc->dead)
+			continue ;
 		if (!proc->op)
 		{
 			if (!(proc->op = read_op(&vm->mem[proc->pc])))
@@ -97,8 +101,23 @@ void t_vm_step(t_vm* vm)
 		write_proc_update(vm, i, 0);
 	}
 	vm->i++;
-	if (vm->i > 1024)
-		vm->shutdown = 1;
+	if (!--vm->i_before_check)
+	{
+		for (i = 0; i < (int)vm->procs.count; ++i)
+		{
+			proc = vm->procs.data[i];
+			if (vm->i - proc->last_live > vm->cycles_to_die)
+			{
+				proc->dead = 1;
+				write_proc_update(vm, i, 0);
+			}
+		}
+		if (vm->live_ops_since_check >= NBR_LIVE)
+			vm->cycles_to_die -= CYCLE_DELTA;
+		if (vm->cycles_to_die < 1)
+			vm->cycles_to_die = 1;
+		vm->i_before_check = vm->cycles_to_die;
+	}
 }
 
 void t_vm_destruct(t_vm* vm)
