@@ -47,6 +47,7 @@ void t_op_parse_arg_types(t_op_context *c, byte *arg_types)
 void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 {
 	int i;
+	int mod_mem;
 	uint reg_number;
 	byte *p;
 
@@ -61,6 +62,8 @@ void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 		else if (arg_types[i] == IND_CODE)
 		{
 			c->ind_arg = read_short_int(c->vm->host_endian, p + c->cursor);
+			mod_mem = read_uint(c->vm->host_endian, c->ind_arg, 4) % MEM_SIZE;
+			write_uint(c->vm->host_endian, mod_mem, c->ind_arg, 4);
 			args[i] = p + c->ind_arg;
 			ft_memcpy(&c->ind_val[0], p + c->ind_arg, REG_SIZE);
 			c->cursor += IND_SIZE;
