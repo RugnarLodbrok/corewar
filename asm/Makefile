@@ -11,47 +11,47 @@
 # **************************************************************************** #
 
 NAME := asm
-LIBFT := libft.a
-HEADERS := libft.h asm.h op.h
+DIR_LIBFT := ../libft/
+LIBFT = $(DIR_LIBFT)libft.a
+HEADERS := asm.h op.h
 CC := gcc
 CFLAGS := -Wall -Wextra -Werror -O3
 REMOVE := /bin/rm -rf
 DIR_BIN := bin
-DIR_INCLUDE := -I include
-DIR_LIBFT := ../libft
+DIR_INCLUDE := -Iinclude -I../libft
 DIR_SRC := src/$(NAME)
 
 vpath %.c $(DIR_SRC)
-vpath %.o $(DIR_BIN)/$(NAME)
+vpath %.o $(DIR_BIN)
 vpath %.h $(DIR_INCLUDE)
 #vpath %.a $(DIR_LIBFT)
 
-SRC_NAME := asm.c\
-			read_input.c\
-			parser.c\
-			error_manager.c\
-			op.c\
-			parsing_header.c\
-			parsing_args.c\
-			parsing_oper.c\
-			parsing_labels.c\
-			replace_args2numbers.c\
-			translator.c\
-			options.c\
-			cleanup.c\
-			dissasembler.c
+SRC_NAME := src/asm.c \
+			src/read_input.c \
+			src/parser.c \
+			src/error_manager.c \
+			src/op.c \
+			src/parsing_header.c \
+			src/parsing_args.c \
+			src/parsing_oper.c \
+			src/parsing_labels.c \
+			src/replace_args2numbers.c \
+			src/translator.c \
+			src/options.c \
+			src/cleanup.c \
+			src/dissasembler.c
 
-OBJ_NAME := $(SRC_NAME:.c=.o)
+OBJ_NAME = $(SRC_NAME:.c=.o)
 
-all: $(NAME)
+all : $(NAME)
 
-$(NAME): $(LIBFT) $(OBJ_NAME)
-	@$(CC) $(CFLAGS) $(addprefix $(DIR_BIN)/, $(addprefix $(NAME)/, $(OBJ_NAME))) -lft -L $(DIR_LIBFT) -o $@
+$(NAME) : $(LIBFT) $(OBJ_NAME)
+	@$(CC) $(CFLAGS) $(OBJ_NAME) -lft -L $(DIR_LIBFT) -o $@
 	@printf "\r\e[J\e[32m$@\e[0m done!\n\e[?25h"
 
-$(OBJ_NAME): %.o: %.c $(HEADERS)
+%.o : %.c
 	@mkdir -p $(DIR_BIN)/$(NAME)
-	@$(CC) $(CFLAGS) -c $< $(DIR_INCLUDE) -o $(DIR_BIN)/$(NAME)/$@
+	@$(CC) $(CFLAGS) -c $(<) $(DIR_INCLUDE) -o $(@)
 	@printf "\r\e[?25l\e[Jcompiling \e[32m$(notdir $<)\e[0m"
 
 $(LIBFT):

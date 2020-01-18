@@ -13,8 +13,13 @@
 #ifndef ASM_H
 # define ASM_H
 
+# include <fcntl.h>
+# include <string.h>
+# include <errno.h>
 # include "libft.h"
 # include "op.h"
+
+# define error ft_error_exit
 
 # define ASM_SIZE_BUF 1024
 # define ASM_NOT_OPER 0

@@ -1,6 +1,5 @@
 CC = gcc
 NAME = corewar
-VM = corewar_vm
 FLAGS = -Wall -Wextra -Werror
 
 SRC_VM = \
@@ -17,12 +16,13 @@ SRC_VM = \
 OPTION = -Iheaders -Ilibft
 OBJ_VM = $(SRC_VM:.c=.o)
 
-all : $(VM)
+all : $(NAME)
+	make -C asm/ all
 
-vm : $(VM)
+vm : $(NAME)
 
-$(VM) : libft/libft.a $(OBJ_VM)
-	$(CC) -o $(VM) $(OBJ_VM) $(OPTION) -L libft/ -lft
+$(NAME) : libft/libft.a $(OBJ_VM)
+	$(CC) -o $(NAME) $(OBJ_VM) $(OPTION) -L libft/ -lft
 
 %.o: %.c
 	@echo compile $(<) "->" $(<:.c=.o)
@@ -34,9 +34,11 @@ libft/libft.a :
 clean :
 	rm -f $(OBJ_VM)
 	make -C libft/ clean
+	make -C asm/ clean
 
 fclean : clean
-	rm -f $(VM)
+	rm -f $(NAME)
 	make -C libft/ fclean
+	make -C asm/ fclean
 
 re : fclean all
