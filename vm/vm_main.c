@@ -15,7 +15,7 @@ void main_loop(t_vm* vm)
 	}
 	if (vm->mode == MODE_VIS)
 	{
-		while ((status = get_next_line(STDIN_FILENO, &line)))
+		while ((status = get_next_line(STDIN_FILENO, &line)) > 0)
 		{
 			steps = ft_atoi(line);
 			free(line);
