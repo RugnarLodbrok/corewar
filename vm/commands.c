@@ -3,10 +3,12 @@
 
 int		op_live(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
+	uint reg_value;
 	(void)arg2;
 	(void)arg3;
-	if (read_uint(c->vm->host_endian, arg1, 4) == c->proc->champ_id)
-		c->vm->champs->live = 0;
+	reg_value = read_uint(c->vm->host_endian, arg1, REG_SIZE);
+	if (UINT_MAX - reg_value == c->proc->champ_id + 1)
+		c->proc->last_live = c->vm->i;
 	return (1);
 }
 

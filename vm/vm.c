@@ -103,10 +103,11 @@ void t_vm_step(t_vm* vm)
 	vm->i++;
 	if (!--vm->i_before_check)
 	{
+		//todo: max_checks
 		for (i = 0; i < (int)vm->procs.count; ++i)
 		{
 			proc = vm->procs.data[i];
-			if (vm->i - proc->last_live > vm->cycles_to_die)
+			if (vm->i - proc->last_live > vm->cycles_to_die || !proc->last_live)
 			{
 				proc->dead = 1;
 				write_proc_update(vm, i, 0);
