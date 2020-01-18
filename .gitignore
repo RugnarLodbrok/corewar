@@ -6,3 +6,5 @@ cmake-build-release
 *.exe
 *.lib
 .DS_Store
+corewar
+asm/asm
