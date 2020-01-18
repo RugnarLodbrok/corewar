@@ -84,7 +84,7 @@ void write_mem(byte *mem, int pc, size_t len, int proc_id)
 		ft_printf("proc_id: %d\n", proc_id);
 	ft_printf("data: \"");
 	for (i = 0; i < len; ++i)
-		put_hex(mem[i], 2);
+		put_hex(mem[pc + i], 2);
 	ft_printf("\"\n\n");
 }
 

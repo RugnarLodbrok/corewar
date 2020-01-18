@@ -35,7 +35,8 @@ class Proc {
         this.bg = "#660000";
         this.elements = proc_div(id, name, this.color);
         this.registers = new Array(16);
-        document.getElementById("sidebar").appendChild(this.elements.e)
+        document.getElementById("sidebar").appendChild(this.elements.e);
+        this.move(this.pc)
     }
 
     update({pc: pc, op: op, delay: delay, registers: registers}) {

@@ -21,7 +21,7 @@ t_op op_tab[17] = {
 		1,
 		10,
 		"alive",
-		0,
+		op_live,
 		0,
 		4,
 		0,

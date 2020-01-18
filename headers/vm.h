@@ -63,8 +63,7 @@ typedef struct
 	t_vm *vm;
 	t_proc *proc;
 	uint cursor;
-	int ind_arg;
-	byte ind_val[REG_SIZE];
+	int changed_memory;
 } t_op_context;
 
 size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ);
