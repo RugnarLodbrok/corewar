@@ -13,7 +13,6 @@
 #include "libft.h"
 #include "libft_compat.h"
 #include "vm.h"
-#include "stdarg.h"
 #include "stdio.h"
 
 void t_vm_init(t_vm* vm, int n_champs)
@@ -23,18 +22,22 @@ void t_vm_init(t_vm* vm, int n_champs)
 	vm->n_champs = n_champs;
 	vm->mem = ft_calloc(MEM_SIZE, sizeof(char));
 	vm->host_endian = endian();
+	vm->cycles_to_die = CYCLE_TO_DIE;
+	vm->i_before_check = vm->cycles_to_die;
 	t_arrayp_init(&vm->procs);
 }
 
-void t_vm_print(t_vm* vm, const char* format, ...)
+void t_vm_print(t_vm* vm)
 {
-	va_list ap;
+	int i;
 
-	if (vm->mode == MODE_DEFAULT)
+	for (i = 0; i < MEM_SIZE; ++i)
 	{
-				va_start(ap, format);
-		ft_printf_ap(STDOUT_FILENO, format, ap);
-				va_end(ap);
+		put_hex(vm->mem[i], 2);
+		if ((i + 1) % 64)
+			ft_printf(" ");
+		else
+			ft_printf("\n");
 	}
 }
 
@@ -50,17 +53,17 @@ void t_vm_add_champ(t_vm* vm, const char* f_name)
 	len = load_bytecode(f_name, (byte*)vm->mem + champ_offset, &vm->champs[n]);
 	proc = malloc(sizeof(t_proc));
 	t_proc_init(proc, vm, n);
+	t_arrayp_push(&vm->procs, proc);
 	if (vm->mode == MODE_VIS)
 	{
-		write_new_proc(proc->id, vm->champs[n].name, proc->pc);
-		write_mem(vm->mem, proc->pc, len);
+		write_proc_update(vm, n, vm->champs[n].name);
+		write_mem(vm->mem, proc->pc, len, -1);
 	}
 	else if (vm->mode == MODE_DEFAULT)
 	{
 		ft_printf("champ: %s\n", vm->champs[n].name);
 		ft_printf("champ comment: %s\n", vm->champs[n].comment);
 	}
-	t_arrayp_push(&vm->procs, proc);
 }
 
 void t_vm_step(t_vm* vm)
@@ -69,9 +72,11 @@ void t_vm_step(t_vm* vm)
 	t_proc* proc;
 
 	i = -1;
-	while (++i < vm->procs.count)
+	while (++i < (int)vm->procs.count)
 	{
 		proc = vm->procs.data[i];
+		if (proc->dead)
+			continue ;
 		if (!proc->op)
 		{
 			if (!(proc->op = read_op(&vm->mem[proc->pc])))
@@ -80,7 +85,7 @@ void t_vm_step(t_vm* vm)
 				break;
 			}
 			proc->delay = proc->op->delay;
-			write_proc_update(vm, i);
+			write_proc_update(vm, i, 0);
 		}
 		if (proc->delay)
 		{
@@ -93,11 +98,27 @@ void t_vm_step(t_vm* vm)
 			vm->shutdown = 1;
 		}
 		proc->op = 0;
-		write_proc_update(vm, i);
+		write_proc_update(vm, i, 0);
 	}
 	vm->i++;
-	if (vm->i > 1024)
-		vm->shutdown = 1;
+	if (!--vm->i_before_check)
+	{
+		//todo: max_checks
+		for (i = 0; i < (int)vm->procs.count; ++i)
+		{
+			proc = vm->procs.data[i];
+			if (vm->i - proc->last_live > vm->cycles_to_die || !proc->last_live)
+			{
+				proc->dead = 1;
+				write_proc_update(vm, i, 0);
+			}
+		}
+		if (vm->live_ops_since_check >= NBR_LIVE)
+			vm->cycles_to_die -= CYCLE_DELTA;
+		if (vm->cycles_to_die < 1)
+			vm->cycles_to_die = 1;
+		vm->i_before_check = vm->cycles_to_die;
+	}
 }
 
 void t_vm_destruct(t_vm* vm)

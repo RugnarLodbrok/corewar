@@ -56,16 +56,13 @@ void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 	{
 		if (arg_types[i] == DIR_CODE)
 		{
-			args[i] = p + c->cursor;
+			args[i] = p + c->cursor; //todo: % MEM_SIZE
 			c->cursor += c->op->dir_size;
 		}
 		else if (arg_types[i] == IND_CODE)
 		{
-			c->ind_arg = read_short_int(c->vm->host_endian, p + c->cursor);
-			mod_mem = read_uint(c->vm->host_endian, c->ind_arg, 4) % MEM_SIZE;
-			write_uint(c->vm->host_endian, mod_mem, c->ind_arg, 4);
-			args[i] = p + c->ind_arg;
-			ft_memcpy(&c->ind_val[0], p + c->ind_arg, REG_SIZE);
+			args[i] = p + read_short_int(c->vm->host_endian,
+										 c->vm->mem + (c->proc->pc + c->cursor) % MEM_SIZE);
 			c->cursor += IND_SIZE;
 		}
 		else if (arg_types[i] == REG_CODE)
@@ -89,16 +86,14 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	c.proc = proc;
 	c.vm = vm;
 	c.cursor = 1;
-	c.ind_arg = INT_MAX;
+	c.changed_memory = -1;
 	ft_bzero(&args[0], 3);
 	old_pc = proc->pc;
 	t_op_parse_arg_types(&c, &arg_types[0]);
 	t_op_parse_args(&c, &arg_types[0], &args[0]);
-	op->f(vm, proc, args[0], args[1], args[2]);
-	if (c.ind_arg != INT_MAX)
-		if (ft_memcmp(&c.ind_val[0], vm->mem + proc->pc + c.ind_arg, REG_SIZE))
-			if (vm->mode == MODE_VIS)
-				write_mem(vm->mem + proc->pc + c.ind_arg, proc->pc + c.ind_arg, REG_SIZE);
+	op->f(&c, args[0], args[1], args[2]);
+	if (c.changed_memory >= 0 && c.changed_memory < MEM_SIZE && vm->mode == MODE_VIS)
+		write_mem(vm->mem, c.changed_memory, REG_SIZE, proc->id);
 	if (proc->pc == old_pc)
 		proc->pc += c.cursor;
 	return (1);

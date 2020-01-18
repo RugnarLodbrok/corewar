@@ -1,7 +1,7 @@
 #include "libft.h"
 #include "vm.h"
 
-static void put_hex(uint v, int digits)
+void put_hex(uint v, int digits)
 {
 	unsigned int a;
 	unsigned int b;
@@ -35,7 +35,7 @@ void write_memory(t_vm *vm)
 	}
 }
 
-void write_proc_update(t_vm *vm, int proc_num)
+void write_proc_update(t_vm *vm, int proc_num, const char *name)
 {
 	int i;
 	t_proc *proc;
@@ -44,6 +44,13 @@ void write_proc_update(t_vm *vm, int proc_num)
 		proc = vm->procs.data[proc_num];
 		ft_printf("type: proc_update\n");
 		ft_printf("id: %d\n", proc_num);
+		if (proc->dead)
+		{
+			ft_printf("dead : 1\n\n");
+			return;
+		}
+		if (name)
+			ft_printf("name: %s\n", name);
 		if (proc->op)
 			ft_printf("op: %s\n", proc->op->name);
 		else
@@ -61,28 +68,23 @@ void write_proc_update(t_vm *vm, int proc_num)
 
 void write_proc_stdout(t_vm *vm, int proc_num, char c)
 {
+	(void)vm;
 	ft_printf("type: arr\n");
 	ft_printf("id: %d\n", proc_num);
-	ft_printf("char: %c\n\n", c);
+	ft_printf("char: \"%c\"\n\n", c);
 }
 
-void write_new_proc(int id, char *name, int pc) //todo: merge with write_proc_update
-{
-	ft_printf("type: new_proc\n");
-	ft_printf("id: %d\n", id);
-	ft_printf("name: %s\n", name);
-	ft_printf("pc: %d\n\n", pc);
-}
-
-void write_mem(byte *mem, int pc, size_t len)
+void write_mem(byte *mem, int pc, size_t len, int proc_id)
 {
 	size_t i;
 
 	ft_printf("type: write_mem\n");
 	ft_printf("pc: %d\n", pc);
+	if (proc_id >= 0)
+		ft_printf("proc_id: %d\n", proc_id);
 	ft_printf("data: \"");
 	for (i = 0; i < len; ++i)
-		put_hex(mem[i], 2);
+		put_hex(mem[pc + i], 2);
 	ft_printf("\"\n\n");
 }
 

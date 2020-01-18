@@ -15,7 +15,7 @@ void main_loop(t_vm* vm)
 	}
 	if (vm->mode == MODE_VIS)
 	{
-		while ((status = get_next_line(STDIN_FILENO, &line)))
+		while ((status = get_next_line(STDIN_FILENO, &line)) > 0)
 		{
 			steps = ft_atoi(line);
 			free(line);
@@ -24,6 +24,26 @@ void main_loop(t_vm* vm)
 				if (vm->shutdown)
 					return;
 				t_vm_step(vm);
+			}
+		}
+		if (status < 0)
+			ft_error_exit("can't read stdin");
+	}
+	if (vm->mode == MODE_PRINT)
+	{
+		t_vm_print(vm);
+		while ((status = get_next_line(STDIN_FILENO, &line)))
+		{
+			steps = ft_atoi(line);
+			free(line);
+			if (steps == 0)
+				steps = 1;
+			while (steps-- > 0)
+			{
+				if (vm->shutdown)
+					return;
+				t_vm_step(vm);
+				t_vm_print(vm);
 			}
 		}
 		if (status < 0)
@@ -44,6 +64,8 @@ int main(int ac, char** av)
 	{
 		if (!ft_strcmp("-v", av[i]))
 			vm.mode = MODE_VIS;
+		if (!ft_strcmp("-p", av[i]))
+			vm.mode = MODE_PRINT;
 		++i;
 	}
 	write_memory(&vm);

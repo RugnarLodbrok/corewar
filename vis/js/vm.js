@@ -63,8 +63,14 @@ class VM {
     }
 
     proc_update(id, kwargs) {
-        let proc = this.procs[id];
-        if (!proc)
+        let proc;
+        if (id < this.procs.length)
+            proc = this.procs[id];
+        else if (id === this.procs.length) {
+            console.log("new proc!");
+            proc = new Proc(this, id, kwargs.name, kwargs.pc);
+            this.procs.push(proc);
+        } else
             return console.error(`proc ${id} does not exist`);
         proc.update(kwargs);
     }
@@ -77,22 +83,23 @@ class VM {
         this.procs[id].move(pc);
     }
 
-    write_mem(pc, data) {
+    write_mem(pc, data, proc_id) {
+        let bg = null;
+        if (proc_id !== undefined)
+            bg = this.procs[proc_id].bg;
         for (let i = 0; i < data.length; ++i) {
             this.mem[pc + i].v = data[i];
-            this.mem[pc + i].draw();
+            this.mem[pc + i].draw({bg: bg});
         }
     }
 
     update(msg) {
         if (msg.type === "mem_init")
             this.mem_init(chunks(msg.data, 2));
-        else if (msg.type === "new_proc")
-            this.new_proc(msg.id, msg.name, msg.pc);
         else if (msg.type === "arr")
             console.log('STDOUT:', msg.char);
         else if (msg.type === "write_mem")
-            this.write_mem(msg.pc, chunks(msg.data, 2));
+            this.write_mem(msg.pc, chunks(msg.data, 2), msg.proc_id);
         else if (msg.type === "proc_update")
             this.proc_update(msg.id, msg);
         else if (msg.type === "end") {

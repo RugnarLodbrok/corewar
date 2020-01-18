@@ -18,6 +18,7 @@
 # include "op.h"
 
 # define VM_ENDIAN BIG_ENDIAN
+# define MODE_PRINT 2
 # define MODE_VIS 1
 # define MODE_DEFAULT 0
 
@@ -35,8 +36,9 @@ typedef struct
 	uint pc;
 	byte reg[REG_NUMBER][REG_SIZE];
 	uint carry;
-	uint live;
+	uint last_live;
 	uint delay;
+	int dead;
 	t_op *op;
 } t_proc;
 
@@ -48,6 +50,9 @@ typedef struct
 	uint i;
 	byte *mem;
 	t_arrayp procs;
+	uint cycles_to_die;
+	uint i_before_check;
+	uint live_ops_since_check;
 	int shutdown;
 	int host_endian;
 } t_vm;
@@ -58,8 +63,7 @@ typedef struct
 	t_vm *vm;
 	t_proc *proc;
 	uint cursor;
-	int ind_arg;
-	byte ind_val[REG_SIZE];
+	int changed_memory;
 } t_op_context;
 
 size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ);
@@ -70,13 +74,13 @@ void t_vm_init(t_vm *vm, int n_champs);
 void t_vm_add_champ(t_vm *vm, const char *f_name);
 void t_vm_step(t_vm *vm);
 void t_vm_destruct(t_vm *vm);
-void t_vm_print(t_vm *vm, const char *format, ...);
+void t_vm_print(t_vm *vm);
 
+void put_hex(uint v, int digits);
 void write_memory(t_vm *vm);
-void write_proc_update(t_vm *vm, int proc_num);
+void write_proc_update(t_vm *vm, int proc_num, const char *name);
 void write_proc_stdout(t_vm *vm, int proc_num, char c);
-void write_new_proc(int id, char *name, int pc);
-void write_mem(byte *mem, int pc, size_t len);
+void write_mem(byte *mem, int pc, size_t len, int proc_id);
 void write_end(void);
 
 short int read_short_int(int host_endian, byte *mem);
