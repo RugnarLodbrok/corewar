@@ -11,7 +11,7 @@ import websockets
 HOSTNAME = 'localhost'
 WSS_PORT = 8765
 HTTP_PORT = 8888
-ASM_DIR = 'asm'
+ASM_DIR = 'champs'
 
 STDIN_F_NAME = 'stdin.txt'
 
@@ -44,7 +44,7 @@ class VM:
     async def __aiter__(self):
         print("starting", self.cor_f_name)
         self.p = await aiosp.create_subprocess_exec(
-            "cmake-build-debug/corewar_vm", "-v", f"asm/{self.cor_f_name}",
+            "cmake-build-debug/corewar_vm", "-v", f"{ASM_DIR}/{self.cor_f_name}",
             stdin=aiosp.PIPE,
             stdout=aiosp.PIPE)
         print(f"pid: {self.p.pid}")
