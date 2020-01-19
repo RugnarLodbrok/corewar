@@ -25,6 +25,7 @@ void main_loop(t_vm* vm)
 					return;
 				t_vm_step(vm);
 			}
+			write_cycle(vm->i);
 		}
 		if (status < 0)
 			ft_error_exit("can't read stdin");

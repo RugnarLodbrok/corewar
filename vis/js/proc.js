@@ -1,3 +1,10 @@
+COLORS = [
+    {color: "#bb0000", bg: "#660000"},
+    {color: "#0000bb", bg: "#000066"},
+    {color: "#bbbb00", bg: "#666600"},
+    {color: "#00bb00", bg: "#006600"},
+];
+
 function proc_div(id, name, color) {
     let delay_div = div(`delay: ${0}`);
     let op_div = div(`op: ${null}`);
@@ -25,14 +32,15 @@ function proc_div(id, name, color) {
 }
 
 class Proc {
-    constructor(vm, id, name, pc) {
+    constructor(vm, id, champ_id, name, pc) {
         this.name = name;
         this.id = id;
+        this.champ_id = champ_id;
         this.pc = pc;
         this.vm = vm;
         this.delay = 0;
-        this.color = "#bb0000";
-        this.bg = "#660000";
+        this.color = COLORS[this.champ_id].color;
+        this.bg = COLORS[this.champ_id].bg;
         this.elements = proc_div(id, name, this.color);
         this.registers = new Array(16);
         document.getElementById("sidebar").appendChild(this.elements.e);

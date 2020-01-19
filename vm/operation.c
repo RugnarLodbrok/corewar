@@ -95,5 +95,5 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 		write_mem(vm->mem, c.changed_memory, REG_SIZE, proc->id);
 	if (proc->pc == old_pc)
 		proc->pc += c.cursor;
-	return (1);
+	return (0);
 }

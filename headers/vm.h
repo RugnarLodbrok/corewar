@@ -53,6 +53,7 @@ typedef struct
 	uint cycles_to_die;
 	uint i_before_check;
 	uint live_ops_since_check;
+	uint checks_without_delta;
 	int shutdown;
 	int host_endian;
 } t_vm;
@@ -67,7 +68,7 @@ typedef struct
 } t_op_context;
 
 size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ);
-void t_proc_init(t_proc *proc, t_vm *vm, int n);
+void t_proc_init(t_proc *proc, t_vm *vm, int id);
 int t_op_exec(t_op *op, t_proc *proc, t_vm *vm);
 t_op *read_op(const byte *ptr);
 void t_vm_init(t_vm *vm, int n_champs);
@@ -78,9 +79,10 @@ void t_vm_print(t_vm *vm);
 
 void put_hex(uint v, int digits);
 void write_memory(t_vm *vm);
-void write_proc_update(t_vm *vm, int proc_num, const char *name);
+void write_proc_update(t_proc *proc, const char *name);
 void write_proc_stdout(t_vm *vm, int proc_num, char c);
 void write_mem(byte *mem, int pc, size_t len, int proc_id);
+void write_cycle(uint i);
 void write_end(void);
 
 short int read_short_int(int host_endian, byte *mem);

@@ -35,35 +35,32 @@ void write_memory(t_vm *vm)
 	}
 }
 
-void write_proc_update(t_vm *vm, int proc_num, const char *name)
+void write_proc_update(t_proc *proc, const char *name)
 {
 	int i;
-	t_proc *proc;
-	if (vm->mode == MODE_VIS)
+
+	ft_printf("type: proc_update\n");
+	ft_printf("id: %d\n", proc->id);
+	if (proc->dead)
 	{
-		proc = vm->procs.data[proc_num];
-		ft_printf("type: proc_update\n");
-		ft_printf("id: %d\n", proc_num);
-		if (proc->dead)
-		{
-			ft_printf("dead : 1\n\n");
-			return;
-		}
-		if (name)
-			ft_printf("name: %s\n", name);
-		if (proc->op)
-			ft_printf("op: %s\n", proc->op->name);
-		else
-			ft_printf("op: %s\n", "null");
-		ft_printf("delay: %d\n", proc->delay);
-		ft_printf("pc: %d\n", proc->pc);
-		ft_printf("registers:\n");
-		for (i = 0; i < REG_NUMBER; ++i)
-			ft_printf("  - \"%02hhx%02hhx%02hhx%02hhx\"\n",
-					proc->reg[i][0], proc->reg[i][1],
-					proc->reg[i][2], proc->reg[i][3]);
-		ft_printf("\n");
+		ft_printf("dead : 1\n\n");
+		return;
 	}
+	if (name)
+		ft_printf("name: %s\n", name);
+	ft_printf("champ_id: %d\n", proc->champ_id);
+	if (proc->op)
+		ft_printf("op: %s\n", proc->op->name);
+	else
+		ft_printf("op: %s\n", "null");
+	ft_printf("delay: %d\n", proc->delay);
+	ft_printf("pc: %d\n", proc->pc);
+	ft_printf("registers:\n");
+	for (i = 0; i < REG_NUMBER; ++i)
+		ft_printf("  - \"%02hhx%02hhx%02hhx%02hhx\"\n",
+				  proc->reg[i][0], proc->reg[i][1],
+				  proc->reg[i][2], proc->reg[i][3]);
+	ft_printf("\n");
 }
 
 void write_proc_stdout(t_vm *vm, int proc_num, char c)
@@ -91,4 +88,10 @@ void write_mem(byte *mem, int pc, size_t len, int proc_id)
 void write_end(void)
 {
 	ft_printf("type: end\n\n");
+}
+
+void write_cycle(uint i)
+{
+	ft_printf("type: cycle\n");
+	ft_printf("value: %u\n\n", i);
 }
