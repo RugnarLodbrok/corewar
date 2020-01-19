@@ -153,6 +153,8 @@ int		op_fork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	int		i;
 	int 	j;
 
+	(void)arg2;
+	(void)arg3;
 	new = (t_proc*)malloc(sizeof(t_proc));
 	i = -1;
 	j = -1;
@@ -171,6 +173,7 @@ int		op_fork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 
 int 	op_lld(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
+	(void)c;
 	(void)arg3;
 	ft_memcpy(arg2, arg1, DIR_SIZE * sizeof(char));
 	return (1);
