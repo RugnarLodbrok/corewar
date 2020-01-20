@@ -57,7 +57,7 @@ void t_vm_add_champ(t_vm *vm, const char *f_name)
 	if (vm->mode == MODE_VIS)
 	{
 		write_proc_update(proc, vm->champs[n].name);
-		write_mem(vm->mem, proc->pc, len, -1);
+		write_mem(vm->mem, proc->pc, len, n);
 	}
 	else if (vm->mode == MODE_DEFAULT)
 	{

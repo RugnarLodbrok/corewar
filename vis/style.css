@@ -44,7 +44,7 @@
 }
 
 .byte {
-    border-width: 1px;
+    border-width: 2px;
     border-radius: 2px;
     border-color: #00000000;
     border-style: solid;

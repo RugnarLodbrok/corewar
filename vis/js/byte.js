@@ -8,13 +8,15 @@ function byte_div() {
 class Byte {
     constructor(v) {
         this.v = v;
-        this.bg = "#888888";
+        this.bg = "#000000";
         this.e = byte_div();
     }
 
     draw(kwargs) {
-        if (kwargs.bg)
+        if (kwargs.bg) {
+            this.bg = kwargs.bg;
             this.e.style.backgroundColor = kwargs.bg;
+        }
         this.e.innerText = this.v;
     }
 }

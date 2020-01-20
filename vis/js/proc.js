@@ -1,8 +1,8 @@
 COLORS = [
-    {color: "#bb0000", bg: "#660000"},
-    {color: "#0000bb", bg: "#000066"},
-    {color: "#bbbb00", bg: "#666600"},
-    {color: "#00bb00", bg: "#006600"},
+    {color: "#bb0000", bg: "#660000", bg_bright: "#990000"},
+    {color: "#0000ff", bg: "#0000cc", bg_bright: "#0000ee"},
+    {color: "#ffff00", bg: "#cccc00", bg_bright: "#eeee00"},
+    {color: "#00bb00", bg: "#006600", bg_bright: "#009900"},
 ];
 
 function proc_div(id, name, color) {
@@ -39,12 +39,13 @@ class Proc {
         this.pc = pc;
         this.vm = vm;
         this.delay = 0;
-        this.color = COLORS[this.champ_id].color;
-        this.bg = COLORS[this.champ_id].bg;
+        this.colors = COLORS[this.champ_id];
         this.elements = proc_div(id, name, this.color);
         this.registers = new Array(16);
+        this.last_mem_write = 0;
+        this.last_mem_write_len = 0;
         document.getElementById("sidebar").appendChild(this.elements.e);
-        this.move(this.pc)
+        this.move(this.pc);
     }
 
     update({pc: pc, op: op, delay: delay, registers: registers}) {
@@ -75,7 +76,7 @@ class Proc {
         byte.e.style.borderColor = "#00000000";
         this.pc = pc;
         byte = this.vm.mem[pc];
-        byte.e.style.borderColor = this.color;
+        byte.e.style.borderColor = this.colors.color;
     }
 
     destructor() {

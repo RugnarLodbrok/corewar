@@ -86,11 +86,23 @@ class VM {
 
     write_mem(pc, data, proc_id) {
         let bg = null;
-        if (proc_id !== undefined)
-            bg = this.procs[proc_id].bg;
+        let byte;
+
+        if (proc_id !== undefined) {
+            let proc = this.procs[proc_id];
+            bg = proc.colors.bg_bright;
+            for (let i = 0; i < proc.last_mem_write_len; ++i) {
+                byte = this.mem[proc.last_mem_write + i];
+                if (byte.bg === proc.colors.bg_bright)
+                    byte.draw({bg: proc.colors.bg})
+            }
+            proc.last_mem_write = pc;
+            proc.last_mem_write_len = data.length;
+        }
         for (let i = 0; i < data.length; ++i) {
-            this.mem[pc + i].v = data[i];
-            this.mem[pc + i].draw({bg: bg});
+            byte = this.mem[pc + i];
+            byte.v = data[i];
+            byte.draw({bg: bg});
         }
     }
 
@@ -100,8 +112,7 @@ class VM {
                 console.error("cycles count divergence");
                 this.cycle = msg.value;
             }
-        }
-        else if (msg.type === "proc_update")
+        } else if (msg.type === "proc_update")
             this.proc_update(msg.id, msg);
         else if (msg.type === "write_mem")
             this.write_mem(msg.pc, chunks(msg.data, 2), msg.proc_id);
