@@ -13,10 +13,10 @@
 #include "vm.h"
 #include "libft.h"
 
-void t_proc_init(t_proc *proc, t_vm *vm, int id)
+void t_proc_init(t_proc *proc, int id, int pc)
 {
+	ft_bzero(proc, sizeof(t_proc));
 	proc->id = id;
 	proc->champ_id = id;
-	ft_bzero(proc, sizeof(t_proc));
-	write_uint(vm->host_endian, UINT_MAX - id - 1, &proc->reg[0][0], 4);
+	proc->pc = pc;
 }

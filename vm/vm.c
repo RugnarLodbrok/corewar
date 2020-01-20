@@ -43,16 +43,17 @@ void t_vm_print(t_vm *vm)
 
 void t_vm_add_champ(t_vm *vm, const char *f_name)
 {
-	uint champ_offset;
+	uint pc;
 	t_proc *proc;
 	int n;
 	size_t len;
 
 	n = (int)vm->procs.count;
-	champ_offset = (MEM_SIZE / vm->n_champs) * n;
-	len = load_bytecode(f_name, (byte *)vm->mem + champ_offset, &vm->champs[n]);
+	pc = (MEM_SIZE / vm->n_champs) * n;
+	len = load_bytecode(f_name, (byte *)vm->mem + pc, &vm->champs[n]);
 	proc = malloc(sizeof(t_proc));
-	t_proc_init(proc, vm, n);
+	t_proc_init(proc, n, pc);
+	write_uint(vm->host_endian, UINT_MAX - n - 1, &proc->reg[0][0], 4);
 	t_arrayp_push(&vm->procs, proc);
 	if (vm->mode == MODE_VIS)
 	{

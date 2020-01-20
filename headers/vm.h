@@ -68,7 +68,7 @@ typedef struct
 } t_op_context;
 
 size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ);
-void t_proc_init(t_proc *proc, t_vm *vm, int id);
+void t_proc_init(t_proc *proc, int id, int pc);
 int t_op_exec(t_op *op, t_proc *proc, t_vm *vm);
 t_op *read_op(const byte *ptr);
 void t_vm_init(t_vm *vm, int n_champs);
