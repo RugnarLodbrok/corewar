@@ -26,7 +26,7 @@ class Client {
             stop: button('stop vm', function (e) {
                 self.stop_vm("stop button");
             }),
-            next: button("next", function (e) {
+            next: button("step", function (e) {
                 self.vm.step(1);
                 self.socket.send(`{"type": "step"}`);
             }),
@@ -40,8 +40,10 @@ class Client {
                 self.vm.step(steps);
                 self.socket.send(`{"type": "step", "steps": ${steps}}`);
             }),
-            run_until_end: button("run until end", function (e) {
-                self.socket.send(`{"type": "run_until_end"}`)
+            run_until_end: button("run 256 steps", function (e) {
+                let steps = 256;
+                self.vm.step(steps);
+                self.socket.send(`{"type": "step", "steps": ${steps}}`);
             })
         };
         this.elements.buttons_bar.appendChild(this.buttons.start);

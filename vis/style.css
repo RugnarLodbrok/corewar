@@ -4,6 +4,7 @@
 
 .sidebar {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .proc {
@@ -25,13 +26,10 @@
 
 .register_val {
     background-color: #bbbbbb;
-    margin: 1px;
     padding-left: 2px;
     padding-right: 4px;
-    margin-left: 4px;
-    margin-right: 4px;
+    margin: 1px 4px;
 }
-
 
 .memory {
     font-family: "Courier New", monospace;

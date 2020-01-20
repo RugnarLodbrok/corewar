@@ -109,7 +109,7 @@ class VM {
     update(msg) {
         if (msg.type === "cycle") {
             if (this.cycle !== msg.value) {
-                console.error("cycles count divergence");
+                console.error(`cycles count divergence: ${this.cycle} != ${msg.value}`);
                 this.cycle = msg.value;
             }
         } else if (msg.type === "proc_update")
