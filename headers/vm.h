@@ -85,7 +85,8 @@ void write_mem(byte *mem, int pc, size_t len, int proc_id);
 void write_cycle(uint i);
 void write_end(void);
 
-short int read_short_int(int host_endian, byte *mem);
+short int read_short_int(t_vm *vm, byte *mem);
+int read_int(int host_endian, byte *mem, byte len);
 uint read_uint(int host_endian, byte *mem, byte len);
 void write_uint(int host_endian, uint v, byte *mem, byte len);
 

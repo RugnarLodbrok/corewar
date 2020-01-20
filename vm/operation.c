@@ -60,8 +60,7 @@ void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 		}
 		else if (arg_types[i] == IND_CODE)
 		{
-			args[i] = p + read_short_int(c->vm->host_endian,
-					p + c->cursor);
+			args[i] = p + read_short_int(c->vm, p + c->cursor);
 			c->cursor += IND_SIZE;
 		}
 		else if (arg_types[i] == REG_CODE)
@@ -91,7 +90,8 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	t_op_parse_arg_types(&c, &arg_types[0]);
 	t_op_parse_args(&c, &arg_types[0], &args[0]);
 	op->f(&c, args[0], args[1], args[2]);
-	if (c.changed_memory >= 0 && c.changed_memory < MEM_SIZE && vm->mode == MODE_VIS)
+	if (c.changed_memory >= 0 && c.changed_memory < MEM_SIZE &&
+		vm->mode == MODE_VIS)
 		write_mem(vm->mem, c.changed_memory, REG_SIZE, proc->id);
 	if (proc->pc == old_pc)
 		proc->pc += c.cursor;

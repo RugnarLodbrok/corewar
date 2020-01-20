@@ -1,22 +1,28 @@
 .name           "marcher"
 .comment        "marcher"
 
-start:
-    ld %0, r2 ; let i = 0;
+; r2 = iterator
+; r3 = memory chunk
+; r14 = size of all code to copy
+; r16 = /dev/null
+init:
+    ld %:end, r16
+    ld %:start, r15
+    sub r16, r15, r14
     ld %4, r15 ; const r15 = 4
     ld %64, r14 ; const r14 = 64
-    ld %4294967295, r13 ; const r13 = 0xFFFFFFFF
     sti r1, %:live, %1
+start:
+    ld %0, r2 ; let i = 0;
 loop:
     ldi %:start, r2, r3
     sti r3, %:end, r2
+    live:
+        live %0
     add r2, r15, r2 ; r2 += 4
     sub r2, r14, r16 ; if r 16 = r2 - r14
-    xor r16, r13, r16 ; r16 = !r16
-    zjump %:loop
-live:
-    live %0
-    xor %0, %0, r16
-    zjmp %:start
+    zjmp %:end  ;break
+    xor r13, r13, r16 ;break
+    zjmp %:loop
 end:
-    arr %51
+    aff r16

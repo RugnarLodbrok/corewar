@@ -1,8 +1,8 @@
 COLORS = [
-    {color: "#bb0000", bg: "#660000", bg_bright: "#990000"},
-    {color: "#00bb00", bg: "#004400", bg_bright: "#007700"},
-    {color: "#ffff00", bg: "#999900", bg_bright: "#cccc00"},
-    {color: "#0000dd", bg: "#000055", bg_bright: "#000099"},
+    {color: "#bb0000", bg_bright: "#990000", bg: "#660000"},
+    {color: "#00bb00", bg_bright: "#007700", bg: "#004400"},
+    {color: "#ffff00", bg_bright: "#cccc00", bg: "#999900"},
+    {color: "#0000dd", bg_bright: "#000099", bg: "#000055"},
 ];
 
 function proc_div(id, name, color) {

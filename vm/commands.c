@@ -53,7 +53,7 @@ int		op_sub(t_op_context *c, void *arg1, void *arg2, void *arg3)
 
 	a = read_uint(c->vm->host_endian, arg1, 4);
 	b = read_uint(c->vm->host_endian, arg2, 4);
-	if (a + b == 0)
+	if (a == b)
 		c->proc->carry = 1;
 	else
 		c->proc->carry = 0;
@@ -118,7 +118,7 @@ int 	op_zjmp(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	(void)arg3;
 	ft_printf("carry: %d\n", c->proc->carry);
 	if (c->proc->carry)
-		c->proc->pc += read_short_int(c->vm->host_endian, arg1);
+		c->proc->pc += read_short_int(c->vm, arg1);
 	return (1);
 }
 
@@ -126,10 +126,13 @@ int 	op_ldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	int n1;
 	int n2;
+	int target;
+	byte *a2;
 
-	n1 = read_uint(c->vm->host_endian, arg1, 4);
-	n2 = read_uint(c->vm->host_endian, arg2, 4);
-	write_uint(c->vm->host_endian, n1 + n2, arg3, 4);
+	n1 = read_short_int(c->vm, arg1);
+	n2 = read_short_int(c->vm, arg2);
+	target = (int)c->proc->pc + n1 + n2;
+	ft_memcpy(arg3, c->vm->mem + target, REG_SIZE);
 	return (1);
 }
 
@@ -139,8 +142,8 @@ int 	op_sti(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	int n3;
 	int target;
 
-	n2 = read_short_int(c->vm->host_endian, arg2);
-	n3 = read_short_int(c->vm->host_endian, arg3);
+	n2 = read_short_int(c->vm, arg2);
+	n3 = read_short_int(c->vm, arg3);
 	target = (int)c->proc->pc + n2 + n3;
 	ft_memcpy(c->vm->mem + target, arg1, REG_SIZE);
 	c->changed_memory = target;
