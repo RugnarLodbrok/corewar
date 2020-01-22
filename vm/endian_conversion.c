@@ -17,8 +17,9 @@ short int read_short_int(t_vm *vm, byte *mem)
 	short int ret;
 
 	ret = 0;
-	if (mem < vm->mem || mem >=vm->mem + MEM_SIZE)
-		mem += 2;
+	if (vm->host_endian == LITTLE_ENDIAN)
+		if (mem < vm->mem || mem >=vm->mem + MEM_SIZE)
+			mem += 2;
 	ft_memcpy(&ret, mem, sizeof(short int));
 	if (VM_ENDIAN != vm->host_endian)
 		ft_memrev(&ret, sizeof(short int));
