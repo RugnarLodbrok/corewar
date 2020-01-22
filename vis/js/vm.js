@@ -126,5 +126,6 @@ class VM {
         } else
             console.error(`unknown command ${msg.type}`);
         this.cycles_bar.innerText = this.cycle + "";
+        return msg.type;
     }
 }

@@ -1,8 +1,9 @@
 WSS_PORT = 8765;
+RUN_SPEED_STEPS = 16;
+RUN_SPEED_DT = 500;
 
 class Client {
     constructor() {
-        let self = this;
         this.state = "down";
         this.elements = {
             buttons_bar: document.getElementById("buttons_bar"),
@@ -15,6 +16,29 @@ class Client {
         };
         this.socket = null;
         this.vm = null;
+        this.run_speed = 0;
+        this.run_step_time = 0;
+        this.run_timeout_id = 0;
+        this.steps_are_running = 0; //vm did not yet fully responded to step request;
+        this.init_buttons();
+        this.stop_vm();
+        this.elements.status_bar.textContent = "VM is down";
+        this.init_selectors();
+    }
+
+    init_buttons() {
+        let self = this;
+
+        let run_function = function () {
+            let now = Date.now();
+            // if dt passed and no pending requests then send new step request
+            if (now - self.run_step_time >= RUN_SPEED_DT && !self.steps_are_running) {
+                self.run_step_time = Date.now();
+                self.step(RUN_SPEED_STEPS * self.run_speed);
+            }
+            if (self.run_speed)
+                self.run_timeout_id = setTimeout(run_function, RUN_SPEED_DT);
+        };
         this.buttons = {
             start: button('start vm', function (e) {
                 let cors = [];
@@ -27,8 +51,7 @@ class Client {
                 self.stop_vm("stop button");
             }),
             next: button("step", function (e) {
-                self.vm.step(1);
-                self.socket.send(`{"type": "step"}`);
+                self.step(1);
             }),
             next_op: button("step op", function (e) {
                 let steps = 1000;
@@ -37,13 +60,21 @@ class Client {
                         steps = proc.delay;
                 if (steps === 0)
                     steps = 1;
-                self.vm.step(steps);
-                self.socket.send(`{"type": "step", "steps": ${steps}}`);
+                self.step(steps)
             }),
             run_until_end: button("run 256 steps", function (e) {
-                let steps = 256;
-                self.vm.step(steps);
-                self.socket.send(`{"type": "step", "steps": ${steps}}`);
+                self.step(256);
+            }),
+            run: button("run", function (e) {
+                self.run_speed++;
+                self.buttons.pause.disabled = false;
+                if (self.run_speed === 1)
+                    run_function();
+            }),
+            pause: button("pause", function (e) {
+                clearTimeout(self.run_timeout_id);
+                self.buttons.pause.disabled = true;
+                self.run_speed = 0;
             })
         };
         this.elements.buttons_bar.appendChild(this.buttons.start);
@@ -51,9 +82,8 @@ class Client {
         this.elements.buttons_bar.appendChild(this.buttons.next);
         this.elements.buttons_bar.appendChild(this.buttons.next_op);
         this.elements.buttons_bar.appendChild(this.buttons.run_until_end);
-        this.stop_vm();
-        this.elements.status_bar.textContent = "VM is down";
-        this.init_selectors();
+        this.elements.buttons_bar.appendChild(this.buttons.run);
+        this.elements.buttons_bar.appendChild(this.buttons.pause);
     }
 
     init_selectors() {
@@ -102,7 +132,9 @@ class Client {
                 return console.error(`can't parse data: "${data}"`);
             self.vm.update(msg);
             if (self.vm.stopped)
-                self.stop_vm()
+                self.stop_vm();
+            if (msg.type === "cycle")
+                self.steps_are_running--;
         };
         this.socket.onclose = function (e) {
             console.log(`close ${e.code}: ${e.reason}`);
@@ -113,6 +145,8 @@ class Client {
         this.buttons.next.disabled = false;
         this.buttons.next_op.disabled = false;
         this.buttons.run_until_end.disabled = false;
+        this.buttons.run.disabled = false;
+        this.buttons.pause.disabled = true;
         for (let sel of this.elements.selectors)
             sel.disabled = true;
         this.elements.status_bar.textContent = "VM is running";
@@ -127,9 +161,30 @@ class Client {
         this.buttons.next.disabled = true;
         this.buttons.next_op.disabled = true;
         this.buttons.run_until_end.disabled = true;
+        this.buttons.run.disabled = true;
+        this.buttons.pause.disabled = true;
         for (let sel of this.elements.selectors)
             sel.disabled = false;
         this.elements.status_bar.textContent = "VM is stopped";
+
+        if (this.run_timeout_id)
+            clearTimeout(this.run_timeout_id);
+        this.run_timeout_id = 0;
+        this.run_speed = 0;
+        this.steps_are_running = 0;
+    }
+
+    step(n) {
+        let msg;
+        if (n === undefined)
+            n = 1;
+        if (n === 1)
+            msg = `{"type": "step"}`;
+        else
+            msg = `{"type": "step", "steps": ${n}}`;
+        this.vm.step(n);
+        this.steps_are_running++;
+        this.socket.send(msg);
     }
 }
 
