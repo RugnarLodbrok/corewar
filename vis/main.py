@@ -9,7 +9,7 @@ from threading import Thread
 import websockets
 
 HOSTNAME = 'localhost'
-WSS_PORT = 8765
+WSS_PORT = 8766
 HTTP_PORT = 8888
 ASM_DIR = 'champs'
 
