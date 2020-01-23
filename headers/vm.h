@@ -65,6 +65,7 @@ typedef struct
 	t_proc *proc;
 	uint cursor;
 	int changed_memory;
+	int invalid_args;
 } t_op_context;
 
 size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ);
