@@ -116,7 +116,6 @@ int 	op_zjmp(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	(void)arg2;
 	(void)arg3;
-	ft_printf("carry: %d\n", c->proc->carry);
 	if (c->proc->carry)
 		c->proc->pc += read_short_int(c->vm, arg1);
 	return (1);

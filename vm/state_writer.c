@@ -21,18 +21,13 @@ void write_memory(t_vm *vm)
 {
 	int i;
 
-	if (vm->mode == MODE_DEFAULT)
-		ft_print_memory(vm->mem, 64);
-	if (vm->mode == MODE_VIS)
+	ft_printf("type: mem_init\n");
+	ft_printf("data: \"");
+	for (i = 0; i < MEM_SIZE; ++i)
 	{
-		ft_printf("type: mem_init\n");
-		ft_printf("data: \"");
-		for (i = 0; i < MEM_SIZE; ++i)
-		{
-			put_hex(*&vm->mem[i], 2);
-		}
-		ft_printf("\"\n\n");
+		put_hex(*&vm->mem[i], 2);
 	}
+	ft_printf("\"\n\n");
 }
 
 void write_proc_update(t_proc *proc, const char *name)

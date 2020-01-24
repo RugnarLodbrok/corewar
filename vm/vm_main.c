@@ -2,10 +2,10 @@
 #include "get_next_line.h"
 #include "vm.h"
 
-void main_loop(t_vm* vm)
+void main_loop(t_vm *vm, int dump)
 {
 	int status;
-	char* line;
+	char *line;
 	int steps;
 
 	if (vm->mode == MODE_DEFAULT)
@@ -50,34 +50,26 @@ void main_loop(t_vm* vm)
 		if (status < 0)
 			ft_error_exit("can't read stdin");
 	}
+	if (vm->mode == MODE_DUMP)
+	{
+		while (dump-- > 0)
+			t_vm_step(vm);
+		t_vm_print(vm);
+	}
 }
 
-int main(int ac, char** av)
+int main(int ac, char **av)
 {
 	int i;
 	t_vm vm;
-	int n_champs;
+	t_args args;
 
-	n_champs = ac - 1;
-	t_vm_init(&vm, n_champs);
-	i = 1;
-	while (i < ac)
-	{
-		if (!ft_strcmp("-v", av[i]))
-			vm.mode = MODE_VIS;
-		if (!ft_strcmp("-p", av[i]))
-			vm.mode = MODE_PRINT;
-		++i;
-	}
-	write_memory(&vm);
-	i = 1;
-	while (i < ac)
-	{
-		if (!ft_startswith(av[i], "-"))
-			t_vm_add_champ(&vm, (const char*)av[i]);
-		++i;
-	}
-	main_loop(&vm);
+	parse_args(&args, ac, av);
+	t_vm_init(&vm, ft_len((void **)&args.champs[0]), args.mode);
+	i = -1;
+	while (args.champs[++i])
+		t_vm_add_champ(&vm, args.champs[i]);
+	main_loop(&vm, args.dump);
 	t_vm_destruct(&vm);
 	if (vm.mode == MODE_VIS)
 		write_end();

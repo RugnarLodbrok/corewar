@@ -15,16 +15,18 @@
 #include "vm.h"
 #include "stdio.h"
 
-void t_vm_init(t_vm *vm, int n_champs)
+void t_vm_init(t_vm *vm, int n_champs, uint mode)
 {
 	ft_bzero(vm, sizeof(t_vm));
-	vm->mode = MODE_DEFAULT;
+	vm->mode = mode;
 	vm->n_champs = n_champs;
 	vm->mem = ft_calloc(MEM_SIZE, sizeof(char));
 	vm->host_endian = endian();
 	vm->cycles_to_die = CYCLE_TO_DIE;
 	vm->i_before_check = vm->cycles_to_die;
 	t_arrayp_init(&vm->procs);
+	if (vm->mode == MODE_VIS)
+		write_memory(vm);
 }
 
 void t_vm_print(t_vm *vm)
@@ -34,7 +36,7 @@ void t_vm_print(t_vm *vm)
 	for (i = 0; i < MEM_SIZE; ++i)
 	{
 		put_hex(vm->mem[i], 2);
-		if ((i + 1) % 64)
+		if ((i + 1) % 32)
 			ft_printf(" ");
 		else
 			ft_printf("\n");
@@ -51,6 +53,8 @@ void t_vm_add_champ(t_vm *vm, const char *f_name)
 	n = (int)vm->procs.count;
 	pc = (MEM_SIZE / vm->n_champs) * n;
 	len = load_bytecode(f_name, (byte *)vm->mem + pc, &vm->champs[n]);
+	ft_assert(len <= CHAMP_MAX_SIZE, "champ `%s` size %d > %d\n",
+			  vm->champs[n].name, len, CHAMP_MAX_SIZE);
 	proc = malloc(sizeof(t_proc));
 	t_proc_init(proc, n, pc);
 	write_uint(vm->host_endian, UINT_MAX - n - 1, &proc->reg[0][0], 4);

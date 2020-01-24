@@ -11,6 +11,7 @@ target_link_libraries(corewar_test
         )
 
 add_executable(corewar_vm
+		vm/parse_args.c
         vm/vm_main.c
         vm/vm.c
         vm/proc.c
