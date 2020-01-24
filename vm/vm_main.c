@@ -23,30 +23,31 @@ static void loop_print(t_vm *vm)
 			t_vm_print(vm);
 		}
 	}
-	if (status < 0)
-		ft_error_exit("can't read stdin");
+	ft_assert(!status, "can't read stdin");
 }
 
 static void loop_vis(t_vm *vm)
 {
 	int status;
-	int steps;
+	int i;
 	char *line;
 
 	while ((status = get_next_line(STDIN_FILENO, &line)) > 0)
 	{
-		steps = ft_atoi(line);
+		i = ft_atoi(line);
 		free(line);
-		while (steps-- > 0)
+		while (i-- > 0)
 		{
 			if (vm->shutdown)
 				return;
 			t_vm_step(vm);
 		}
+		i = -1;
+		while(++i < (int)vm->procs.count)
+			write_proc_update(vm->procs.data[i], 0);
 		write_cycle(vm->i);
 	}
-	if (status < 0)
-		ft_error_exit("can't read stdin");
+	ft_assert(!status, "can't read stdin");
 }
 
 void main_loop(t_vm *vm, int dump)

@@ -1,6 +1,6 @@
 WSS_PORT = 8765;
-RUN_SPEED_STEPS = 16;
-RUN_SPEED_DT = 500;
+RUN_SPEED_STEPS = 8;
+RUN_SPEED_DT = 128;
 
 class Client {
     constructor() {
@@ -8,6 +8,7 @@ class Client {
         this.elements = {
             buttons_bar: document.getElementById("buttons_bar"),
             status_bar: document.getElementById("status_bar"),
+            speed_bar: document.getElementById("speed_bar"),
             selectors: [
                 document.getElementById("cor_select1"),
                 document.getElementById("cor_select2"),
@@ -66,7 +67,12 @@ class Client {
                 self.step(256);
             }),
             run: button("run", function (e) {
-                self.run_speed++;
+                if (self.run_speed === 0)
+                    self.run_speed = 1;
+                else
+                    self.run_speed *= 2;
+                let cps = Math.round(self.run_speed * RUN_SPEED_STEPS* 1000 / RUN_SPEED_DT);
+                self.elements.speed_bar.innerText = `speed ${cps} c/s`;
                 self.buttons.pause.disabled = false;
                 if (self.run_speed === 1)
                     run_function();
@@ -75,6 +81,7 @@ class Client {
                 clearTimeout(self.run_timeout_id);
                 self.buttons.pause.disabled = true;
                 self.run_speed = 0;
+                self.elements.speed_bar.innerText = `paused`;
             })
         };
         this.elements.buttons_bar.appendChild(this.buttons.start);

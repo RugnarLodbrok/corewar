@@ -100,11 +100,7 @@ static void t_vm_death_check(t_vm *vm)
 	{
 		proc = vm->procs.data[i];
 		if (vm->i - proc->last_live > vm->cycles_to_die || !proc->last_live)
-		{
 			proc->dead = 1;
-			if (vm->mode == MODE_VIS)
-				write_proc_update(proc, 0);
-		}
 	}
 	if (vm->live_ops_since_check >= NBR_LIVE ||
 		vm->checks_without_delta > MAX_CHECKS)
@@ -130,8 +126,6 @@ void t_vm_step(t_vm *vm)
 		if ((proc = vm->procs.data[i])->dead)
 			continue;
 		t_vm_proc_step(vm, proc);
-		if (vm->mode == MODE_VIS)
-			write_proc_update(proc, 0);
 	}
 	vm->i++;
 	if (!--vm->i_before_check)
