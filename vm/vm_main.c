@@ -2,55 +2,63 @@
 #include "get_next_line.h"
 #include "vm.h"
 
-void main_loop(t_vm *vm, int dump)
+static void loop_print(t_vm *vm)
 {
 	int status;
-	char *line;
 	int steps;
+	char *line;
 
-	if (vm->mode == MODE_DEFAULT)
+	t_vm_print(vm);
+	while ((status = get_next_line(STDIN_FILENO, &line)))
 	{
+		steps = ft_atoi(line);
+		free(line);
+		if (steps == 0)
+			steps = 1;
+		while (steps-- > 0)
+		{
+			if (vm->shutdown)
+				return;
+			t_vm_step(vm);
+			t_vm_print(vm);
+		}
+	}
+	if (status < 0)
+		ft_error_exit("can't read stdin");
+}
+
+static void loop_vis(t_vm *vm)
+{
+	int status;
+	int steps;
+	char *line;
+
+	while ((status = get_next_line(STDIN_FILENO, &line)) > 0)
+	{
+		steps = ft_atoi(line);
+		free(line);
+		while (steps-- > 0)
+		{
+			if (vm->shutdown)
+				return;
+			t_vm_step(vm);
+		}
+		write_cycle(vm->i);
+	}
+	if (status < 0)
+		ft_error_exit("can't read stdin");
+}
+
+void main_loop(t_vm *vm, int dump)
+{
+	if (vm->mode == MODE_DEFAULT)
 		while (!vm->shutdown)
 			t_vm_step(vm);
-	}
-	if (vm->mode == MODE_VIS)
-	{
-		while ((status = get_next_line(STDIN_FILENO, &line)) > 0)
-		{
-			steps = ft_atoi(line);
-			free(line);
-			while (steps-- > 0)
-			{
-				if (vm->shutdown)
-					return;
-				t_vm_step(vm);
-			}
-			write_cycle(vm->i);
-		}
-		if (status < 0)
-			ft_error_exit("can't read stdin");
-	}
-	if (vm->mode == MODE_PRINT)
-	{
-		t_vm_print(vm);
-		while ((status = get_next_line(STDIN_FILENO, &line)))
-		{
-			steps = ft_atoi(line);
-			free(line);
-			if (steps == 0)
-				steps = 1;
-			while (steps-- > 0)
-			{
-				if (vm->shutdown)
-					return;
-				t_vm_step(vm);
-				t_vm_print(vm);
-			}
-		}
-		if (status < 0)
-			ft_error_exit("can't read stdin");
-	}
-	if (vm->mode == MODE_DUMP)
+	else if (vm->mode == MODE_VIS)
+		loop_vis(vm);
+	else if (vm->mode == MODE_PRINT)
+		loop_print(vm);
+	else if (vm->mode == MODE_DUMP)
 	{
 		while (dump-- > 0)
 			t_vm_step(vm);
