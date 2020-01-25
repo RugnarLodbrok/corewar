@@ -49,7 +49,7 @@ void write_proc_update(t_proc *proc, const char *name)
 	else
 		ft_printf("op: %s\n", "null");
 	ft_printf("delay: %d\n", proc->delay);
-	ft_printf("pc: %d\n", proc->pc);
+	ft_printf("pc: %d\n", proc->pc % MEM_SIZE);
 	ft_printf("registers:\n");
 	for (i = 0; i < REG_NUMBER; ++i)
 		ft_printf("  - \"%02hhx%02hhx%02hhx%02hhx\"\n",
@@ -71,12 +71,12 @@ void write_mem(byte *mem, int pc, size_t len, int proc_id)
 	size_t i;
 
 	ft_printf("type: write_mem\n");
-	ft_printf("pc: %d\n", pc);
+	ft_printf("pc: %d\n", pc % MEM_SIZE);
 	if (proc_id >= 0)
 		ft_printf("proc_id: %d\n", proc_id);
 	ft_printf("data: \"");
 	for (i = 0; i < len; ++i)
-		put_hex(mem[pc + i], 2);
+		put_hex(mem[(pc + i) % MEM_SIZE], 2);
 	ft_printf("\"\n\n");
 }
 

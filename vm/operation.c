@@ -53,25 +53,39 @@ void t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 {
 	int i;
+	int mod_mem;
 	uint reg_number;
 	byte *p;
 
-	p = c->vm->mem + c->proc->pc;
+//	p = c->vm->mem + c->proc->pc;
+//	p = &c->vm->mem[((char*)c->proc->pc - (char*)c->vm->mem) % MEM_SIZE];
 	for (i = 0; i < c->op->args_num; ++i)
 	{
 		if (arg_types[i] == DIR_CODE)
 		{
-			args[i] = p + c->cursor;
+			//args[i] = p + c->cursor; //todo: % MEM_SIZE
+			args[i] = &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE];
 			c->cursor += c->op->dir_size;
 		}
 		else if (arg_types[i] == IND_CODE)
 		{
-			args[i] = p + read_short_int(c->vm, p + c->cursor);
-			c->cursor += IND_SIZE;
+			args[i] = &c->vm->mem[(c->proc->pc +
+                       read_short_int(c->vm,c->vm->mem + (c->proc->pc + c->cursor) % MEM_SIZE))];
+			//args[i] = p + read_short_int(c->vm,
+            //							 c->vm->mem + (c->proc->pc + c->cursor) % MEM_SIZE);
+            c->cursor += IND_SIZE;
 		}
 		else if (arg_types[i] == REG_CODE)
 		{
-			reg_number = read_uint(c->vm, p + c->cursor, REG_ARG_SIZE) - 1;
+		    /*
+<<<<<<< HEAD
+            reg_number = read_uint(c->vm->host_endian,
+                                   &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE],REG_ARG_SIZE) - 1;
+            if (reg_number >= REG_NUMBER)
+=======
+		    */
+			reg_number = read_uint(c->vm,
+                     &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE], REG_ARG_SIZE) - 1;
 			if (reg_number >= REG_NUMBER)
 				c->invalid_args = 1;
 			else
@@ -100,7 +114,7 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 
 	t_op_context_init(&c, vm, proc, op);
 	ft_bzero(&args[0], 3);
-	old_pc = proc->pc;
+	old_pc = proc->pc % MEM_SIZE;
 	t_op_parse_arg_types(&c, &arg_types[0]);
 	t_op_parse_args(&c, &arg_types[0], &args[0]);
 	if (!c.invalid_args)
@@ -111,6 +125,7 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 			write_mem(vm->mem, c.changed_memory, REG_SIZE, proc->id);
 	}
 	if (proc->pc == old_pc)
-		proc->pc += c.cursor;
+		//proc->pc += c.cursor;
+	    proc->pc = (proc->pc + c.cursor) % MEM_SIZE;
 	return (0);
 }
