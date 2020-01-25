@@ -53,9 +53,9 @@ void t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 {
 	int i;
-	int mod_mem;
+	//int mod_mem;
 	uint reg_number;
-	byte *p;
+	//byte *p;
 
 //	p = c->vm->mem + c->proc->pc;
 //	p = &c->vm->mem[((char*)c->proc->pc - (char*)c->vm->mem) % MEM_SIZE];
