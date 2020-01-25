@@ -12,6 +12,7 @@
 
 #include "vm.h"
 
+/*
 void    *ft_cut_memcpy(t_op_context *pc, void *dst, const void *src, int n)
 {
 	int     i;
@@ -42,17 +43,74 @@ void    *ft_cut_memcpy(t_op_context *pc, void *dst, const void *src, int n)
 		i++;
 	}
 	return (dst);
+}*/
+
+/*
+void ft_memcpy2(byte*mem, char dst, char src, size_t n)
+{
+    int i;
+
+    i = -1;
+//    printf("%d\n", dst);
+//    printf("%d\n", src);
+    while(++i < n)
+        mem[(dst + i) % MEM_SIZE] = mem[(src + i) % MEM_SIZE];
+}
+*/
+
+void *ft_memcpy2(byte *mem, void *dst, const void *src, size_t n)
+{
+    int i;
+    char *s;
+    char *d;
+	char *test;
+
+    i = -1;
+    s = (char *)src;
+    d = (char *)dst;
+    if (!src && !dst)
+        return (0);
+    /*
+    if (dst < mem || dst >= mem + MEM_SIZE)
+        while (++i < n)
+            *d++ = mem[((char*)mem - s + i) % MEM_SIZE];
+    else
+        while (++i < n)
+            mem[((char*)dst - (char*)mem + i) % MEM_SIZE] = mem[((char*)src - (char*)mem + i) % MEM_SIZE];
+     */
+    if (dst >= mem && dst < mem + MEM_SIZE)
+		while (++i < n)
+			mem[((char*)dst - (char*)mem + i) % MEM_SIZE] = mem[((char*)src - (char*)mem + i) % MEM_SIZE];
+	else
+		while (++i < n)
+			d[i] = mem[(s - (char*)mem + i) % MEM_SIZE];
+	return (dst);
 }
 
-short int read_short_int(int host_endian, byte *mem)
+short int read_short_int(t_vm *vm, byte *mem)
 {
 	short int	ret;
 
 	ret = 0;
-
+	if (mem < vm->mem || mem >=vm->mem + MEM_SIZE)
+		mem += 2;
 	ft_memcpy(&ret, mem, sizeof(short int));
-	if (VM_ENDIAN != host_endian)
+	if (VM_ENDIAN != vm->host_endian)
 		ft_memrev(&ret, sizeof(short int));
+	return (ret);
+}
+
+int read_int(int host_endian, byte *mem, byte len)
+{
+	int ret;
+
+	ret = 0;
+	if (host_endian == LITTLE_ENDIAN)
+		ft_memcpy(((byte*)&ret) + (4 - len), mem, len);
+	else
+		ft_memcpy(&ret, mem, len);
+	if (VM_ENDIAN != host_endian)
+		ft_memrev(&ret, 4);
 	return (ret);
 }
 

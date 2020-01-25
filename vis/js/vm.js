@@ -14,6 +14,7 @@ class VM {
         this.procs = [];
         this.e = document.getElementById('memory_view');
         this.e.className = "memory";
+        this.cycles_bar = document.getElementById('cycles_bar');
     }
 
     step(n) {
@@ -68,7 +69,7 @@ class VM {
             proc = this.procs[id];
         else if (id === this.procs.length) {
             console.log("new proc!");
-            proc = new Proc(this, id, kwargs.name, kwargs.pc);
+            proc = new Proc(this, id, kwargs.champ_id, kwargs.name, kwargs.pc);
             this.procs.push(proc);
         } else
             return console.error(`proc ${id} does not exist`);
@@ -85,27 +86,45 @@ class VM {
 
     write_mem(pc, data, proc_id) {
         let bg = null;
-        if (proc_id !== undefined)
-            bg = this.procs[proc_id].bg;
+        let byte;
+
+        if (proc_id !== undefined) {
+            let proc = this.procs[proc_id];
+            bg = proc.colors.bg_bright;
+            for (let i = 0; i < proc.last_mem_write_len; ++i) {
+                byte = this.mem[proc.last_mem_write + i];
+                if (byte.bg === proc.colors.bg_bright)
+                    byte.draw({bg: proc.colors.bg})
+            }
+            proc.last_mem_write = pc;
+            proc.last_mem_write_len = data.length;
+        }
         for (let i = 0; i < data.length; ++i) {
-            this.mem[pc + i].v = data[i];
-            this.mem[pc + i].draw({bg: bg});
+            byte = this.mem[pc + i];
+            byte.v = data[i];
+            byte.draw({bg: bg});
         }
     }
 
     update(msg) {
-        if (msg.type === "mem_init")
-            this.mem_init(chunks(msg.data, 2));
-        else if (msg.type === "arr")
-            console.log('STDOUT:', msg.char);
+        if (msg.type === "cycle") {
+            if (this.cycle !== msg.value) {
+                console.error(`cycles count divergence: ${this.cycle} != ${msg.value}`);
+                this.cycle = msg.value;
+            }
+        } else if (msg.type === "proc_update")
+            this.proc_update(msg.id, msg);
         else if (msg.type === "write_mem")
             this.write_mem(msg.pc, chunks(msg.data, 2), msg.proc_id);
-        else if (msg.type === "proc_update")
-            this.proc_update(msg.id, msg);
+        else if (msg.type === "arr")
+            console.log('STDOUT:', msg.char);
+        else if (msg.type === "mem_init")
+            this.mem_init(chunks(msg.data, 2));
         else if (msg.type === "end") {
             this.stopped = true;
             console.log('command: end')
         } else
             console.error(`unknown command ${msg.type}`);
+        this.cycles_bar.innerText = this.cycle + "";
     }
 }

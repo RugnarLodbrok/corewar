@@ -30,9 +30,9 @@ def yaml_to_json(msg):
 
 
 class VM:
-    def __init__(self, cor_f_name):
+    def __init__(self, cors):
         self.p = None
-        self.cor_f_name = cor_f_name
+        self.cors = cors
 
     async def stop(self):
         if self.p.returncode is None:
@@ -42,9 +42,10 @@ class VM:
         print(f"proc finished; ret = {ret}")
 
     async def __aiter__(self):
-        print("starting", self.cor_f_name)
+        print("starting", ", ".join(self.cors))
         self.p = await aiosp.create_subprocess_exec(
-            "cmake-build-debug/corewar_vm", "-v", f"{ASM_DIR}/{self.cor_f_name}",
+            "cmake-build-debug/corewar_vm", "-v",
+            *(f"{ASM_DIR}/{cor}" for cor in self.cors),
             stdin=aiosp.PIPE,
             stdout=aiosp.PIPE)
         print(f"pid: {self.p.pid}")
@@ -109,8 +110,8 @@ async def producer_handler(ws: websockets.WebSocketServerProtocol, vm):
 
 
 async def handler(ws: websockets.WebSocketServerProtocol, path):
-    cor_f_name = path[1:]
-    vm = VM(cor_f_name)
+    cors = path.strip('/').split(';')
+    vm = VM(cors)
     consumer_task = asyncio.ensure_future(consumer_handler(ws, vm))
     producer_task = asyncio.ensure_future(producer_handler(ws, vm))
     done, pending = await asyncio.wait(

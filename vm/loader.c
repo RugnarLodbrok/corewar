@@ -28,7 +28,7 @@ size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ)
 	uint code_size;
 
 	if ((fd = open(f_name, O_RDONLY)) < 0)
-		ft_error_exit("can't open file");
+		ft_error_exit("can't open file: %s", f_name);
 	champ->name = ft_calloc(PROG_NAME_LENGTH, sizeof(char));
 	champ->comment = ft_calloc(COMMENT_LENGTH, sizeof(char));
 	//magic - 4b;

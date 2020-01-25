@@ -17,7 +17,8 @@ int		op_ld(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	uint v;
 
 	(void)arg3;
-	ft_memcpy(arg2, arg1, sizeof(char) * REG_SIZE);
+//	ft_memcpy(arg2, arg1, sizeof(char) * REG_SIZE);
+	ft_memcpy2(c->vm->mem, arg2, arg1, sizeof(char) * REG_SIZE);
 	v = read_uint(c->vm->host_endian, arg2, 4);
 	c->proc->carry = (v != 0);
 	return (1);
@@ -26,7 +27,8 @@ int		op_ld(t_op_context *c, void *arg1, void *arg2, void *arg3)
 int		op_st(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	(void)arg3;
-	ft_memcpy(arg2, arg1, sizeof(char) * REG_SIZE);
+//	ft_memcpy(arg2, arg1, sizeof(char) * REG_SIZE);
+	ft_memcpy2(c->vm->mem, arg2, arg1, sizeof(char) * REG_SIZE);
 	c->changed_memory = (int)((byte*)arg2 - c->vm->mem);
 	return (1);
 }
@@ -53,7 +55,7 @@ int		op_sub(t_op_context *c, void *arg1, void *arg2, void *arg3)
 
 	a = read_uint(c->vm->host_endian, arg1, 4);
 	b = read_uint(c->vm->host_endian, arg2, 4);
-	if (a + b == 0)
+	if (a == b)
 		c->proc->carry = 1;
 	else
 		c->proc->carry = 0;
@@ -118,7 +120,7 @@ int 	op_zjmp(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	(void)arg3;
 	ft_printf("carry: %d\n", c->proc->carry);
 	if (c->proc->carry)
-		c->proc->pc += read_short_int(c->vm->host_endian, arg1);
+		c->proc->pc += read_short_int(c->vm, arg1);
 	return (1);
 }
 
@@ -126,10 +128,14 @@ int 	op_ldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	int n1;
 	int n2;
+	int target;
+	byte *a2;
 
-	n1 = read_uint(c->vm->host_endian, arg1, 4);
-	n2 = read_uint(c->vm->host_endian, arg2, 4);
-	write_uint(c->vm->host_endian, n1 + n2, arg3, 4);
+	n1 = read_short_int(c->vm, arg1);
+	n2 = read_short_int(c->vm, arg2);
+	target = (int)c->proc->pc + n1 + n2;
+	//ft_memcpy(arg3, c->vm->mem + target, REG_SIZE);
+	ft_memcpy2(c->vm->mem, arg3, c->vm->mem + target, sizeof(char) * REG_SIZE);
 	return (1);
 }
 
@@ -139,10 +145,11 @@ int 	op_sti(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	int n3;
 	int target;
 
-	n2 = read_short_int(c->vm->host_endian, arg2);
-	n3 = read_short_int(c->vm->host_endian, arg3);
+	n2 = read_short_int(c->vm, arg2);
+	n3 = read_short_int(c->vm, arg3);
 	target = (int)c->proc->pc + n2 + n3;
-	ft_memcpy(c->vm->mem + target, arg1, REG_SIZE);
+	//ft_memcpy(c->vm->mem + target, arg1, REG_SIZE);
+	ft_memcpy2(c->vm->mem, c->vm->mem + target, arg1, sizeof(char) * REG_SIZE);
 	c->changed_memory = target;
 	return (1);
 }
@@ -153,6 +160,8 @@ int		op_fork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	int		i;
 	int 	j;
 
+	(void)arg2;
+	(void)arg3;
 	new = (t_proc*)malloc(sizeof(t_proc));
 	i = -1;
 	j = -1;
@@ -165,14 +174,17 @@ int		op_fork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	while (++i < REG_NUMBER)
 		while (++j < 4)
 			new->reg[i][j] = c->proc->reg[i][j];
-	ft_memcpy(new,  arg1, 40);
+	//ft_memcpy(new,  arg1, 40);
+	ft_memcpy2(c->vm->mem, new, arg1, 40);
 	return (1);
 }
 
 int 	op_lld(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
+	(void)c;
 	(void)arg3;
-	ft_memcpy(arg2, arg1, DIR_SIZE * sizeof(char));
+	//ft_memcpy(arg2, arg1, DIR_SIZE * sizeof(char));
+	ft_memcpy2(c->vm->mem, arg2, arg1, DIR_SIZE * sizeof(char));
 	return (1);
 }
 
@@ -203,6 +215,6 @@ int		op_aff(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	if (c->vm->mode == MODE_VIS)
 		write_proc_stdout(c->vm, c->proc->id, d);
 	if (c->vm->mode == MODE_DEFAULT)
-		write(1, &c, 1);
+		write(1, &d, 1);
 	return (1);
 }

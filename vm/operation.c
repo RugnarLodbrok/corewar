@@ -57,11 +57,14 @@ void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 		if (arg_types[i] == DIR_CODE)
 		{
 			args[i] = p + c->cursor; //todo: % MEM_SIZE
+//			args[i] = p + read_short_int(c->vm->host_endian,
+//										  (p + c->cursor) % MEM_SIZE); //todo: % MEM_SIZE
+
 			c->cursor += c->op->dir_size;
 		}
 		else if (arg_types[i] == IND_CODE)
 		{
-			args[i] = p + read_short_int(c->vm->host_endian,
+			args[i] = p + read_short_int(c->vm,
 										 c->vm->mem + (c->proc->pc + c->cursor) % MEM_SIZE);
 			c->cursor += IND_SIZE;
 		}
@@ -92,9 +95,10 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	t_op_parse_arg_types(&c, &arg_types[0]);
 	t_op_parse_args(&c, &arg_types[0], &args[0]);
 	op->f(&c, args[0], args[1], args[2]);
-	if (c.changed_memory >= 0 && c.changed_memory < MEM_SIZE && vm->mode == MODE_VIS)
+	if (c.changed_memory >= 0 && c.changed_memory < MEM_SIZE &&
+		vm->mode == MODE_VIS)
 		write_mem(vm->mem, c.changed_memory, REG_SIZE, proc->id);
 	if (proc->pc == old_pc)
 		proc->pc += c.cursor;
-	return (1);
+	return (0);
 }
