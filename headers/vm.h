@@ -97,7 +97,6 @@ void write_proc_update(t_proc *proc, const char *name);
 void write_proc_stdout(t_vm *vm, int proc_num, char c);
 void write_mem(byte *mem, int pc, size_t len, int proc_id);
 void write_cycle(uint i);
-void write_end(void);
 
 short int read_short_int(t_vm *vm, byte *mem);
 uint read_uint(t_vm *vm, byte *mem, byte len);
