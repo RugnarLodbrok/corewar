@@ -80,11 +80,6 @@ void write_mem(byte *mem, int pc, size_t len, int proc_id)
 	ft_printf("\"\n\n");
 }
 
-void write_end(void)
-{
-	ft_printf("type: end\n\n");
-}
-
 void write_cycle(uint i)
 {
 	ft_printf("type: cycle\n");

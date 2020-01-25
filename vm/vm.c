@@ -66,11 +66,9 @@ void t_vm_add_champ(t_vm *vm, const char *f_name)
 		write_proc_update(proc, vm->champs[n].name);
 		write_mem(vm->mem, proc->pc % MEM_SIZE, len, n);
 	}
-	else if (vm->mode == MODE_DEFAULT)
-	{
-		ft_printf("champ: %s\n", vm->champs[n].name);
-		ft_printf("champ comment: %s\n", vm->champs[n].comment);
-	}
+	else if (vm->mode & (MODE_DEFAULT | MODE_DUMP))
+		ft_printf("* Player %d, weighing %lu bytes, \"%s\" (\"%s\") !\n",
+				n + 1, len, vm->champs[n].name, vm->champs[n].comment);
 }
 
 static void t_vm_proc_step(t_vm *vm, t_proc *proc)

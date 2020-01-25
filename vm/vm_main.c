@@ -69,9 +69,16 @@ void main_loop(t_vm *vm, int dump)
 
 static void print_winner(t_vm *vm)
 {
-	ft_assert(vm->winner < vm->n_champs, "invalid winner #%d", vm->winner);
-	ft_printf("Player %d (%s) won\n",
-			  vm->winner + 1, vm->champs[vm->winner].name);
+	if (vm->mode == MODE_DEFAULT)
+	{
+		ft_assert(vm->winner < vm->n_champs, "invalid winner #%d", vm->winner);
+		ft_printf("Player %d (%s) won\n",
+				  vm->winner + 1, vm->champs[vm->winner].name);
+	}
+	else if (vm->mode == MODE_VIS)
+	{
+		ft_printf("type: end\n\n");
+	}
 }
 
 int main(int ac, char **av)
@@ -83,13 +90,12 @@ int main(int ac, char **av)
 	parse_args(&args, ac, av);
 	t_vm_init(&vm, ft_len((void **)&args.champs[0]), args.mode);
 	i = -1;
+	if (vm.mode & (MODE_DEFAULT | MODE_DUMP))
+		ft_printf("Introducing contestants...\n");
 	while (args.champs[++i])
 		t_vm_add_champ(&vm, args.champs[i]);
 	main_loop(&vm, args.dump);
-	if (vm.mode == MODE_DEFAULT)
-		print_winner(&vm);
+	print_winner(&vm);
 	t_vm_destruct(&vm);
-	if (vm.mode == MODE_VIS)
-		write_end();
 	return (0);
 }
