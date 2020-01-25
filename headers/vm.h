@@ -17,10 +17,20 @@
 # include "libft_compat.h"
 # include "op.h"
 
+# define VM_USAGE "USGE: ./corewar [-v | -p | -d N] [[-n N] CHAMP] ..."
+
 # define VM_ENDIAN BIG_ENDIAN
+# define MODE_DUMP 3
 # define MODE_PRINT 2
 # define MODE_VIS 1
 # define MODE_DEFAULT 0
+
+typedef struct
+{
+	const char *champs[5];
+	int dump;
+	uint mode;
+} t_args;
 
 typedef struct
 {
@@ -65,13 +75,15 @@ typedef struct
 	t_proc *proc;
 	uint cursor;
 	int changed_memory;
+	int invalid_args;
 } t_op_context;
 
+void parse_args(t_args *args, int ac, char **av);
 size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ);
 void t_proc_init(t_proc *proc, int id, int pc);
 int t_op_exec(t_op *op, t_proc *proc, t_vm *vm);
 t_op *read_op(const byte *ptr);
-void t_vm_init(t_vm *vm, int n_champs);
+void t_vm_init(t_vm *vm, int n_champs, uint mode);
 void t_vm_add_champ(t_vm *vm, const char *f_name);
 void t_vm_step(t_vm *vm);
 void t_vm_destruct(t_vm *vm);

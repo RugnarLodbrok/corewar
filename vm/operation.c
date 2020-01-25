@@ -14,6 +14,8 @@
 #include "vm.h"
 
 extern t_op op_tab[17];
+extern byte code_to_arg_type[5];
+extern byte arg_type_to_code[5];
 
 t_op *read_op(const byte *ptr)
 {
@@ -26,20 +28,24 @@ t_op *read_op(const byte *ptr)
 	return (0);
 }
 
-void t_op_parse_arg_types(t_op_context *c, byte *arg_types)
+void t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 {
 	uint i;
 	byte *pc;
 
-	ft_bzero(arg_types, sizeof(byte) * 3);
+	ft_bzero(arg_codes, sizeof(byte) * 3);
 	if (!c->op->need_types)
-		ft_memcpy(arg_types, &c->op->args_types[0],
-				  sizeof(byte) * c->op->args_num);
+		for (i = 0; i < c->op->args_num; ++i)
+			arg_codes[i] = arg_type_to_code[c->op->args_types[i]];
 	else
 	{
 		pc = c->vm->mem + c->proc->pc;
 		for (i = 0; i < c->op->args_num; ++i)
-			arg_types[i] = (*(pc + c->cursor) >> (2 * (3 - i))) & (byte)0x3;
+		{
+			arg_codes[i] = (*(pc + c->cursor) >> (2 * (3 - i))) & (byte)0x3;
+			if (!(code_to_arg_type[arg_codes[i]] & c->op->args_types[i]))
+				c->invalid_args = 1;
+		}
 		c->cursor++;
 	}
 }
@@ -51,31 +57,47 @@ void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 	uint reg_number;
 	byte *p;
 
-	p = c->vm->mem + c->proc->pc;
+//	p = c->vm->mem + c->proc->pc;
+//	p = &c->vm->mem[((char*)c->proc->pc - (char*)c->vm->mem) % MEM_SIZE];
 	for (i = 0; i < c->op->args_num; ++i)
 	{
 		if (arg_types[i] == DIR_CODE)
 		{
-			args[i] = p + c->cursor; //todo: % MEM_SIZE
-//			args[i] = p + read_short_int(c->vm->host_endian,
-//										  (p + c->cursor) % MEM_SIZE); //todo: % MEM_SIZE
-
+			//args[i] = p + c->cursor; //todo: % MEM_SIZE
+			args[i] = &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE];
 			c->cursor += c->op->dir_size;
 		}
 		else if (arg_types[i] == IND_CODE)
 		{
-			args[i] = p + read_short_int(c->vm,
-										 c->vm->mem + (c->proc->pc + c->cursor) % MEM_SIZE);
-			c->cursor += IND_SIZE;
+			args[i] = &c->vm->mem[(c->proc->pc +
+                       read_short_int(c->vm,c->vm->mem + (c->proc->pc + c->cursor) % MEM_SIZE))];
+			//args[i] = p + read_short_int(c->vm,
+            //							 c->vm->mem + (c->proc->pc + c->cursor) % MEM_SIZE);
+            c->cursor += IND_SIZE;
 		}
 		else if (arg_types[i] == REG_CODE)
 		{
-			reg_number = read_uint(c->vm->host_endian, p + c->cursor,
-								   REG_ARG_SIZE);
-			args[i] = &c->proc->reg[reg_number - 1][0];
+			//reg_number = read_uint(c->vm->host_endian, p + c->cursor,
+			//					   REG_ARG_SIZE) - 1;
+            reg_number = read_uint(c->vm->host_endian,
+                                   &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE],REG_ARG_SIZE) - 1;
+            if (reg_number >= REG_NUMBER)
+				c->invalid_args = 1;
+			else
+				args[i] = &c->proc->reg[reg_number][0];
 			c->cursor += REG_ARG_SIZE;
 		}
 	}
+}
+
+void t_op_context_init(t_op_context *c, t_vm *vm, t_proc *proc, t_op *op)
+{
+	ft_bzero(c, sizeof(t_op_context));
+	c->op = op;
+	c->proc = proc;
+	c->vm = vm;
+	c->cursor = 1;
+	c->changed_memory = -1;
 }
 
 int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
@@ -85,20 +107,20 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	byte *args[3];
 	byte arg_types[3];
 
-	c.op = op;
-	c.proc = proc;
-	c.vm = vm;
-	c.cursor = 1;
-	c.changed_memory = -1;
+	t_op_context_init(&c, vm, proc, op);
 	ft_bzero(&args[0], 3);
-	old_pc = proc->pc;
+	old_pc = proc->pc % MEM_SIZE;
 	t_op_parse_arg_types(&c, &arg_types[0]);
 	t_op_parse_args(&c, &arg_types[0], &args[0]);
-	op->f(&c, args[0], args[1], args[2]);
-	if (c.changed_memory >= 0 && c.changed_memory < MEM_SIZE &&
-		vm->mode == MODE_VIS)
-		write_mem(vm->mem, c.changed_memory, REG_SIZE, proc->id);
+	if (!c.invalid_args)
+	{
+		op->f(&c, args[0], args[1], args[2]);
+		if (c.changed_memory >= 0 && c.changed_memory < MEM_SIZE &&
+			vm->mode == MODE_VIS)
+			write_mem(vm->mem, c.changed_memory, REG_SIZE, proc->id);
+	}
 	if (proc->pc == old_pc)
-		proc->pc += c.cursor;
+		//proc->pc += c.cursor;
+	    proc->pc = (proc->pc + c.cursor) % MEM_SIZE;
 	return (0);
 }

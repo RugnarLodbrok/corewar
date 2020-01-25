@@ -3,6 +3,7 @@ NAME = corewar
 FLAGS = -Wall -Wextra -Werror
 
 SRC_VM = \
+	vm/parse_args.c \
 	vm/vm_main.c \
 	vm/vm.c \
 	vm/proc.c \
@@ -24,7 +25,7 @@ vm : $(NAME)
 $(NAME) : libft/libft.a $(OBJ_VM)
 	$(CC) -o $(NAME) $(OBJ_VM) $(OPTION) -L libft/ -lft
 
-%.o: %.c
+%.o: %.c headers/vm.h headers/op.h headers/ops.h
 	@echo compile $(<) "->" $(<:.c=.o)
 	$(CC) $(FLAGS) -c $(<) -o $(<:.c=.o) $(OPTION)
 

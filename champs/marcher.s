@@ -8,14 +8,14 @@
 init:
     ld %:end, r16
     ld %:start, r15
-    sub r16, r15, r14
+    sub r16, r15, r14 ; r14 = size of all code to copy
     ld %4, r15 ; const r15 = 4
     ld %64, r14 ; const r14 = 64
     sti r1, %:live, %1
 start:
-    ld %0, r2 ; let i = 0;
+    ld %0, r2 ; r2 = iterator
 loop:
-    ldi %:start, r2, r3
+    ldi %:start, r2, r3 ;r3 = memory chunk
     sti r3, %:end, r2
     live:
         live %0

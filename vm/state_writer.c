@@ -21,18 +21,13 @@ void write_memory(t_vm *vm)
 {
 	int i;
 
-	if (vm->mode == MODE_DEFAULT)
-		ft_print_memory(vm->mem, 64);
-	if (vm->mode == MODE_VIS)
+	ft_printf("type: mem_init\n");
+	ft_printf("data: \"");
+	for (i = 0; i < MEM_SIZE; ++i)
 	{
-		ft_printf("type: mem_init\n");
-		ft_printf("data: \"");
-		for (i = 0; i < MEM_SIZE; ++i)
-		{
-			put_hex(*&vm->mem[i], 2);
-		}
-		ft_printf("\"\n\n");
+		put_hex(*&vm->mem[i], 2);
 	}
+	ft_printf("\"\n\n");
 }
 
 void write_proc_update(t_proc *proc, const char *name)
@@ -54,7 +49,7 @@ void write_proc_update(t_proc *proc, const char *name)
 	else
 		ft_printf("op: %s\n", "null");
 	ft_printf("delay: %d\n", proc->delay);
-	ft_printf("pc: %d\n", proc->pc);
+	ft_printf("pc: %d\n", proc->pc % MEM_SIZE);
 	ft_printf("registers:\n");
 	for (i = 0; i < REG_NUMBER; ++i)
 		ft_printf("  - \"%02hhx%02hhx%02hhx%02hhx\"\n",
@@ -76,12 +71,12 @@ void write_mem(byte *mem, int pc, size_t len, int proc_id)
 	size_t i;
 
 	ft_printf("type: write_mem\n");
-	ft_printf("pc: %d\n", pc);
+	ft_printf("pc: %d\n", pc % MEM_SIZE);
 	if (proc_id >= 0)
 		ft_printf("proc_id: %d\n", proc_id);
 	ft_printf("data: \"");
 	for (i = 0; i < len; ++i)
-		put_hex(mem[pc + i], 2);
+		put_hex(mem[(pc + i) % MEM_SIZE], 2);
 	ft_printf("\"\n\n");
 }
 

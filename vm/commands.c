@@ -118,7 +118,6 @@ int 	op_zjmp(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	(void)arg2;
 	(void)arg3;
-	ft_printf("carry: %d\n", c->proc->carry);
 	if (c->proc->carry)
 		c->proc->pc += read_short_int(c->vm, arg1);
 	return (1);
@@ -129,7 +128,6 @@ int 	op_ldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	int n1;
 	int n2;
 	int target;
-	byte *a2;
 
 	n1 = read_short_int(c->vm, arg1);
 	n2 = read_short_int(c->vm, arg2);

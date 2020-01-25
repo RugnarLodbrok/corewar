@@ -3,6 +3,7 @@ cmake-build-debug
 cmake-build-release
 *.o
 *.a
+*.cor
 *.exe
 *.lib
 .DS_Store
