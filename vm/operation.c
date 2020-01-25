@@ -53,17 +53,12 @@ void t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 {
 	int i;
-	int mod_mem;
 	uint reg_number;
-	byte *p;
 
-//	p = c->vm->mem + c->proc->pc;
-//	p = &c->vm->mem[((char*)c->proc->pc - (char*)c->vm->mem) % MEM_SIZE];
 	for (i = 0; i < c->op->args_num; ++i)
 	{
 		if (arg_types[i] == DIR_CODE)
 		{
-			//args[i] = p + c->cursor; //todo: % MEM_SIZE
 			args[i] = &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE];
 			c->cursor += c->op->dir_size;
 		}
@@ -71,19 +66,10 @@ void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 		{
 			args[i] = &c->vm->mem[(c->proc->pc +
                        read_short_int(c->vm,c->vm->mem + (c->proc->pc + c->cursor) % MEM_SIZE))];
-			//args[i] = p + read_short_int(c->vm,
-            //							 c->vm->mem + (c->proc->pc + c->cursor) % MEM_SIZE);
             c->cursor += IND_SIZE;
 		}
 		else if (arg_types[i] == REG_CODE)
 		{
-		    /*
-<<<<<<< HEAD
-            reg_number = read_uint(c->vm->host_endian,
-                                   &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE],REG_ARG_SIZE) - 1;
-            if (reg_number >= REG_NUMBER)
-=======
-		    */
 			reg_number = read_uint(c->vm,
                      &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE], REG_ARG_SIZE) - 1;
 			if (reg_number >= REG_NUMBER)
