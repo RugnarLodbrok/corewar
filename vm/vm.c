@@ -35,8 +35,10 @@ void t_vm_print(t_vm *vm)
 
 	for (i = 0; i < MEM_SIZE; ++i)
 	{
+		if (!(i % OCTETS_PER_LINE))
+			ft_printf("0x%04x : ", i);
 		put_hex(vm->mem[i], 2);
-		if ((i + 1) % 32)
+		if ((i + 1) % OCTETS_PER_LINE)
 			ft_printf(" ");
 		else
 			ft_printf("\n");
@@ -99,7 +101,7 @@ static void t_vm_kill_proc(t_vm *vm, t_proc *proc)
 	proc->dead = 1;
 	found_alive = 0;
 	i = -1;
-	while(++i < vm->procs.count)
+	while(++i < (int)vm->procs.count)
 	{
 		proc = vm->procs.data[i];
 		found_alive += !proc->dead;

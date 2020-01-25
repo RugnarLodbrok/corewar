@@ -18,12 +18,13 @@
 # include "op.h"
 
 # define VM_USAGE "USGE: ./corewar [-v | -p | -d N] [[-n N] CHAMP] ..."
+# define OCTETS_PER_LINE 64
 
 # define VM_ENDIAN BIG_ENDIAN
-# define MODE_DUMP 3
-# define MODE_PRINT 2
-# define MODE_VIS 1
-# define MODE_DEFAULT 0
+# define MODE_DUMP 8
+# define MODE_PRINT 4
+# define MODE_VIS 2
+# define MODE_DEFAULT 1
 
 typedef struct
 {
