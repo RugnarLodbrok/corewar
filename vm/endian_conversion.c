@@ -18,48 +18,74 @@ short int read_short_int(t_vm *vm, byte *mem)
 
 	ret = 0;
 	if (vm->host_endian == LITTLE_ENDIAN)
-		if (mem < vm->mem || mem >=vm->mem + MEM_SIZE)
+		if (mem < vm->mem || mem >= vm->mem + MEM_SIZE)
 			mem += 2;
-	ft_memcpy(&ret, mem, sizeof(short int));
+	t_vm_memcpy(vm, &ret, mem, sizeof(short int));
 	if (VM_ENDIAN != vm->host_endian)
 		ft_memrev(&ret, sizeof(short int));
 	return (ret);
 }
 
-int read_int(int host_endian, byte *mem, byte len)
-{
-	int ret;
-
-	ret = 0;
-	if (host_endian == LITTLE_ENDIAN)
-		ft_memcpy(((byte*)&ret) + (4 - len), mem, len);
-	else
-		ft_memcpy(&ret, mem, len);
-	if (VM_ENDIAN != host_endian)
-		ft_memrev(&ret, 4);
-	return (ret);
-}
-
-uint read_uint(int host_endian, byte *mem, byte len)
+uint read_uint(t_vm *vm, byte *mem, byte len)
 {
 	uint ret;
 
 	ret = 0;
-	if (host_endian == LITTLE_ENDIAN)
-		ft_memcpy(((byte*)&ret) + (4 - len), mem, len);
+	if (vm->host_endian == LITTLE_ENDIAN)
+		t_vm_memcpy(vm, ((byte *)&ret) + (4 - len), mem, len);
 	else
-		ft_memcpy(&ret, mem, len);
-	if (VM_ENDIAN != host_endian)
+		t_vm_memcpy(vm, &ret, mem, len);
+	if (VM_ENDIAN != vm->host_endian)
 		ft_memrev(&ret, 4);
 	return (ret);
 }
 
-void write_uint(int host_endian, uint v, byte *mem, byte len)
+void write_uint(t_vm *vm, uint v, byte *mem, byte len)
 {
-	if (VM_ENDIAN != host_endian)
+	if (VM_ENDIAN != vm->host_endian)
 		ft_memrev(&v, 4);
-	if (host_endian == LITTLE_ENDIAN)
-		ft_memcpy(mem, ((byte*)&v) + (4 - len), len);
+	if (vm->host_endian == LITTLE_ENDIAN)
+		t_vm_memcpy(vm, mem, ((byte *)&v) + (4 - len), len);
 	else
-		ft_memcpy(mem, &v, len);
+		t_vm_memcpy(vm, mem, &v, len);
+}
+
+byte *apply_idx_mod(t_op_context *c, byte *ptr)
+{
+	long int pc;
+	int proc_pc;
+
+	pc = ptr - c->vm->mem;
+	if (pc < 0 || pc >= MEM_SIZE)
+		return (ptr);
+	proc_pc = c->proc->pc;
+	return &c->vm->mem[((pc - proc_pc) % IDX_MOD + proc_pc) % MEM_SIZE];
+}
+
+void t_vm_memcpy(t_vm *vm, void *dst, const void *src, long int n)
+{
+	long int i;
+	byte *ds;
+	const byte *sr = src;
+	const long int s = (byte*)src - vm->mem;
+	const long int d = (byte*)dst - vm->mem;
+
+	ds = dst;
+	i = -1;
+	if (d >= 0 && d <= MEM_SIZE)
+	{
+		if (s >= 0 && s <= MEM_SIZE)
+			while (++i < n)
+				ds[(d + i) % MEM_SIZE] = sr[(s + i) % MEM_SIZE];
+		else
+			while (++i < n)
+				ds[(d + i) % MEM_SIZE] = sr[i];
+
+	}
+	else if (s >= 0 && s <= MEM_SIZE)
+		while (++i < n)
+			ds[i] = sr[(s + i) % MEM_SIZE];
+	else
+		while (++i < n)
+			ds[i] = sr[i];
 }

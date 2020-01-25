@@ -17,6 +17,7 @@ int 	op_ldi(t_op_context *c, void *arg1, void *arg2, void *arg3);
 int 	op_sti(t_op_context *c, void *arg1, void *arg2, void *arg3);
 int 	op_lld(t_op_context *c, void *arg1, void *arg2, void *arg3);
 int		op_lldi(t_op_context *c, void *arg1, void *arg2, void *arg3);
+int		op_fork(t_op_context *c, void *arg1, void *arg2, void *arg3);
 int		op_lfork(t_op_context *c, void *arg1, void *arg2, void *arg3);
 
 #endif
