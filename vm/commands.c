@@ -171,9 +171,10 @@ int		op_lfork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	(void)arg2;
 	(void)arg3;
 	p = (t_proc*)malloc(sizeof(t_proc));
-	ft_memcpy(p, &c->proc, sizeof(t_proc));
+	ft_memcpy(p, c->proc, sizeof(t_proc));
 	p->id = c->vm->procs.count;
 	p->pc = (p->pc + (read_short_int(c->vm, arg1) % IDX_MOD)) % MEM_SIZE;
+	p->op = 0;
 	t_arrayp_push(&c->vm->procs, p);
 	return (1);
 }
