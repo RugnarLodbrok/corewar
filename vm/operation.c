@@ -77,11 +77,16 @@ void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 		}
 		else if (arg_types[i] == REG_CODE)
 		{
-			//reg_number = read_uint(c->vm->host_endian, p + c->cursor,
-			//					   REG_ARG_SIZE) - 1;
+		    /*
+<<<<<<< HEAD
             reg_number = read_uint(c->vm->host_endian,
                                    &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE],REG_ARG_SIZE) - 1;
             if (reg_number >= REG_NUMBER)
+=======
+		    */
+			reg_number = read_uint(c->vm,
+                     &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE], REG_ARG_SIZE) - 1;
+			if (reg_number >= REG_NUMBER)
 				c->invalid_args = 1;
 			else
 				args[i] = &c->proc->reg[reg_number][0];

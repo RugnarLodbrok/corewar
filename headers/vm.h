@@ -57,6 +57,7 @@ typedef struct
 	uint mode;
 	int n_champs;
 	t_champ champs[4];
+	int winner;
 	uint i;
 	byte *mem;
 	t_arrayp procs;
@@ -98,8 +99,16 @@ void write_cycle(uint i);
 void write_end(void);
 
 short int read_short_int(t_vm *vm, byte *mem);
+/*
+<<<<<<< HEAD
 int read_int(int host_endian, byte *mem, byte len);
 uint read_uint(int host_endian, byte *mem, byte len);
 void write_uint(int host_endian, uint v, byte *mem, byte len);
 void *ft_memcpy2(byte *mem, void *dst, const void *src, size_t n);
+=======
+*/
+uint read_uint(t_vm *vm, byte *mem, byte len);
+void write_uint(t_vm *vm, uint v, byte *mem, byte len);
+byte *apply_idx_mod(t_op_context *c, byte *ptr);
+void t_vm_memcpy(t_vm *vm, void *dst, const void *src, long int n);
 #endif
