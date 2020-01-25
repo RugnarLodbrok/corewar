@@ -35,8 +35,10 @@ void t_vm_print(t_vm *vm)
 
 	for (i = 0; i < MEM_SIZE; ++i)
 	{
+		if (!(i % OCTETS_PER_LINE))
+			ft_printf("0x%04x : ", i);
 		put_hex(vm->mem[i], 2);
-		if ((i + 1) % 32)
+		if ((i + 1) % OCTETS_PER_LINE)
 			ft_printf(" ");
 		else
 			ft_printf("\n");
@@ -91,6 +93,22 @@ static void t_vm_proc_step(t_vm *vm, t_proc *proc)
 	proc->op = 0;
 }
 
+static void t_vm_kill_proc(t_vm *vm, t_proc *proc)
+{
+	int i;
+	int found_alive;
+
+	proc->dead = 1;
+	found_alive = 0;
+	i = -1;
+	while(++i < (int)vm->procs.count)
+	{
+		proc = vm->procs.data[i];
+		found_alive += !proc->dead;
+	}
+	vm->shutdown = !found_alive;
+}
+
 static void t_vm_death_check(t_vm *vm)
 {
 	int i;
@@ -100,7 +118,7 @@ static void t_vm_death_check(t_vm *vm)
 	{
 		proc = vm->procs.data[i];
 		if (vm->i - proc->last_live > vm->cycles_to_die || !proc->last_live)
-			proc->dead = 1;
+			t_vm_kill_proc(vm, proc);
 	}
 	if (vm->live_ops_since_check >= NBR_LIVE ||
 		vm->checks_without_delta > MAX_CHECKS)

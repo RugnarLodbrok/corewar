@@ -39,6 +39,7 @@ void parse_args(t_args *args, int ac, char **av)
 	ft_assert(ac > 1, VM_USAGE);
 	i = 1;
 	ft_bzero(args, sizeof(t_args));
+	args->mode = MODE_DEFAULT;
 	while (i < ac)
 	{
 		parse_arg(args, ac, av, &i);

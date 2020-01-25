@@ -168,14 +168,15 @@ int		op_lfork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
     t_proc	*p;
 
-    (void)arg2;
-    (void)arg3;
-    p = (t_proc*)malloc(sizeof(t_proc));
-    ft_memcpy(p, &c->proc, sizeof(t_proc));
-    p->id = c->vm->procs.count;
-    p->pc = (p->pc + (read_short_int(c->vm, arg1) % IDX_MOD)) % MEM_SIZE;
-    t_arrayp_push(&c->vm->procs, p);
-    return (1);
+	(void)arg2;
+	(void)arg3;
+	p = (t_proc*)malloc(sizeof(t_proc));
+	ft_memcpy(p, c->proc, sizeof(t_proc));
+	p->id = c->vm->procs.count;
+	p->pc = (p->pc + (read_short_int(c->vm, arg1) % IDX_MOD)) % MEM_SIZE;
+	p->op = 0;
+	t_arrayp_push(&c->vm->procs, p);
+	return (1);
 }
 
 int		op_fork(t_op_context *c, void *arg1, void *arg2, void *arg3)
@@ -187,12 +188,12 @@ int		op_aff(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
     byte d;
 
-    (void)arg2;
-    (void)arg3;
-    d = (byte)read_uint(c->vm, arg1, REG_SIZE);
-    if (c->vm->mode == MODE_VIS)
-        write_proc_stdout(c->vm, c->proc->id, d);
-    if (c->vm->mode == MODE_DEFAULT)
-        write(1, &d, 1);
-    return (1);
+	(void)arg2;
+	(void)arg3;
+	d = (byte)read_uint(c->vm, arg1, REG_SIZE);
+	if (c->vm->mode == MODE_VIS)
+		write_proc_stdout(c->vm, c->proc->id, d);
+	if (c->vm->mode == MODE_DEFAULT)
+		write(1, &d, 1);
+	return (1);
 }
