@@ -71,8 +71,7 @@ void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 		}
 		else if (arg_types[i] == REG_CODE)
 		{
-			reg_number = read_uint(c->vm, p + c->cursor,
-								   REG_ARG_SIZE) - 1;
+			reg_number = read_uint(c->vm, p + c->cursor, REG_ARG_SIZE) - 1;
 			if (reg_number >= REG_NUMBER)
 				c->invalid_args = 1;
 			else

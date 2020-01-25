@@ -76,15 +76,15 @@ void t_vm_memcpy(t_vm *vm, void *dst, const void *src, long int n)
 	{
 		if (s >= 0 && s <= MEM_SIZE)
 			while (++i < n)
-				ds[(d + i) % MEM_SIZE] = sr[(s + i) % MEM_SIZE];
+				vm->mem[(d + i) % MEM_SIZE] = vm->mem[(s + i) % MEM_SIZE];
 		else
 			while (++i < n)
-				ds[(d + i) % MEM_SIZE] = sr[i];
+				vm->mem[(d + i) % MEM_SIZE] = sr[i];
 
 	}
 	else if (s >= 0 && s <= MEM_SIZE)
 		while (++i < n)
-			ds[i] = sr[(s + i) % MEM_SIZE];
+			ds[i] = vm->mem[(s + i) % MEM_SIZE];
 	else
 		while (++i < n)
 			ds[i] = sr[i];

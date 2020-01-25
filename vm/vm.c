@@ -57,7 +57,7 @@ void t_vm_add_champ(t_vm *vm, const char *f_name)
 			  vm->champs[n].name, len, CHAMP_MAX_SIZE);
 	proc = malloc(sizeof(t_proc));
 	t_proc_init(proc, n, pc);
-	write_uint(vm->host_endian, UINT_MAX - n - 1, &proc->reg[0][0], 4);
+	write_uint(vm, UINT_MAX - n - 1, &proc->reg[0][0], 4);
 	t_arrayp_push(&vm->procs, proc);
 	if (vm->mode == MODE_VIS)
 	{
