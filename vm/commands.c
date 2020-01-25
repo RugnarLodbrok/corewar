@@ -4,11 +4,15 @@
 int		op_live(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	uint reg_value;
+	uint champ_id;
+
 	(void)arg2;
 	(void)arg3;
+	c->proc->last_live = c->vm->i;
 	reg_value = read_uint(c->vm->host_endian, arg1, REG_SIZE);
-	if (UINT_MAX - reg_value == c->proc->champ_id + 1)
-		c->proc->last_live = c->vm->i;
+	champ_id = UINT_MAX - reg_value - 1;
+	if (champ_id == c->proc->champ_id && champ_id < c->vm->n_champs)
+		c->vm->winner = champ_id;
 	return (1);
 }
 

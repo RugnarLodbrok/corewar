@@ -57,6 +57,7 @@ typedef struct
 	uint mode;
 	int n_champs;
 	t_champ champs[4];
+	int winner;
 	uint i;
 	byte *mem;
 	t_arrayp procs;

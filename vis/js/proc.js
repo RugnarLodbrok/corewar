@@ -1,5 +1,5 @@
 COLORS = [
-    {color: "#bb0000", bg_bright: "#990000", bg: "#660000"},
+    {color: "#bb0000", bg_bright: "#880000", bg: "#550000"},
     {color: "#00bb00", bg_bright: "#007700", bg: "#004400"},
     {color: "#ffff00", bg_bright: "#cccc00", bg: "#999900"},
     {color: "#0000dd", bg_bright: "#000099", bg: "#000055"},
