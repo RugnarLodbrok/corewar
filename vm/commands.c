@@ -193,6 +193,6 @@ int		op_aff(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	if (c->vm->mode == MODE_VIS)
 		write_proc_stdout(c->vm, c->proc->id, d);
 	if (c->vm->mode == MODE_DEFAULT)
-		write(1, &c, 1);
+		write(1, &d, 1);
 	return (1);
 }
