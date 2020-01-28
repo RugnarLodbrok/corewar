@@ -55,7 +55,7 @@ byte *apply_idx_mod(t_op_context *c, byte *ptr)
 	long int pc;
 	int proc_pc;
 
-	pc = ptr - c->vm->mem;
+	pc = (ptr - c->vm->mem) % MEM_SIZE;
 	if (pc < 0 || pc >= MEM_SIZE)
 		return (ptr);
 	proc_pc = c->proc->pc;
@@ -64,14 +64,14 @@ byte *apply_idx_mod(t_op_context *c, byte *ptr)
 
 void t_vm_memcpy(t_vm *vm, void *dst, const void *src, long int n)
 {
-	long int i;
-	byte *ds;
-	const byte *sr = src;
-	const long int s = (byte*)src - vm->mem;
-	const long int d = (byte*)dst - vm->mem;
+    long int i;
+    byte *ds;
+    const byte *sr = src;
+    const long int s = ((byte *) src - vm->mem);
+    const long int d = ((byte *) dst - vm->mem);
 
-	ds = dst;
-	i = -1;
+    ds = dst;
+    i = -1;
 	if (d >= 0 && d <= MEM_SIZE)
 	{
 		if (s >= 0 && s <= MEM_SIZE)
@@ -80,7 +80,6 @@ void t_vm_memcpy(t_vm *vm, void *dst, const void *src, long int n)
 		else
 			while (++i < n)
 				vm->mem[(d + i) % MEM_SIZE] = sr[i];
-
 	}
 	else if (s >= 0 && s <= MEM_SIZE)
 		while (++i < n)
@@ -88,4 +87,5 @@ void t_vm_memcpy(t_vm *vm, void *dst, const void *src, long int n)
 	else
 		while (++i < n)
 			ds[i] = sr[i];
+
 }

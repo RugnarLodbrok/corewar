@@ -18,5 +18,5 @@ void t_proc_init(t_proc *proc, int id, int pc)
 	ft_bzero(proc, sizeof(t_proc));
 	proc->id = id;
 	proc->champ_id = id;
-	proc->pc = pc;
+	proc->pc = pc % MEM_SIZE;
 }

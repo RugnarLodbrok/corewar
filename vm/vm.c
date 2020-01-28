@@ -41,7 +41,7 @@ void t_vm_print(t_vm *vm)
 		if ((i + 1) % OCTETS_PER_LINE)
 			ft_printf(" ");
 		else
-			ft_printf("\n");
+			ft_printf(" \n");
 	}
 }
 
@@ -58,7 +58,7 @@ void t_vm_add_champ(t_vm *vm, const char *f_name)
 	ft_assert(len <= CHAMP_MAX_SIZE, "champ `%s` size %d > %d\n",
 			  vm->champs[n].name, len, CHAMP_MAX_SIZE);
 	proc = malloc(sizeof(t_proc));
-	t_proc_init(proc, n, pc);
+	t_proc_init(proc, n, pc % MEM_SIZE);
 	write_uint(vm, UINT_MAX - n - 1, &proc->reg[0][0], 4);
 	t_arrayp_push(&vm->procs, proc);
 	if (vm->mode == MODE_VIS)
@@ -77,7 +77,8 @@ static void t_vm_proc_step(t_vm *vm, t_proc *proc)
 	{
 		if (!(proc->op = read_op(&vm->mem[proc->pc % MEM_SIZE])))
 		{
-			proc->pc++;
+			//proc->pc++;
+			proc->pc = (proc->pc + 1) % MEM_SIZE;
 			return;
 		}
 		proc->delay = proc->op->delay;
