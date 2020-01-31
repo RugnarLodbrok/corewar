@@ -66,7 +66,7 @@ void write_proc_stdout(t_vm *vm, int proc_num, char c)
 	ft_printf("char: \"%c\"\n\n", c);
 }
 
-void write_mem(byte *mem, int pc, size_t len, int proc_id)
+void write_mem(byte *mem, uint pc, size_t len, int proc_id)
 {
 	size_t i;
 

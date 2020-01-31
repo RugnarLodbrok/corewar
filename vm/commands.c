@@ -162,11 +162,9 @@ int op_sti(t_op_context *c, void *arg1, void *arg2, void *arg3)
 
     n2 = read_short_int(c->vm, arg2);
     n3 = read_short_int(c->vm, arg3);
-    target = (int)c->proc->pc + (n2 + n3) % IDX_MOD;
-    //t_vm_memcpy(c->vm, &c->vm->mem[target % MEM_SIZE], arg1, REG_SIZE);
-    t_vm_memcpy(c->vm, &c->vm->mem[target], arg1, REG_SIZE);
-    //c->changed_memory = target % MEM_SIZE;
-    c->changed_memory = target;
+    target = (int)c->proc->pc % MEM_SIZE + (n2 + n3) % IDX_MOD;
+    t_vm_memcpy(c->vm, &c->vm->mem[target % MEM_SIZE], arg1, REG_SIZE);
+    c->changed_memory = target % MEM_SIZE;
     return (1);
 }
 

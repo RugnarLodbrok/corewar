@@ -82,7 +82,7 @@ typedef struct
 
 void parse_args(t_args *args, int ac, char **av);
 size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ);
-void t_proc_init(t_proc *proc, int id, int pc);
+void t_proc_init(t_proc *proc, int id, uint pc);
 int t_op_exec(t_op *op, t_proc *proc, t_vm *vm);
 t_op *read_op(const byte *ptr);
 void t_vm_init(t_vm *vm, int n_champs, uint mode);
@@ -95,7 +95,7 @@ void put_hex(uint v, int digits);
 void write_memory(t_vm *vm);
 void write_proc_update(t_proc *proc, const char *name);
 void write_proc_stdout(t_vm *vm, int proc_num, char c);
-void write_mem(byte *mem, int pc, size_t len, int proc_id);
+void write_mem(byte *mem, uint pc, size_t len, int proc_id);
 void write_cycle(uint i);
 
 short int read_short_int(t_vm *vm, byte *mem);

@@ -13,7 +13,7 @@
 #include "vm.h"
 #include "libft.h"
 
-void t_proc_init(t_proc *proc, int id, int pc)
+void t_proc_init(t_proc *proc, int id, uint pc)
 {
 	ft_bzero(proc, sizeof(t_proc));
 	proc->id = id;
