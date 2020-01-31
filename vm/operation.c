@@ -31,7 +31,6 @@ t_op *read_op(const byte *ptr)
 void t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 {
 	uint i;
-	byte *pc;
 
 	ft_bzero(arg_codes, sizeof(byte) * 3);
 	if (!c->op->need_types)
@@ -39,15 +38,14 @@ void t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 			arg_codes[i] = arg_type_to_code[c->op->args_types[i]];
 	else
 	{
-		pc = c->vm->mem + c->proc->pc % MEM_SIZE;
 		for (i = 0; i < c->op->args_num; ++i)
 		{
-			arg_codes[i] = (*(pc + c->cursor) >> (2 * (3 - i))) & (byte)0x3;
+			arg_codes[i] = (c->vm->mem[mem_mod(c->proc->pc + c->cursor)]
+					>> (2 * (3 - i))) & (byte)0x3; //!achtung
 			if (!(code_to_arg_type[arg_codes[i]] & c->op->args_types[i]))
 				c->invalid_args = 1;
 		}
-		//c->cursor++;
-		c->cursor = (c->cursor + 1) % MEM_SIZE;
+		c->cursor++;
 	}
 }
 
@@ -60,27 +58,29 @@ void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 	{
 		if (arg_types[i] == DIR_CODE)
 		{
-			args[i] = &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE];
-			//c->cursor += c->op->dir_size;
-            c->cursor = (c->cursor + c->op->dir_size) % MEM_SIZE;
-        }
+			args[i] = &c->vm->mem[mem_mod(c->proc->pc + c->cursor)];
+			c->cursor += c->op->dir_size;
+		}
 		else if (arg_types[i] == IND_CODE)
 		{
-			args[i] = &c->vm->mem[(c->proc->pc +
-                       read_short_int(c->vm,c->vm->mem + (c->proc->pc + c->cursor) % MEM_SIZE))];
-            //c->cursor += IND_SIZE;
-            c->cursor = (c->cursor + IND_SIZE) % MEM_SIZE;
+			args[i] = &c->vm->mem[
+					mem_mod(c->proc->pc +
+							read_short_int(c->vm, &c->vm->mem[mem_mod(
+									c->proc->pc + c->cursor)]))];
+			c->cursor += IND_SIZE;
 		}
 		else if (arg_types[i] == REG_CODE)
 		{
 			reg_number = read_uint(c->vm,
-                     &c->vm->mem[(c->proc->pc + c->cursor) % MEM_SIZE], REG_ARG_SIZE) - 1;
+								   &c->vm->mem[mem_mod(
+										   c->proc->pc + c->cursor)],
+								   REG_ARG_SIZE) - 1;
 			if (reg_number >= REG_NUMBER)
 				c->invalid_args = 1;
 			else
 				args[i] = &c->proc->reg[reg_number][0];
 			//c->cursor += REG_ARG_SIZE;
-			c->cursor = (c->cursor + REG_ARG_SIZE) % MEM_SIZE;
+			c->cursor +=  REG_ARG_SIZE;
 		}
 	}
 }
@@ -104,7 +104,7 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 
 	t_op_context_init(&c, vm, proc, op);
 	ft_bzero(&args[0], 3);
-	old_pc = proc->pc % MEM_SIZE;
+	old_pc = mem_mod(proc->pc);
 	t_op_parse_arg_types(&c, &arg_types[0]);
 	t_op_parse_args(&c, &arg_types[0], &args[0]);
 	if (!c.invalid_args)
@@ -116,6 +116,6 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	}
 	if (proc->pc == old_pc)
 		//proc->pc += c.cursor;
-	    proc->pc = (proc->pc + c.cursor) % MEM_SIZE;
+		proc->pc = mem_mod(proc->pc + c.cursor);
 	return (0);
 }

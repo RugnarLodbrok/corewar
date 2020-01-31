@@ -57,7 +57,7 @@ void t_vm_add_champ(t_vm *vm, const char *f_name)
 	ft_assert(len <= CHAMP_MAX_SIZE, "champ `%s` size %d > %d\n",
 			  vm->champs[n].name, len, CHAMP_MAX_SIZE);
 	proc = malloc(sizeof(t_proc));
-	t_proc_init(proc, n, pc % MEM_SIZE);
+	t_proc_init(proc, n, mem_mod(pc));
 	write_uint(vm, UINT_MAX - n, &proc->reg[0][0], 4);
 	t_arrayp_push(&vm->procs, proc);
 	if (vm->mode == MODE_VIS)
@@ -74,10 +74,9 @@ static void t_vm_proc_step(t_vm *vm, t_proc *proc)
 {
 	if (!proc->op)
 	{
-		if (!(proc->op = read_op(&vm->mem[proc->pc % MEM_SIZE])))
+		if (!(proc->op = read_op(&vm->mem[mem_mod(proc->pc)])))
 		{
-			//proc->pc++;
-			proc->pc = (proc->pc + 1) % MEM_SIZE;
+			proc->pc = mem_mod(proc->pc + 1);
 			return;
 		}
 		proc->delay = proc->op->delay;
@@ -151,4 +150,11 @@ void t_vm_destruct(t_vm *vm)
 {
 	free(vm->mem);
 	t_arrayp_del(&vm->procs);
+}
+
+uint mem_mod(long int pc)
+{
+	while (pc < 0)
+		pc += MEM_SIZE;
+	return (pc % MEM_SIZE);
 }

@@ -103,4 +103,6 @@ uint read_uint(t_vm *vm, byte *mem, byte len);
 void write_uint(t_vm *vm, uint v, byte *mem, byte len);
 byte *apply_idx_mod(t_op_context *c, byte *ptr);
 void t_vm_memcpy(t_vm *vm, void *dst, const void *src, long int n);
+uint mem_mod(long int pc);
+
 #endif
