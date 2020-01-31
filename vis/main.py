@@ -14,6 +14,8 @@ HTTP_PORT = 8888
 ASM_DIR = 'champs'
 
 STDIN_F_NAME = 'stdin.txt'
+COREWAR_EXE = "cmake-build-debug/corewar_vm"
+# COREWAR_EXE = "corewar"
 
 
 def append_file(data):
@@ -44,7 +46,7 @@ class VM:
     async def __aiter__(self):
         print("starting", ", ".join(self.cors))
         self.p = await aiosp.create_subprocess_exec(
-            "cmake-build-debug/corewar_vm", "-v",
+            COREWAR_EXE, "-v",
             *(f"{ASM_DIR}/{cor}" for cor in self.cors),
             stdin=aiosp.PIPE,
             stdout=aiosp.PIPE)

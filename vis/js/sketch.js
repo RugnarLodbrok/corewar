@@ -9,6 +9,7 @@ class Client {
             buttons_bar: document.getElementById("buttons_bar"),
             status_bar: document.getElementById("status_bar"),
             speed_bar: document.getElementById("speed_bar"),
+            goto: document.getElementById("go_to_cycle"),
             selectors: [
                 document.getElementById("cor_select1"),
                 document.getElementById("cor_select2"),
@@ -25,6 +26,33 @@ class Client {
         this.stop_vm();
         this.elements.status_bar.textContent = "VM is down";
         this.init_selectors();
+        this.init_goto();
+    }
+
+    init_goto() {
+        let self = this;
+        this.elements.goto.onkeydown = function (e) {
+            if (e.key === "Enter") {
+                let v = this.value - 0;
+                this.value = "";
+                self.goto(v);
+            }
+        }
+    }
+
+    goto(i) {
+        let self = this;
+        if (this.vm.cycle <= i)
+            this.step(i - this.vm.cycle);
+        else if (this.vm.cycle >= i) {
+            this.socket.onclose = function () {
+                self.start_vm(function () {
+                    self.step(i);
+                    self.elements.goto.focus();
+                });
+            };
+            this.stop_vm("restart to goto back");
+        }
     }
 
     init_buttons() {
@@ -42,11 +70,7 @@ class Client {
         };
         this.buttons = {
             start: button('start vm', function (e) {
-                let cors = [];
-                for (let sel of self.elements.selectors)
-                    if (sel.value)
-                        cors.push(sel.value);
-                self.start_vm(cors)
+                self.start_vm();
             }),
             stop: button('stop vm', function (e) {
                 self.stop_vm("stop button");
@@ -71,7 +95,7 @@ class Client {
                     self.run_speed = 1;
                 else
                     self.run_speed *= 2;
-                let cps = Math.round(self.run_speed * RUN_SPEED_STEPS* 1000 / RUN_SPEED_DT);
+                let cps = Math.round(self.run_speed * RUN_SPEED_STEPS * 1000 / RUN_SPEED_DT);
                 self.elements.speed_bar.innerText = `speed ${cps} c/s`;
                 self.buttons.pause.disabled = false;
                 if (self.run_speed === 1)
@@ -119,7 +143,15 @@ class Client {
             });
     }
 
-    start_vm(cors) {
+    start_vm(on_open) {
+        let cors = [];
+        for (let sel of this.elements.selectors)
+            if (sel.value)
+                cors.push(sel.value);
+        this.start_vm_cors(cors, on_open)
+    }
+
+    start_vm_cors(cors, on_open) {
         let self = this;
         this.state = "up";
         if (this.vm) {
@@ -128,8 +160,10 @@ class Client {
         }
         this.vm = new VM();
         this.socket = new WebSocket(`ws://localhost:${WSS_PORT}/${cors.join(';')}`); //wss://?
-        this.socket.onopen = function () {
-        };
+        if (on_open)
+            this.socket.onopen = function () {
+                on_open()
+            };
         this.socket.onmessage = function (s) {
             let data = s.data;
             let msg = JSON.parse(data);
@@ -157,11 +191,13 @@ class Client {
         for (let sel of this.elements.selectors)
             sel.disabled = true;
         this.elements.status_bar.textContent = "VM is running";
+        this.elements.goto.disabled = false;
     }
 
     stop_vm(msg) {
         if (this.socket)
-            this.socket.close(1000, msg || "stop");
+            if (this.socket.readyState === this.socket.OPEN)
+                this.socket.close(1000, msg || "stop");
         this.state = "down";
         this.buttons.start.disabled = false;
         this.buttons.stop.disabled = true;
@@ -173,6 +209,7 @@ class Client {
         for (let sel of this.elements.selectors)
             sel.disabled = false;
         this.elements.status_bar.textContent = "VM is stopped";
+        this.elements.goto.disabled = true;
 
         if (this.run_timeout_id)
             clearTimeout(this.run_timeout_id);
