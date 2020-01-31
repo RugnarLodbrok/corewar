@@ -21,6 +21,7 @@
 # define OCTETS_PER_LINE 64
 
 # define VM_ENDIAN BIG_ENDIAN
+# define MODE_VERBOSE 16
 # define MODE_DUMP 8
 # define MODE_PRINT 4
 # define MODE_VIS 2
