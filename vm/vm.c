@@ -133,9 +133,11 @@ void t_vm_step(t_vm *vm)
 {
 	int i;
 	t_proc *proc;
+	int proc_cnt;
 
 	i = -1;
-	while (++i < (int)vm->procs.count)
+	proc_cnt = (int)vm->procs.count;
+	while (++i < proc_cnt)
 	{
 		if ((proc = vm->procs.data[i])->dead)
 			continue;
