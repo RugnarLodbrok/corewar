@@ -38,9 +38,8 @@ void t_vm_print(t_vm *vm)
 		if (!(i % OCTETS_PER_LINE))
 			ft_printf("0x%04x : ", i);
 		put_hex(vm->mem[i], 2);
-		if ((i + 1) % OCTETS_PER_LINE)
-			ft_printf(" ");
-		else
+		ft_printf(" ");
+		if (!((i + 1) % OCTETS_PER_LINE))
 			ft_printf("\n");
 	}
 }
@@ -59,7 +58,7 @@ void t_vm_add_champ(t_vm *vm, const char *f_name)
 			  vm->champs[n].name, len, CHAMP_MAX_SIZE);
 	proc = malloc(sizeof(t_proc));
 	t_proc_init(proc, n, pc);
-	write_uint(vm, UINT_MAX - n - 1, &proc->reg[0][0], 4);
+	write_uint(vm, UINT_MAX - n, &proc->reg[0][0], 4);
 	t_arrayp_push(&vm->procs, proc);
 	if (vm->mode == MODE_VIS)
 	{
@@ -83,10 +82,9 @@ static void t_vm_proc_step(t_vm *vm, t_proc *proc)
 		proc->delay = proc->op->delay;
 	}
 	if (proc->delay)
-	{
 		proc->delay--;
+	if (proc->delay)
 		return;
-	}
 	t_op_exec(proc->op, proc, vm);
 	proc->op = 0;
 }

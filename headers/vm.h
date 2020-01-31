@@ -99,14 +99,6 @@ void write_mem(byte *mem, int pc, size_t len, int proc_id);
 void write_cycle(uint i);
 
 short int read_short_int(t_vm *vm, byte *mem);
-/*
-<<<<<<< HEAD
-int read_int(int host_endian, byte *mem, byte len);
-uint read_uint(int host_endian, byte *mem, byte len);
-void write_uint(int host_endian, uint v, byte *mem, byte len);
-void *ft_memcpy2(byte *mem, void *dst, const void *src, size_t n);
-=======
-*/
 uint read_uint(t_vm *vm, byte *mem, byte len);
 void write_uint(t_vm *vm, uint v, byte *mem, byte len);
 byte *apply_idx_mod(t_op_context *c, byte *ptr);

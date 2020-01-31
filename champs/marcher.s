@@ -17,8 +17,8 @@ start:
 loop:
     ldi %:start, r2, r3 ;r3 = memory chunk
     sti r3, %:end, r2
-    live:
-        live %0
+live:
+    live %0
     add r2, r15, r2 ; r2 += 4
     sub r2, r14, r16 ; if r 16 = r2 - r14
     zjmp %:end  ;break

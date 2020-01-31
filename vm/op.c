@@ -72,7 +72,7 @@ t_op op_tab[17] = {
 		{T_REG, T_REG, T_REG},
 		5,
 		10,
-		"soustraction",
+		"subtraction",
 		op_sub,
 		1,
 		4,
