@@ -17,7 +17,7 @@
 # include "libft_compat.h"
 # include "op.h"
 
-# define VM_USAGE "USGE: ./corewar [-v | -p | -d N] [[-n N] CHAMP] ..."
+# define VM_USAGE "USGE: ./corewar [-i | -v | -p | -d N] [[-n N] CHAMP] ..."
 # define OCTETS_PER_LINE 64
 
 # define VM_ENDIAN BIG_ENDIAN
@@ -43,6 +43,7 @@ typedef struct
 
 typedef struct
 {
+    uint mark;
 	uint id;
 	uint champ_id;
 	uint pc;
@@ -57,6 +58,7 @@ typedef struct
 typedef struct
 {
 	uint mode;
+	int dump;
 	int n_champs;
 	t_champ champs[4];
 	int winner;

@@ -46,7 +46,7 @@ class VM:
     async def __aiter__(self):
         print("starting", ", ".join(self.cors))
         self.p = await aiosp.create_subprocess_exec(
-            COREWAR_EXE, "-v",
+            COREWAR_EXE, "-i",
             *(f"{ASM_DIR}/{cor}" for cor in self.cors),
             stdin=aiosp.PIPE,
             stdout=aiosp.PIPE)

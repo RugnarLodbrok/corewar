@@ -72,18 +72,28 @@ void t_vm_add_champ(t_vm *vm, const char *f_name)
 
 static void t_vm_proc_step(t_vm *vm, t_proc *proc)
 {
-	if (!proc->op)
+    int adv;
+    void *adr;
+
+    adr = 0;
+    if (!proc->op)
 	{
 		if (!(proc->op = read_op(&vm->mem[mem_mod(proc->pc)])))
 		{
-			proc->pc = mem_mod(proc->pc + 1);
+            proc->pc = mem_mod(proc->pc + 1);
 			return;
 		}
 		proc->delay = proc->op->delay;
-	}
+		adv = proc->pc - proc->mark;
+		if (vm->mode == MODE_VERBOSE && adv > 0)
+		{
+            ft_printf("ADV %d (%.4p -> %.4p)\n", adv, adr + vm->i, adr + vm->i + adv);
+        }
+        proc->mark = proc->pc;
+    }
 	if (proc->delay)
 		proc->delay--;
-	if (proc->delay)
+    if (proc->delay)
 		return;
 	t_op_exec(proc->op, proc, vm);
 	proc->op = 0;
@@ -139,11 +149,11 @@ void t_vm_step(t_vm *vm)
 	proc_cnt = (int)vm->procs.count;
 	while (++i < proc_cnt)
 	{
-		if ((proc = vm->procs.data[i])->dead)
-			continue;
-		t_vm_proc_step(vm, proc);
-	}
-	vm->i++;
+        if ((proc = vm->procs.data[i])->dead)
+            continue;
+        t_vm_proc_step(vm, proc);
+    }
+    vm->i++;
 	if (!--vm->i_before_check)
 		t_vm_death_check(vm);
 }

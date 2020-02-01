@@ -30,23 +30,23 @@ t_op *read_op(const byte *ptr)
 
 void t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 {
-	uint i;
+    uint i;
 
-	ft_bzero(arg_codes, sizeof(byte) * 3);
-	if (!c->op->need_types)
-		for (i = 0; i < c->op->args_num; ++i)
-			arg_codes[i] = arg_type_to_code[c->op->args_types[i]];
-	else
-	{
-		for (i = 0; i < c->op->args_num; ++i)
-		{
-			arg_codes[i] = (c->vm->mem[mem_mod(c->proc->pc + c->cursor)]
-					>> (2 * (3 - i))) & (byte)0x3; //!achtung
-			if (!(code_to_arg_type[arg_codes[i]] & c->op->args_types[i]))
-				c->invalid_args = 1;
-		}
-		c->cursor++;
-	}
+    ft_bzero(arg_codes, sizeof(byte) * 3);
+    if (!c->op->need_types)
+        for (i = 0; i < c->op->args_num; ++i)
+            arg_codes[i] = arg_type_to_code[c->op->args_types[i]];
+    else
+    {
+        for (i = 0; i < c->op->args_num; ++i)
+        {
+            arg_codes[i] = (c->vm->mem[mem_mod(c->proc->pc + c->cursor)]
+                    >> (2 * (3 - i))) & (byte)0x3; //!achtung
+            if (!(code_to_arg_type[arg_codes[i]] & c->op->args_types[i]))
+                c->invalid_args = 1;
+        }
+        c->cursor++;
+    }
 }
 
 void t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
