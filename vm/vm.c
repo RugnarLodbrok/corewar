@@ -74,7 +74,9 @@ static void t_vm_proc_step(t_vm *vm, t_proc *proc)
 {
     int adv;
     void *adr;
+    int i;
 
+    i = -1;
     adr = 0;
     if (!proc->op)
 	{
@@ -88,7 +90,15 @@ static void t_vm_proc_step(t_vm *vm, t_proc *proc)
 		if (vm->mode == MODE_VERBOSE && adv > 0)
 		{
 		    ft_printf("P    %d | %s\n", proc->id + 1, proc->op->name);
-            ft_printf("ADV %d (%.4p -> %.4p)\n", adv, adr + vm->i % MEM_SIZE, adr + (vm->i + adv) % MEM_SIZE);
+            ft_printf("ADV %d (%.4p -> %.4p) ", adv, adr + vm->i % MEM_SIZE, adr + (vm->i + adv) % MEM_SIZE);
+            while (++i < adv)
+            {
+                put_hex(vm->mem[(vm->i + i) % MEM_SIZE], 2);
+                ft_putchar(' ');
+            }
+            ft_putchar('\n');
+            if (!ft_strcmp(proc->op->name, "live"))
+                ft_printf("Player %d (%s) is said to be alive\n", proc->id + 1, vm->champs->name);
         }
         proc->mark = proc->pc;
     }
@@ -155,7 +165,9 @@ void t_vm_step(t_vm *vm)
         t_vm_proc_step(vm, proc);
     }
     vm->i++;
-	if (!--vm->i_before_check)
+    if (vm->mode == MODE_VERBOSE)
+        ft_printf("It is now cycle %d\n", vm->i);
+    if (!--vm->i_before_check)
 		t_vm_death_check(vm);
 }
 
