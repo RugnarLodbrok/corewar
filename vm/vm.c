@@ -87,7 +87,8 @@ static void t_vm_proc_step(t_vm *vm, t_proc *proc)
 		adv = proc->pc - proc->mark;
 		if (vm->mode == MODE_VERBOSE && adv > 0)
 		{
-            ft_printf("ADV %d (%.4p -> %.4p)\n", adv, adr + vm->i, adr + vm->i + adv);
+		    ft_printf("P    %d | %s\n", proc->id + 1, proc->op->name);
+            ft_printf("ADV %d (%.4p -> %.4p)\n", adv, adr + vm->i % MEM_SIZE, adr + (vm->i + adv) % MEM_SIZE);
         }
         proc->mark = proc->pc;
     }
