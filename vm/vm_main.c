@@ -91,7 +91,7 @@ int main(int ac, char **av)
 	t_args args;
 
 	parse_args(&args, ac, av);
-	t_vm_init(&vm, ft_len((void **)&args.champs[0]), args.mode);
+	t_vm_init(&vm, ft_len((void **)&args.champs[0]), args);
 	i = -1;
 	if (vm.mode & (MODE_DEFAULT | MODE_DUMP))
 		ft_printf("Introducing contestants...\n");
