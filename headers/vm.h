@@ -31,6 +31,7 @@ typedef struct
 {
 	const char *champs[5];
 	int dump;
+	int v_flag;
 	uint mode;
 } t_args;
 
@@ -59,6 +60,7 @@ typedef struct
 {
 	uint mode;
 	int dump;
+	int v_flag;
 	int n_champs;
 	t_champ champs[4];
 	int winner;
