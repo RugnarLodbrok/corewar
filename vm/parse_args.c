@@ -1,32 +1,44 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_args.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rpoetess <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/02/03 16:17:21 by rpoetess          #+#    #+#             */
+/*   Updated: 2020/02/03 16:17:22 by rpoetess         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "vm.h"
 
-static void add_champ(t_args *args, int idx, const char *champ_name)
+static void	add_champ(t_args *args, int idx, const char *champ_name)
 {
 	ft_assert(idx >= 0 && idx < 4, "bad player number #%d", idx);
 	ft_assert(!args->champs[idx], "player #%d already exists", idx);
 	args->champs[idx] = champ_name;
 }
 
-char        *get_error(t_uint mode)
+char		*get_error(t_uint mode)
 {
-    if (mode == MODE_VERBOSE)
-        return ("-v N      : Verbosity levels, can be added together to enable several\n"
-                "            - 16 : Show PC movements (Except for jumps)");
-    return("USGE: ./corewar [-i | -v | -p | -d N] [[-n N] CHAMP] ...");
+	if (mode == MODE_VERBOSE)
+		return ("-v N      : Verbosity levels, can be added together to enable several\n"
+		"            - 16 : Show PC movements (Except for jumps)");
+	return ("USGE: ./corewar [-i | -v | -p | -d N] [[-n N] CHAMP] ...");
 }
 
-static void parse_arg(t_args *args, int ac, char **av, int *i)
+static void	parse_arg(t_args *args, int ac, char **av, int *i)
 {
-	int idx;
+	int	idx;
 
 	if (!ft_strcmp("-i", av[*i]))
 		args->mode = MODE_VIS;
-	if(!ft_strcmp("-v", av[*i]))
-    {
+	if (!ft_strcmp("-v", av[*i]))
+	{
 		args->mode = MODE_VERBOSE;
-        ft_assert(++(*i) < ac, get_error(args->mode));
-        args->dump = ft_atoi(av[*i]);
-    }
+		ft_assert(++(*i) < ac, get_error(args->mode));
+		args->dump = ft_atoi(av[*i]);
+	}
 	else if (!ft_strcmp("-p", av[*i]))
 		args->mode = MODE_PRINT;
 	else if (!ft_strcmp("-d", av[*i]))
@@ -46,9 +58,9 @@ static void parse_arg(t_args *args, int ac, char **av, int *i)
 		add_champ(args, ft_len((void **)&args->champs[0]), av[*i]);
 }
 
-void parse_args(t_args *args, int ac, char **av)
+void		parse_args(t_args *args, int ac, char **av)
 {
-	int i;
+	int	i;
 
 	ft_assert(ac > 1, VM_USAGE);
 	i = 1;
