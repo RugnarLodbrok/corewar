@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   vm_main.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rpoetess <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/02/03 16:03:48 by rpoetess          #+#    #+#             */
+/*   Updated: 2020/02/03 16:03:50 by rpoetess         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 #include "get_next_line.h"
 #include "vm.h"
 
-static void loop_print(t_vm *vm)
+static void	loop_print(t_vm *vm)
 {
-	int status;
-	int steps;
-	char *line;
+	int		status;
+	int		steps;
+	char	*line;
 
 	t_vm_print(vm);
 	while ((status = get_next_line(STDIN_FILENO, &line)))
@@ -18,7 +30,7 @@ static void loop_print(t_vm *vm)
 		while (steps-- > 0)
 		{
 			if (vm->shutdown)
-				return;
+				return ;
 			t_vm_step(vm);
 			t_vm_print(vm);
 		}
@@ -26,11 +38,11 @@ static void loop_print(t_vm *vm)
 	ft_assert(!status, "can't read stdin");
 }
 
-static void loop_vis(t_vm *vm)
+static void	loop_vis(t_vm *vm)
 {
-	int status;
-	int i;
-	char *line;
+	int		status;
+	int		i;
+	char	*line;
 
 	while ((status = get_next_line(STDIN_FILENO, &line)) > 0)
 	{
@@ -39,7 +51,7 @@ static void loop_vis(t_vm *vm)
 		while (i-- > 0)
 		{
 			if (vm->shutdown)
-				return;
+				return ;
 			t_vm_step(vm);
 		}
 		i = -1;
@@ -50,7 +62,7 @@ static void loop_vis(t_vm *vm)
 	ft_assert(!status, "can't read stdin");
 }
 
-void main_loop(t_vm *vm, int dump)
+void		main_loop(t_vm *vm, int dump)
 {
 	if (vm->mode == MODE_DEFAULT)
 		while (!vm->shutdown)
@@ -58,8 +70,8 @@ void main_loop(t_vm *vm, int dump)
 	else if (vm->mode == MODE_VIS)
 		loop_vis(vm);
 	else if (vm->mode == MODE_VERBOSE)
-        while (!vm->shutdown)
-            t_vm_step(vm);
+		while (!vm->shutdown)
+			t_vm_step(vm);
 	else if (vm->mode == MODE_PRINT)
 		loop_print(vm);
 	else if (vm->mode == MODE_DUMP)
@@ -70,13 +82,13 @@ void main_loop(t_vm *vm, int dump)
 	}
 }
 
-static void print_winner(t_vm *vm)
+static void	print_winner(t_vm *vm)
 {
 	if (vm->mode == MODE_DEFAULT)
 	{
 		ft_assert(vm->winner < vm->n_champs, "invalid winner #%d", vm->winner);
 		ft_printf("Player %d (%s) won\n",
-				  vm->winner + 1, vm->champs[vm->winner].name);
+				vm->winner + 1, vm->champs[vm->winner].name);
 	}
 	else if (vm->mode == MODE_VIS)
 	{
@@ -84,11 +96,11 @@ static void print_winner(t_vm *vm)
 	}
 }
 
-int main(int ac, char **av)
+int			main(int ac, char **av)
 {
-	int i;
-	t_vm vm;
-	t_args args;
+	int		i;
+	t_vm	vm;
+	t_args	args;
 
 	parse_args(&args, ac, av);
 	t_vm_init(&vm, ft_len((void **)&args.champs[0]), args);

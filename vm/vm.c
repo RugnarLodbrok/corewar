@@ -15,7 +15,7 @@
 #include "vm.h"
 #include "stdio.h"
 
-void t_vm_init(t_vm *vm, int n_champs, t_args args)
+void		t_vm_init(t_vm *vm, int n_champs, t_args args)
 {
 	ft_bzero(vm, sizeof(t_vm));
 	vm->mode = args.mode;
@@ -30,9 +30,9 @@ void t_vm_init(t_vm *vm, int n_champs, t_args args)
 		write_memory(vm);
 }
 
-void t_vm_print(t_vm *vm)
+void		t_vm_print(t_vm *vm)
 {
-	int i;
+	int	i;
 
 	for (i = 0; i < MEM_SIZE; ++i)
 	{
@@ -45,18 +45,18 @@ void t_vm_print(t_vm *vm)
 	}
 }
 
-void t_vm_add_champ(t_vm *vm, const char *f_name)
+void		t_vm_add_champ(t_vm *vm, const char *f_name)
 {
-	uint pc;
-	t_proc *proc;
-	int n;
-	size_t len;
+	uint	pc;
+	t_proc	*proc;
+	int		n;
+	size_t	len;
 
 	n = (int)vm->procs.count;
 	pc = (MEM_SIZE / vm->n_champs) * n;
 	len = load_bytecode(f_name, (byte *)vm->mem + pc, &vm->champs[n]);
 	ft_assert(len <= CHAMP_MAX_SIZE, "champ `%s` size %d > %d\n",
-			  vm->champs[n].name, len, CHAMP_MAX_SIZE);
+			vm->champs[n].name, len, CHAMP_MAX_SIZE);
 	proc = malloc(sizeof(t_proc));
 	t_proc_init(proc, n, mem_mod(pc));
 	write_uint(vm, UINT_MAX - n, &proc->reg[0][0], 4);
@@ -71,58 +71,59 @@ void t_vm_add_champ(t_vm *vm, const char *f_name)
 				n + 1, len, vm->champs[n].name, vm->champs[n].comment);
 }
 
-static void t_vm_proc_step(t_vm *vm, t_proc *proc)
+static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 {
-    int adv;
-    void *adr;
-    int i;
+	int		adv;
+	void	*adr;
+	int		i;
 
-    i = -1;
-    adr = 0;
-    if (!proc->op)
+	i = -1;
+	adr = 0;
+	if (!proc->op)
 	{
 		if (!(proc->op = read_op(&vm->mem[mem_mod(proc->pc)])))
 		{
-            proc->pc = mem_mod(proc->pc + 1);
-			return;
+			proc->pc = mem_mod(proc->pc + 1);
+			return ;
 		}
 		proc->delay = proc->op->delay;
 		adv = proc->pc - proc->mark;
 		if (vm->mode == MODE_VERBOSE && adv > 0)
 		{
-		    if (vm->dump & 4)
-	    	    ft_printf("P    %d | %s\n", proc->id + 1, proc->op->name);
-		    if (vm->dump & 16)
-		    {
-                ft_printf("ADV %d (%.4p -> %.4p) ", adv, adr + vm->i % MEM_SIZE, adr + (vm->i + adv) % MEM_SIZE);
-                while (++i < adv) {
-                    put_hex(vm->mem[(vm->i + i) % MEM_SIZE], 2);
-                    ft_putchar(' ');
-                }
-                ft_putchar('\n');
-            }
-            if (vm->dump & 1 && !ft_strcmp(proc->op->name, "live"))
-                ft_printf("Player %d (%s) is said to be alive\n", proc->id + 1, vm->champs->name);
-        }
-        proc->mark = proc->pc;
-    }
+			if (vm->dump & 4)
+				ft_printf("P    %d | %s\n", proc->id + 1, proc->op->name);
+			if (vm->dump & 16)
+			{
+				ft_printf("ADV %d (%.4p -> %.4p) ", adv, adr + vm->i % MEM_SIZE, adr + (vm->i + adv) % MEM_SIZE);
+				while (++i < adv)
+				{
+					put_hex(vm->mem[(vm->i + i) % MEM_SIZE], 2);
+					ft_putchar(' ');
+				}
+				ft_putchar('\n');
+			}
+			if (vm->dump & 1 && !ft_strcmp(proc->op->name, "live"))
+				ft_printf("Player %d (%s) is said to be alive\n", proc->id + 1, vm->champs->name);
+		}
+		proc->mark = proc->pc;
+	}
 	if (proc->delay)
 		proc->delay--;
-    if (proc->delay)
-		return;
+	if (proc->delay)
+		return ;
 	t_op_exec(proc->op, proc, vm);
 	proc->op = 0;
 }
 
-static void t_vm_kill_proc(t_vm *vm, t_proc *proc)
+static void	t_vm_kill_proc(t_vm *vm, t_proc *proc)
 {
-	int i;
-	int found_alive;
+	int	i;
+	int	found_alive;
 
 	proc->dead = 1;
 	found_alive = 0;
 	i = -1;
-	while(++i < (int)vm->procs.count)
+	while (++i < (int)vm->procs.count)
 	{
 		proc = vm->procs.data[i];
 		found_alive += !proc->dead;
@@ -130,10 +131,10 @@ static void t_vm_kill_proc(t_vm *vm, t_proc *proc)
 	vm->shutdown = !found_alive;
 }
 
-static void t_vm_death_check(t_vm *vm)
+static void	t_vm_death_check(t_vm *vm)
 {
-	int i;
-	t_proc *proc;
+	int		i;
+	t_proc	*proc;
 
 	for (i = 0; i < (int)vm->procs.count; ++i)
 	{
@@ -154,34 +155,34 @@ static void t_vm_death_check(t_vm *vm)
 	vm->i_before_check = vm->cycles_to_die;
 }
 
-void t_vm_step(t_vm *vm)
+void		t_vm_step(t_vm *vm)
 {
-	int i;
-	t_proc *proc;
-	int proc_cnt;
+	int		i;
+	t_proc	*proc;
+	int		proc_cnt;
 
 	i = -1;
 	proc_cnt = (int)vm->procs.count;
 	while (++i < proc_cnt)
 	{
-        if ((proc = vm->procs.data[i])->dead)
-            continue;
-        t_vm_proc_step(vm, proc);
-    }
-    vm->i++;
-    if (vm->mode == MODE_VERBOSE && vm->dump & 2)
-        ft_printf("It is now cycle %d\n", vm->i);
-    if (!--vm->i_before_check)
+		if ((proc = vm->procs.data[i])->dead)
+			continue;
+		t_vm_proc_step(vm, proc);
+	}
+	vm->i++;
+	if (vm->mode == MODE_VERBOSE && vm->dump & 2)
+		ft_printf("It is now cycle %d\n", vm->i);
+	if (!--vm->i_before_check)
 		t_vm_death_check(vm);
 }
 
-void t_vm_destruct(t_vm *vm)
+void		t_vm_destruct(t_vm *vm)
 {
 	free(vm->mem);
 	t_arrayp_del(&vm->procs);
 }
 
-uint mem_mod(long int pc)
+uint		mem_mod(long int pc)
 {
 	while (pc < 0)
 		pc += MEM_SIZE;

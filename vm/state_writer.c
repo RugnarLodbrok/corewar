@@ -1,13 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   state_writer.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rpoetess <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/02/03 16:06:45 by rpoetess          #+#    #+#             */
+/*   Updated: 2020/02/03 16:06:49 by rpoetess         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 #include "vm.h"
 
-void put_hex(uint v, int digits)
+void	put_hex(uint v, int digits)
 {
-	unsigned int a;
-	unsigned int b;
+	unsigned int	a;
+	unsigned int	b;
 
 	if (!digits)
-		return;
+		return ;
 	a = v / 16;
 	b = v - a * 16;
 	put_hex(a, digits - 1);
@@ -17,9 +29,9 @@ void put_hex(uint v, int digits)
 		ft_putchar('a' - 10 + b);
 }
 
-void write_memory(t_vm *vm)
+void	write_memory(t_vm *vm)
 {
-	int i;
+	int	i;
 
 	ft_printf("type: mem_init\n");
 	ft_printf("data: \"");
@@ -30,16 +42,16 @@ void write_memory(t_vm *vm)
 	ft_printf("\"\n\n");
 }
 
-void write_proc_update(t_proc *proc, const char *name)
+void	write_proc_update(t_proc *proc, const char *name)
 {
-	int i;
+	int	i;
 
 	ft_printf("type: proc_update\n");
 	ft_printf("id: %d\n", proc->id);
 	if (proc->dead)
 	{
 		ft_printf("dead : 1\n\n");
-		return;
+		return ;
 	}
 	if (name)
 		ft_printf("name: %s\n", name);
@@ -53,12 +65,12 @@ void write_proc_update(t_proc *proc, const char *name)
 	ft_printf("registers:\n");
 	for (i = 0; i < REG_NUMBER; ++i)
 		ft_printf("  - \"%02hhx%02hhx%02hhx%02hhx\"\n",
-				  proc->reg[i][0], proc->reg[i][1],
-				  proc->reg[i][2], proc->reg[i][3]);
+				proc->reg[i][0], proc->reg[i][1],
+				proc->reg[i][2], proc->reg[i][3]);
 	ft_printf("\n");
 }
 
-void write_proc_stdout(t_vm *vm, int proc_num, char c)
+void	write_proc_stdout(t_vm *vm, int proc_num, char c)
 {
 	(void)vm;
 	ft_printf("type: arr\n");
@@ -66,9 +78,9 @@ void write_proc_stdout(t_vm *vm, int proc_num, char c)
 	ft_printf("char: \"%c\"\n\n", c);
 }
 
-void write_mem(byte *mem, uint pc, size_t len, int proc_id)
+void	write_mem(byte *mem, uint pc, size_t len, int proc_id)
 {
-	size_t i;
+	size_t	i;
 
 	ft_printf("type: write_mem\n");
 	ft_printf("pc: %d\n", mem_mod(pc));
@@ -80,7 +92,7 @@ void write_mem(byte *mem, uint pc, size_t len, int proc_id)
 	ft_printf("\"\n\n");
 }
 
-void write_cycle(uint i)
+void	write_cycle(uint i)
 {
 	ft_printf("type: cycle\n");
 	ft_printf("value: %u\n\n", i);
