@@ -76,25 +76,33 @@ static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 	int		adv;
 	void	*adr;
 	int		i;
+	uint	arg1;
+	uint	arg2;
+	uint	arg3;
 
 	i = -1;
 	adr = 0;
 	if (!proc->delay && !proc->op)
-		if (vm->mode == MODE_VERBOSE && vm->v_flag & 16)
+	{
+		if (vm->mode == MODE_VERBOSE)
 		{
-			adv = proc->pc - proc->mark;
-			if (adv > 0)
+			if (vm->v_flag & 16)
 			{
-				ft_printf("ADV %d (%.4p -> %.4p) ", adv, adr + proc->last_pos % MEM_SIZE,
-						  adr + (proc->last_pos + adv) % MEM_SIZE);
-				while (++i < adv)
+				adv = proc->pc - proc->mark;
+				if (adv > 0)
 				{
-					put_hex(vm->mem[(proc->pc + i) % MEM_SIZE], 2);
-					ft_putchar(' ');
+					ft_printf("ADV %d (%.4p -> %.4p) ", adv, adr + proc->last_pos % MEM_SIZE,
+							  adr + (proc->last_pos + adv) % MEM_SIZE);
+					while (++i < adv)
+					{
+						put_hex(vm->mem[(proc->last_pos + i) % MEM_SIZE], 2);
+						ft_putchar(' ');
+					}
+					ft_putchar('\n');
 				}
-				ft_putchar('\n');
 			}
 		}
+	}
 	if (!proc->op)
 	{
 		if (!(proc->op = read_op(&vm->mem[mem_mod(proc->pc)])))
@@ -105,10 +113,15 @@ static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 		proc->delay = proc->op->delay;
 		adv = proc->pc - proc->mark;
 		proc->last_pos = proc->pc;
-		if (vm->mode == MODE_VERBOSE && adv > 0)
+		if (vm->mode == MODE_VERBOSE)
 		{
 			if (vm->v_flag & 4)
-				ft_printf("P    %d | %s\n", proc->id + 1, proc->op->name);
+			{
+				arg1 = read_uint(vm, proc->op->f, 4);
+				ft_printf("P    %d | %s ", proc->id + 1, proc->op->name);
+				//ft_printf("%s", );
+				ft_printf("\n");
+			}
 			if (vm->v_flag & 1 && !ft_strcmp(proc->op->name, "live"))
 				ft_printf("Player %d (%s) is said to be alive\n", proc->id + 1, vm->champs->name);
 		}
