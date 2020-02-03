@@ -33,7 +33,7 @@ static void	parse_arg(t_args *args, int ac, char **av, int *i)
 
 	if (!ft_strcmp("-i", av[*i]))
 		args->mode = MODE_VIS;
-	if (!ft_strcmp("-v", av[*i]))
+	else if (!ft_strcmp("-v", av[*i]))
 	{
 		args->mode = MODE_VERBOSE;
 		ft_assert(++(*i) < ac, get_error(args->mode));
