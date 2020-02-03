@@ -82,6 +82,9 @@ static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 
 	i = -1;
 	adr = 0;
+	arg1 = 0;
+	arg2 = 0;
+	arg3 = 0;
 	if (!proc->delay && !proc->op)
 	{
 		if (vm->mode == MODE_VERBOSE)
@@ -117,9 +120,16 @@ static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 		{
 			if (vm->v_flag & 4)
 			{
-				arg1 = read_uint(vm, proc->op->f, 4);
+				if (proc->args[0] > 0)
+					arg1 = read_uint(vm, &proc->args[0], 4);
+					//ft_printf("%d\n", proc->args[0]);
+				if (proc->args[1] > 0)
+					arg2 = read_uint(vm, &proc->args[1], 4);
+				if (proc->args[2] > 0)
+					arg3 = read_uint(vm, &proc->args[2], 4);
 				ft_printf("P    %d | %s ", proc->id + 1, proc->op->name);
-				//ft_printf("%s", );
+			//	ft_printf("%d %d %d", proc->args[0], proc->args[1], proc->args[2]);
+			//	ft_printf("%d %d %d", arg1, arg2, arg3);
 				ft_printf("\n");
 			}
 			if (vm->v_flag & 1 && !ft_strcmp(proc->op->name, "live"))

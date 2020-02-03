@@ -49,6 +49,7 @@ typedef struct
 	uint champ_id;
 	uint pc;
 	uint last_pos;
+	byte args[3];
 	byte reg[REG_NUMBER][REG_SIZE];
 	uint carry;
 	uint last_live;
