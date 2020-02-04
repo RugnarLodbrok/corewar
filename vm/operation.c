@@ -97,7 +97,7 @@ void	t_op_context_init(t_op_context *c, t_vm *vm, t_proc *proc, t_op *op)
 int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 {
 	t_op_context	c;
-	uint			old_pc;
+	uint			old_pc; //todo: remove this variable
 	byte			*args[3];
 	byte			arg_types[3];
 
