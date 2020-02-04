@@ -115,7 +115,8 @@ static void	t_vm_death_check(t_vm *vm)
 	int		i;
 	t_proc	*proc;
 
-	for (i = 0; i < (int)vm->procs.count; ++i)
+	i = vm->procs.count;
+	while (--i >= 0)
 	{
 		proc = vm->procs.data[i];
 		if (vm->i - proc->last_live > vm->cycles_to_die || !proc->last_live)
@@ -140,13 +141,11 @@ void		t_vm_step(t_vm *vm)
 {
 	int		i;
 	t_proc	*proc;
-	int		proc_cnt;
 
 	if (vm->v_flag & VERBOSE_CYCLES)
 		ft_printf("It is now cycle %u\n", vm->i + 1);
-	i = -1;
-	proc_cnt = (int)vm->procs.count;
-	while (++i < proc_cnt)
+	i = (int)vm->procs.count;
+	while (--i >= 0)
 	{
 		if ((proc = vm->procs.data[i])->dead)
 			continue;

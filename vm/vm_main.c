@@ -107,7 +107,8 @@ int			main(int ac, char **av)
 	while (args.champs[++i])
 		t_vm_add_champ(&vm, args.champs[i]);
 	main_loop(&vm, args.dump);
-	print_winner(&vm);
+	if (vm.shutdown)
+		print_winner(&vm);
 	t_vm_destruct(&vm);
 	return (0);
 }
