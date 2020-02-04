@@ -98,7 +98,7 @@ static void	t_vm_kill_proc(t_vm *vm, t_proc *proc)
 
 	proc->dead = 1;
 	if (vm->v_flag & VERBOSE_DEATHS)
-		ft_printf("Process %u hasn't lived for %u cycles (CTD %u)\n",
+		ft_printf("Process %u hasn't lived for %u cycles (CTD %d)\n",
 				proc->id + 1, vm->i - proc->last_live - 1, vm->cycles_to_die);
 	found_alive = 0;
 	i = -1;
@@ -132,9 +132,9 @@ static void	t_vm_death_check(t_vm *vm)
 		if (vm->v_flag & VERBOSE_CYCLES)
 			ft_printf("Cycle to die is now %d\n", vm->cycles_to_die);
 	}
-	if (vm->cycles_to_die < 1)
-		vm->cycles_to_die = 1;
-	vm->i_before_check = vm->cycles_to_die;
+//	if (vm->cycles_to_die < 1)
+//		vm->cycles_to_die = 1;
+	vm->i_before_check = vm->cycles_to_die > 0 ? vm->cycles_to_die : 1;
 	vm->live_ops_since_check = 0;
 }
 
