@@ -151,6 +151,9 @@ static void	t_vm_kill_proc(t_vm *vm, t_proc *proc)
 	int	found_alive;
 
 	proc->dead = 1;
+	if (vm->v_flag & VERBOSE_DEATHS)
+		ft_printf("Process %u hasn't lived for %u cycles (CTD %u)\n",
+				proc->id, vm->i, vm->cycles_to_die);
 	found_alive = 0;
 	i = -1;
 	while (++i < (int)vm->procs.count)
