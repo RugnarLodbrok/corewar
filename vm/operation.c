@@ -79,8 +79,7 @@ void	t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 				c->invalid_args = 1;
 			else
 				args[i] = &c->proc->reg[reg_number][0];
-			//c->cursor += REG_ARG_SIZE;
-			c->cursor +=  REG_ARG_SIZE;
+			c->cursor += REG_ARG_SIZE;
 		}
 	}
 }
@@ -122,8 +121,8 @@ int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 		if (vm->v_flag & VERBOSE_PC)
 		{
 			ft_printf("ADV %u (0x%04x -> 0x%04x) ",
-					  c.cursor, old_pc, mem_mod(old_pc + c.cursor));
-			while (old_pc != proc->pc)
+					  c.cursor, old_pc, mem_mod((old_pc + c.cursor) % MEM_SIZE));
+			while (old_pc % MEM_SIZE != proc->pc % MEM_SIZE)
 			{
 				put_hex(vm->mem[old_pc++], 2);
 				ft_printf(" ");
