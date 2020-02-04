@@ -73,7 +73,7 @@ void		main_loop(t_vm *vm, int dump)
 		loop_print(vm);
 	else if (vm->mode == MODE_DUMP)
 	{
-		while (dump-- > 0)
+		while (dump-- > 0 && !vm->shutdown)
 			t_vm_step(vm);
 		t_vm_print(vm);
 	}
@@ -81,10 +81,10 @@ void		main_loop(t_vm *vm, int dump)
 
 static void	print_winner(t_vm *vm)
 {
-	if (vm->mode == MODE_DEFAULT)
+	if (vm->mode & (MODE_DEFAULT | MODE_DUMP | MODE_PRINT))
 	{
 		ft_assert(vm->winner < vm->n_champs, "invalid winner #%d", vm->winner);
-		ft_printf("Player %d (%s) won\n",
+		ft_printf("Contestant %d, \"%s\", has won !\n",
 				vm->winner + 1, vm->champs[vm->winner].name);
 	}
 	else if (vm->mode == MODE_VIS)

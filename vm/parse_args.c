@@ -27,7 +27,6 @@ static void	parse_arg(t_args *args, int ac, char **av, int *i)
 		args->mode = MODE_VIS;
 	else if (!ft_strcmp("-v", av[*i]))
 	{
-//		args->mode = MODE_VERBOSE;
 		ft_assert(++(*i) < ac, VM_USAGE);
 		args->v_flag = ft_atoi(av[*i]);
 	}
