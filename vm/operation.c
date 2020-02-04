@@ -118,7 +118,19 @@ int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 			write_mem(vm->mem, c.changed_memory, REG_SIZE, proc->id);
 	}
 	if (proc->pc == old_pc)
-		//proc->pc += c.cursor;
+	{
 		proc->pc = mem_mod(proc->pc + c.cursor);
+		if (vm->v_flag & VERBOSE_PC)
+		{
+			ft_printf("ADV %u (0x%04x -> 0x%04x) ",
+					  c.cursor, old_pc, mem_mod(proc->pc + c.cursor));
+			while (old_pc != proc->pc)
+			{
+				put_hex(vm->mem[old_pc++], 2);
+				ft_printf(" ");
+			}
+			ft_printf("\n");
+		}
+	}
 	return (0);
 }

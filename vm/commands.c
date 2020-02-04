@@ -41,12 +41,12 @@ int op_lld(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int	op_ld(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_ld(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	return (op_lld(c, apply_idx_mod(c, arg1), arg2, arg3));
 }
 
-int	op_st(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_st(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	(void)arg3;
 	arg2 = apply_idx_mod(c, arg2);
@@ -55,10 +55,10 @@ int	op_st(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int	op_add(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_add(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
-	int	a;
-	int	b;
+	int a;
+	int b;
 
 	a = read_uint(c->vm, arg1, 4);
 	b = read_uint(c->vm, arg2, 4);
@@ -67,10 +67,10 @@ int	op_add(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int	op_sub(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_sub(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
-	int	a;
-	int	b;
+	int a;
+	int b;
 
 	a = read_uint(c->vm, arg1, 4);
 	b = read_uint(c->vm, arg2, 4);
@@ -79,11 +79,11 @@ int	op_sub(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int	op_and(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_and(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
-	uint	a;
-	uint	b;
-	uint	r;
+	uint a;
+	uint b;
+	uint r;
 
 	a = read_uint(c->vm, apply_idx_mod(c, arg1), 4);
 	b = read_uint(c->vm, apply_idx_mod(c, arg2), 4);
@@ -92,11 +92,11 @@ int	op_and(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int	op_or(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_or(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
-	uint	a;
-	uint	b;
-	uint	d;
+	uint a;
+	uint b;
+	uint d;
 
 	a = read_uint(c->vm, arg1, 4);
 	b = read_uint(c->vm, arg2, 4);
@@ -109,11 +109,11 @@ int	op_or(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int	op_xor(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_xor(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
-	uint	a;
-	uint	b;
-	uint	d;
+	uint a;
+	uint b;
+	uint d;
 
 	a = read_uint(c->vm, arg1, 4);
 	b = read_uint(c->vm, arg2, 4);
@@ -126,20 +126,21 @@ int	op_xor(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int	op_zjmp(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_zjmp(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	(void)arg2;
 	(void)arg3;
 	if (c->proc->carry)
-		c->proc->pc = mem_mod(c->proc->pc + read_short_int(c->vm, arg1) % IDX_MOD);
+		c->proc->pc = mem_mod(
+				c->proc->pc + read_short_int(c->vm, arg1) % IDX_MOD);
 	return (1);
 }
 
-int	op_ldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_ldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
-	int	n1;
-	int	n2;
-	int	target;
+	int n1;
+	int n2;
+	int target;
 
 	n1 = read_short_int(c->vm, arg1);
 	n2 = read_short_int(c->vm, arg2);
@@ -149,11 +150,11 @@ int	op_ldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int	op_lldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_lldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
-	int	n1;
-	int	n2;
-	int	target;
+	int n1;
+	int n2;
+	int target;
 
 	n1 = read_short_int(c->vm, arg1);
 	n2 = read_short_int(c->vm, arg2);
@@ -162,11 +163,11 @@ int	op_lldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int	op_sti(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_sti(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
-	int	n2;
-	int	n3;
-	int	target;
+	int n2;
+	int n3;
+	int target;
 
 	n2 = read_short_int(c->vm, arg2);
 	n3 = read_short_int(c->vm, arg3);
@@ -176,7 +177,7 @@ int	op_sti(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int	op_lfork(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_lfork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	t_proc *p;
 
@@ -193,14 +194,14 @@ int	op_lfork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int	op_fork(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_fork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	return (op_lfork(c, apply_idx_mod(c, arg1), arg2, arg3));
 }
 
-int	op_aff(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_aff(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
-	byte	d;
+	byte d;
 
 	(void)arg2;
 	(void)arg3;
