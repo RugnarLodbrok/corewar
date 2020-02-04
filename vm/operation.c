@@ -121,8 +121,8 @@ int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 		if (vm->v_flag & VERBOSE_PC)
 		{
 			ft_printf("ADV %u (0x%04x -> 0x%04x) ",
-					  c.cursor, old_pc, mem_mod((proc->pc + c.cursor) % MEM_SIZE));
-			while (old_pc != proc->pc)
+					  c.cursor, old_pc, mem_mod((old_pc + c.cursor) % MEM_SIZE));
+			while (old_pc % MEM_SIZE != proc->pc % MEM_SIZE)
 			{
 				put_hex(vm->mem[old_pc++], 2);
 				ft_printf(" ");
