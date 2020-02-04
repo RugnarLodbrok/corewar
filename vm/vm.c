@@ -126,6 +126,8 @@ static void	t_vm_death_check(t_vm *vm)
 	{
 		vm->checks_without_delta = 0;
 		vm->cycles_to_die -= CYCLE_DELTA;
+		if (vm->v_flag & VERBOSE_CYCLES)
+			ft_printf("Cycle to die is now %u\n", vm->cycles_to_die);
 	}
 	else
 		vm->checks_without_delta++;
