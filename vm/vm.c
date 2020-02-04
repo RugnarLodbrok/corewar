@@ -118,7 +118,8 @@ static void	t_vm_death_check(t_vm *vm)
 	i = vm->procs.count;
 	while (--i >= 0)
 	{
-		proc = vm->procs.data[i];
+		if ((proc = vm->procs.data[i])->dead)
+			continue;
 		if (vm->i - proc->last_live > vm->cycles_to_die || !proc->last_live)
 			t_vm_kill_proc(vm, proc);
 	}
