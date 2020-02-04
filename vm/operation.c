@@ -105,26 +105,27 @@ int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	ft_bzero(&args[0], 3);
 	old_pc = mem_mod(proc->pc);
 	t_op_parse_arg_types(&c, &arg_types[0]);
-	if (vm->v_flag & VERBOSE_OPS)
-		ft_printf("P    %d | %s \n", proc->id + 1, proc->op->name);
 	t_op_parse_args(&c, &arg_types[0], &args[0]);
 	if (!c.invalid_args)
 	{
+		if (vm->v_flag & VERBOSE_OPS)
+			ft_printf("P %4d | %s\n", proc->id + 1, proc->op->name);
 		op->f(&c, args[0], args[1], args[2]);
 		if (c.changed_memory >= 0 && c.changed_memory < MEM_SIZE &&
 			vm->mode == MODE_VIS)
 			write_mem(vm->mem, c.changed_memory, REG_SIZE, proc->id);
 	}
-	if (proc->pc == old_pc)
+	if (op->code != 9 || !proc->carry)
 	{
 		proc->pc = mem_mod(proc->pc + c.cursor);
 		if (vm->v_flag & VERBOSE_PC)
 		{
 			ft_printf("ADV %u (0x%04x -> 0x%04x) ",
-					  c.cursor, old_pc, mem_mod((old_pc + c.cursor) % MEM_SIZE));
-			while (old_pc % MEM_SIZE != proc->pc % MEM_SIZE)
+					  c.cursor, old_pc, old_pc + c.cursor);
+			while (old_pc != proc->pc)
 			{
-				put_hex(vm->mem[old_pc++], 2);
+				put_hex(vm->mem[old_pc], 2);
+				old_pc = mem_mod(old_pc + 1);
 				ft_printf(" ");
 			}
 			ft_printf("\n");
