@@ -120,7 +120,7 @@ static void	t_vm_death_check(t_vm *vm)
 	{
 		if ((proc = vm->procs.data[i])->dead)
 			continue;
-		if (vm->i - proc->last_live > vm->cycles_to_die || !proc->last_live)
+		if ((int)(vm->i - proc->last_live) > vm->cycles_to_die || !proc->last_live)
 			t_vm_kill_proc(vm, proc);
 	}
 	vm->checks_without_delta++;
@@ -130,7 +130,7 @@ static void	t_vm_death_check(t_vm *vm)
 		vm->checks_without_delta = 0;
 		vm->cycles_to_die -= CYCLE_DELTA;
 		if (vm->v_flag & VERBOSE_CYCLES)
-			ft_printf("Cycle to die is now %u\n", vm->cycles_to_die);
+			ft_printf("Cycle to die is now %d\n", vm->cycles_to_die);
 	}
 	if (vm->cycles_to_die < 1)
 		vm->cycles_to_die = 1;

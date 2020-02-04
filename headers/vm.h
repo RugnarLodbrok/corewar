@@ -75,7 +75,7 @@ typedef struct
 	uint i;
 	byte *mem;
 	t_arrayp procs;
-	uint cycles_to_die;
+	int cycles_to_die;
 	uint i_before_check;
 	uint live_ops_since_check;
 	uint checks_without_delta;
