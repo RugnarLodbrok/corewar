@@ -152,8 +152,6 @@ void		t_vm_step(t_vm *vm)
 		t_vm_proc_step(vm, proc);
 	}
 	vm->i++;
-	if (vm->mode == MODE_VERBOSE && vm->v_flag & VERBOSE_CYCLES)
-		ft_printf("It is now cycle %d\n", vm->i);
 	if (!--vm->i_before_check)
 		t_vm_death_check(vm);
 }

@@ -105,17 +105,17 @@ int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	ft_bzero(&args[0], 3);
 	old_pc = mem_mod(proc->pc);
 	t_op_parse_arg_types(&c, &arg_types[0]);
-	if (vm->v_flag & VERBOSE_OPS)
-		ft_printf("P    %d | %s\n", proc->id + 1, proc->op->name);
 	t_op_parse_args(&c, &arg_types[0], &args[0]);
 	if (!c.invalid_args)
 	{
+		if (vm->v_flag & VERBOSE_OPS)
+			ft_printf("P %4d | %s\n", proc->id + 1, proc->op->name);
 		op->f(&c, args[0], args[1], args[2]);
 		if (c.changed_memory >= 0 && c.changed_memory < MEM_SIZE &&
 			vm->mode == MODE_VIS)
 			write_mem(vm->mem, c.changed_memory, REG_SIZE, proc->id);
 	}
-	if (proc->pc == old_pc)
+	if (op->code != 9 || !proc->carry)
 	{
 		proc->pc = mem_mod(proc->pc + c.cursor);
 		if (vm->v_flag & VERBOSE_PC)
