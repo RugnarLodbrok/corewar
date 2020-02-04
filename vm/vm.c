@@ -73,39 +73,6 @@ void		t_vm_add_champ(t_vm *vm, const char *f_name)
 
 static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 {
-/*	int		adv;
-	void	*adr;
-	int		i;
-	uint	arg1;
-	uint	arg2;
-	uint	arg3;
-
-	i = -1;
-	adr = 0;
-	arg1 = 0;
-	arg2 = 0;
-	arg3 = 0;
-	if (!proc->delay && !proc->op)
-	{
-		if (vm->mode == MODE_VERBOSE)
-		{
-			if (vm->v_flag & 16)
-			{
-				adv = proc->pc - proc->mark;
-				if (adv > 0)
-				{
-					ft_printf("ADV %d (%.4p -> %.4p) ", adv, adr + proc->last_pos % MEM_SIZE,
-							  adr + (proc->last_pos + adv) % MEM_SIZE);
-					while (++i < adv)
-					{
-						put_hex(vm->mem[(proc->last_pos + i) % MEM_SIZE], 2);
-						ft_putchar(' ');
-					}
-					ft_putchar('\n');
-				}
-			}
-		}
-	}*/
 	if (!proc->op)
 	{
 		if (!(proc->op = read_op(&vm->mem[mem_mod(proc->pc)])))
@@ -114,28 +81,7 @@ static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 			return ;
 		}
 		proc->delay = proc->op->delay;
-/*		adv = proc->pc - proc->mark;
 		proc->last_pos = proc->pc;
-		if (vm->mode == MODE_VERBOSE)
-		{
-			if (vm->v_flag & 4)
-			{
-				if (proc->args[0] > 0)
-					arg1 = read_uint(vm, &proc->args[0], 4);
-					//ft_printf("%d\n", proc->args[0]);
-				if (proc->args[1] > 0)
-					arg2 = read_uint(vm, &proc->args[1], 4);
-				if (proc->args[2] > 0)
-					arg3 = read_uint(vm, &proc->args[2], 4);
-				ft_printf("P    %d | %s ", proc->id + 1, proc->op->name);
-			//	ft_printf("%d %d %d", proc->args[0], proc->args[1], proc->args[2]);
-			//	ft_printf("%d %d %d", arg1, arg2, arg3);
-				ft_printf("\n");
-			}
-			if (vm->v_flag & 1 && !ft_strcmp(proc->op->name, "live"))
-				ft_printf("Player %d (%s) is said to be alive\n", proc->id + 1, vm->champs->name);
-		}
-		proc->mark = proc->pc;*/
 	}
 	if (proc->delay)
 		proc->delay--;
