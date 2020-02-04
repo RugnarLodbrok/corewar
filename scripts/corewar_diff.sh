@@ -15,7 +15,7 @@ then
   diff tmp/a.txt tmp/b.txt
 else
   ${MY_COREWAR} -v 31 -d $STEPS $CHAMPS | grep -v -E "0x(\d|\w)+ : " > tmp/a.txt
-  ${OG_COREWAR} -v 31 -d $STEPS $CHAMPS | sed "s///" | grep -v -E "0x(\d|\w)+ : " > tmp/b.txt
+  ${OG_COREWAR} -v 31 -d $STEPS $CHAMPS | sed -E "s/(P +[0-9]+ \| [a-z]+).*$/\1/g" | grep -v -E "0x(\d|\w)+ : " > tmp/b.txt
   diff tmp/a.txt tmp/b.txt
 #  echo "---"
 #  cat tmp/a.txt | grep -A1 -B1 Cycle > tmp/a1.txt

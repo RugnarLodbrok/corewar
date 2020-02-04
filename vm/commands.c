@@ -145,9 +145,11 @@ int op_ldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
 
 	n1 = read_short_int(c->vm, arg1);
 	n2 = read_short_int(c->vm, arg2);
-	target = (int)c->proc->pc + (n1 + n2) % IDX_MOD;
-	t_vm_memcpy(c->vm, arg3, &c->vm->mem[mem_mod(target)], REG_SIZE);
-//  t_vm_memcpy(c->vm, arg3, &c->vm->mem[target], REG_SIZE);
+	target = mem_mod((int)c->proc->pc + (n1 + n2) % IDX_MOD);
+	t_vm_memcpy(c->vm, arg3, &c->vm->mem[target], REG_SIZE);
+	if (c->vm->v_flag & VERBOSE_OPS)
+		ft_printf("       | -> load from %d + %d = %d (with pc and mod %d)\n",
+				  n1, n2, n1 + n2, target);
 	return (1);
 }
 
@@ -159,8 +161,11 @@ int op_lldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
 
 	n1 = read_short_int(c->vm, arg1);
 	n2 = read_short_int(c->vm, arg2);
-	target = (int)c->proc->pc + n1 + n2;
-	t_vm_memcpy(c->vm, arg3, &c->vm->mem[mem_mod(target)], REG_SIZE);
+	target = mem_mod((int)c->proc->pc + n1 + n2);
+	t_vm_memcpy(c->vm, arg3, &c->vm->mem[target], REG_SIZE);
+	if (c->vm->v_flag & VERBOSE_OPS)
+		ft_printf("       | -> load from %d + %d = %d (with pc and mod %d)",
+				  n1, n2, n1 + n2, target);
 	return (1);
 }
 
@@ -172,9 +177,12 @@ int op_sti(t_op_context *c, void *arg1, void *arg2, void *arg3)
 
 	n2 = read_short_int(c->vm, arg2);
 	n3 = read_short_int(c->vm, arg3);
-	target = (int)mem_mod(c->proc->pc) + (n2 + n3) % IDX_MOD;
-	t_vm_memcpy(c->vm, &c->vm->mem[mem_mod(target)], arg1, REG_SIZE);
-	c->changed_memory = mem_mod(target);
+	target = mem_mod((int)mem_mod(c->proc->pc) + (n2 + n3) % IDX_MOD);
+	t_vm_memcpy(c->vm, &c->vm->mem[target], arg1, REG_SIZE);
+	c->changed_memory = target;
+	if (c->vm->v_flag & VERBOSE_OPS)
+		ft_printf("       | -> store to %d + %d = %d (with pc and mod %d)\n",
+				  n2, n3, n2 + n3, target);
 	return (1);
 }
 

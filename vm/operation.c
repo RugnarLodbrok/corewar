@@ -106,7 +106,7 @@ int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	old_pc = mem_mod(proc->pc);
 	t_op_parse_arg_types(&c, &arg_types[0]);
 	if (vm->v_flag & VERBOSE_OPS)
-		ft_printf("P    %d | %s \n", proc->id + 1, proc->op->name);
+		ft_printf("P    %d | %s\n", proc->id + 1, proc->op->name);
 	t_op_parse_args(&c, &arg_types[0], &args[0]);
 	if (!c.invalid_args)
 	{
