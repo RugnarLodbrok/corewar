@@ -69,9 +69,6 @@ void		main_loop(t_vm *vm, int dump)
 			t_vm_step(vm);
 	else if (vm->mode == MODE_VIS)
 		loop_vis(vm);
-	else if (vm->mode == MODE_VERBOSE)
-		while (!vm->shutdown)
-			t_vm_step(vm);
 	else if (vm->mode == MODE_PRINT)
 		loop_print(vm);
 	else if (vm->mode == MODE_DUMP)

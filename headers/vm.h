@@ -17,7 +17,7 @@
 # include "libft_compat.h"
 # include "op.h"
 
-# define VM_USAGE "USGE: ./corewar [-i | -v | -p | -d N] [[-n N] CHAMP] ..."
+# define VM_USAGE "USGE: ./corewar [-i | -p] [-v V] [-d N] [[-n N] CHAMP] ..."
 # define OCTETS_PER_LINE 64
 
 # define VM_ENDIAN BIG_ENDIAN
@@ -26,6 +26,12 @@
 # define MODE_PRINT 4
 # define MODE_VIS 2
 # define MODE_DEFAULT 1
+
+# define VERBOSE_LIVES 1
+# define VERBOSE_CYCLES 2
+# define VERBOSE_OPS 4
+# define VERBOSE_DEATHS 8
+# define VERBOSE_PC 16
 
 typedef struct
 {

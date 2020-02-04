@@ -19,14 +19,6 @@ static void	add_champ(t_args *args, int idx, const char *champ_name)
 	args->champs[idx] = champ_name;
 }
 
-char		*get_error(t_uint mode)
-{
-	if (mode == MODE_VERBOSE)
-		return ("-v N      : Verbosity levels, can be added together to enable several\n"
-		"            - 16 : Show PC movements (Except for jumps)");
-	return ("USGE: ./corewar [-i | -v | -p | -d N] [[-n N] CHAMP] ...");
-}
-
 static void	parse_arg(t_args *args, int ac, char **av, int *i)
 {
 	int	idx;
@@ -35,8 +27,8 @@ static void	parse_arg(t_args *args, int ac, char **av, int *i)
 		args->mode = MODE_VIS;
 	else if (!ft_strcmp("-v", av[*i]))
 	{
-		args->mode = MODE_VERBOSE;
-		ft_assert(++(*i) < ac, get_error(args->mode));
+//		args->mode = MODE_VERBOSE;
+		ft_assert(++(*i) < ac, VM_USAGE);
 		args->v_flag = ft_atoi(av[*i]);
 	}
 	else if (!ft_strcmp("-p", av[*i]))

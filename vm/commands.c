@@ -13,22 +13,27 @@
 #include "libft.h"
 #include "vm.h"
 
-int	op_live(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_live(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
-	uint	reg_value;
-	uint	champ_id;
+	uint reg_value;
+	uint champ_id;
 
 	(void)arg2;
 	(void)arg3;
 	c->proc->last_live = c->vm->i;
 	reg_value = read_uint(c->vm, arg1, REG_SIZE);
-	champ_id = UINT_MAX - reg_value - 1;
+	champ_id = UINT_MAX - reg_value;
 	if (champ_id == c->proc->champ_id && champ_id < (uint)c->vm->n_champs)
+	{
 		c->vm->winner = champ_id;
+		if (c->vm->v_flag & VERBOSE_LIVES)
+			ft_printf("Player %d (%s) is said to be alive\n",
+					  champ_id + 1, c->vm->champs[champ_id].name);
+	}
 	return (1);
 }
 
-int	op_lld(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int op_lld(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	(void)arg3;
 	t_vm_memcpy(c->vm, arg2, arg1, sizeof(char) * REG_SIZE);

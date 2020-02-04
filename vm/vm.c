@@ -73,7 +73,7 @@ void		t_vm_add_champ(t_vm *vm, const char *f_name)
 
 static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 {
-	int		adv;
+/*	int		adv;
 	void	*adr;
 	int		i;
 	uint	arg1;
@@ -105,7 +105,7 @@ static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 				}
 			}
 		}
-	}
+	}*/
 	if (!proc->op)
 	{
 		if (!(proc->op = read_op(&vm->mem[mem_mod(proc->pc)])))
@@ -114,7 +114,7 @@ static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 			return ;
 		}
 		proc->delay = proc->op->delay;
-		adv = proc->pc - proc->mark;
+/*		adv = proc->pc - proc->mark;
 		proc->last_pos = proc->pc;
 		if (vm->mode == MODE_VERBOSE)
 		{
@@ -135,7 +135,7 @@ static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 			if (vm->v_flag & 1 && !ft_strcmp(proc->op->name, "live"))
 				ft_printf("Player %d (%s) is said to be alive\n", proc->id + 1, vm->champs->name);
 		}
-		proc->mark = proc->pc;
+		proc->mark = proc->pc;*/
 	}
 	if (proc->delay)
 		proc->delay--;
@@ -191,6 +191,8 @@ void		t_vm_step(t_vm *vm)
 	t_proc	*proc;
 	int		proc_cnt;
 
+	if (vm->v_flag & VERBOSE_CYCLES)
+		ft_printf("It is now cycle %u\n", vm->i + 1);
 	i = -1;
 	proc_cnt = (int)vm->procs.count;
 	while (++i < proc_cnt)
