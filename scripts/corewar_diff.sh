@@ -2,7 +2,7 @@
 
 OG_COREWAR="./asm/vm_champs/corewar"
 MY_COREWAR="./corewar"
-CHAMPS="champs/marcher.cor"
+CHAMPS="champs/jumper.cor"
 MODE=$1
 STEPS=$2
 shift
