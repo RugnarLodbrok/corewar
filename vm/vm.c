@@ -121,19 +121,19 @@ static void	t_vm_death_check(t_vm *vm)
 		if (vm->i - proc->last_live > vm->cycles_to_die || !proc->last_live)
 			t_vm_kill_proc(vm, proc);
 	}
+	vm->checks_without_delta++;
 	if (vm->live_ops_since_check >= NBR_LIVE ||
-		vm->checks_without_delta > MAX_CHECKS)
+		vm->checks_without_delta >= MAX_CHECKS)
 	{
 		vm->checks_without_delta = 0;
 		vm->cycles_to_die -= CYCLE_DELTA;
 		if (vm->v_flag & VERBOSE_CYCLES)
 			ft_printf("Cycle to die is now %u\n", vm->cycles_to_die);
 	}
-	else
-		vm->checks_without_delta++;
 	if (vm->cycles_to_die < 1)
 		vm->cycles_to_die = 1;
 	vm->i_before_check = vm->cycles_to_die;
+	vm->live_ops_since_check = 0;
 }
 
 void		t_vm_step(t_vm *vm)
