@@ -13,7 +13,7 @@
 #include "libft.h"
 #include "vm.h"
 
-int op_live(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int	op_live(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	uint reg_value;
 	uint champ_id;
@@ -29,105 +29,12 @@ int op_live(t_op_context *c, void *arg1, void *arg2, void *arg3)
 		c->vm->winner = champ_id;
 		if (c->vm->v_flag & VERBOSE_LIVES)
 			ft_printf("Player %d (%s) is said to be alive\n",
-					  champ_id + 1, c->vm->champs[champ_id].name);
+					champ_id + 1, c->vm->champs[champ_id].name);
 	}
 	return (1);
 }
 
-int op_lld(t_op_context *c, void *arg1, void *arg2, void *arg3)
-{
-	(void)arg3;
-	t_vm_memcpy(c->vm, arg2, arg1, sizeof(char) * REG_SIZE);
-	c->proc->carry = (0 == read_uint(c->vm, arg2, 4));
-	return (1);
-}
-
-int op_ld(t_op_context *c, void *arg1, void *arg2, void *arg3)
-{
-	return (op_lld(c, apply_idx_mod(c, arg1), arg2, arg3));
-}
-
-int op_st(t_op_context *c, void *arg1, void *arg2, void *arg3)
-{
-	(void)arg3;
-	arg2 = apply_idx_mod(c, arg2);
-	t_vm_memcpy(c->vm, arg2, arg1, sizeof(char) * REG_SIZE);
-	c->changed_memory = (int)((byte *)arg2 - c->vm->mem);
-	return (1);
-}
-
-int op_add(t_op_context *c, void *arg1, void *arg2, void *arg3)
-{
-	int a;
-	int b;
-
-	a = read_uint(c->vm, arg1, 4);
-	b = read_uint(c->vm, arg2, 4);
-	c->proc->carry = (a + b == 0);
-	write_uint(c->vm, a + b, arg3, 4);
-	return (1);
-}
-
-int op_sub(t_op_context *c, void *arg1, void *arg2, void *arg3)
-{
-	int a;
-	int b;
-
-	a = read_uint(c->vm, arg1, 4);
-	b = read_uint(c->vm, arg2, 4);
-	c->proc->carry = (a == b);
-	write_uint(c->vm, a - b, arg3, 4);
-	return (1);
-}
-
-int op_and(t_op_context *c, void *arg1, void *arg2, void *arg3)
-{
-	uint a;
-	uint b;
-	uint r;
-
-	a = read_uint(c->vm, apply_idx_mod(c, arg1), 4);
-	b = read_uint(c->vm, apply_idx_mod(c, arg2), 4);
-	c->proc->carry = !(r = a & b);
-	write_uint(c->vm, r, arg3, 4);
-	return (1);
-}
-
-int op_or(t_op_context *c, void *arg1, void *arg2, void *arg3)
-{
-	uint a;
-	uint b;
-	uint d;
-
-	a = read_uint(c->vm, arg1, 4);
-	b = read_uint(c->vm, arg2, 4);
-	d = a | b;
-	if (d == 0)
-		c->proc->carry = 1;
-	else
-		c->proc->carry = 0;
-	write_uint(c->vm, d, arg3, 4);
-	return (1);
-}
-
-int op_xor(t_op_context *c, void *arg1, void *arg2, void *arg3)
-{
-	uint a;
-	uint b;
-	uint d;
-
-	a = read_uint(c->vm, arg1, 4);
-	b = read_uint(c->vm, arg2, 4);
-	d = a ^ b;
-	if (d == 0)
-		c->proc->carry = 1;
-	else
-		c->proc->carry = 0;
-	write_uint(c->vm, d, arg3, 4);
-	return (1);
-}
-
-int op_zjmp(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int	op_zjmp(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	(void)arg2;
 	(void)arg3;
@@ -137,59 +44,7 @@ int op_zjmp(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int op_ldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
-{
-	int n1;
-	int n2;
-	int target;
-
-	n1 = read_short_int(c->vm, arg1);
-	n2 = read_short_int(c->vm, arg2);
-	target = (int)c->proc->pc + (n1 + n2) % IDX_MOD;
-	if (c->vm->v_flag & VERBOSE_OPS)
-		ft_printf("       | -> load from %d + %d = %d (with pc and mod %d)\n",
-				  n1, n2, n1 + n2, target);
-	target = mem_mod(target);
-	t_vm_memcpy(c->vm, arg3, &c->vm->mem[target], REG_SIZE);
-	return (1);
-}
-
-int op_lldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
-{
-	int n1;
-	int n2;
-	int target;
-
-	n1 = read_short_int(c->vm, arg1);
-	n2 = read_short_int(c->vm, arg2);
-	target = (int)c->proc->pc + n1 + n2;
-	if (c->vm->v_flag & VERBOSE_OPS)
-		ft_printf("       | -> load from %d + %d = %d (with pc and mod %d)",
-				  n1, n2, n1 + n2, target);
-	target = mem_mod(target);
-	t_vm_memcpy(c->vm, arg3, &c->vm->mem[target], REG_SIZE);
-	return (1);
-}
-
-int op_sti(t_op_context *c, void *arg1, void *arg2, void *arg3)
-{
-	int n2;
-	int n3;
-	int target;
-
-	n2 = read_short_int(c->vm, arg2);
-	n3 = read_short_int(c->vm, arg3);
-	target = (int)mem_mod(c->proc->pc) + (n2 + n3) % IDX_MOD;
-	if (c->vm->v_flag & VERBOSE_OPS)
-		ft_printf("       | -> store to %d + %d = %d (with pc and mod %d)\n",
-				  n2, n3, n2 + n3, target);
-	target = mem_mod(target);
-	t_vm_memcpy(c->vm, &c->vm->mem[target], arg1, REG_SIZE);
-	c->changed_memory = target;
-	return (1);
-}
-
-int op_lfork(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int	op_lfork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	t_proc *p;
 
@@ -206,12 +61,12 @@ int op_lfork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	return (1);
 }
 
-int op_fork(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int	op_fork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	return (op_lfork(c, apply_idx_mod(c, arg1), arg2, arg3));
 }
 
-int op_aff(t_op_context *c, void *arg1, void *arg2, void *arg3)
+int	op_aff(t_op_context *c, void *arg1, void *arg2, void *arg3)
 {
 	byte d;
 

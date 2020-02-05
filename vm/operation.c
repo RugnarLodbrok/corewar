@@ -32,13 +32,15 @@ void	t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 {
 	uint	i;
 
+	i = -1;
 	ft_bzero(arg_codes, sizeof(byte) * 3);
 	if (!c->op->need_types)
-		for (i = 0; i < c->op->args_num; ++i)
+		while (++i < c->op->args_num)
 			arg_codes[i] = arg_type_to_code[c->op->args_types[i]];
 	else
 	{
-		for (i = 0; i < c->op->args_num; ++i)
+		i = -1;
+		while (++i < c->op->args_num)
 		{
 			arg_codes[i] = (c->vm->mem[mem_mod(c->proc->pc + c->cursor)]
 					>> (2 * (3 - i))) & (byte)0x3; //!achtung
@@ -54,7 +56,8 @@ void	t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 	int		i;
 	uint	reg_number;
 
-	for (i = 0; i < c->op->args_num; ++i)
+	i = -1;
+	while (++i < c->op->args_num)
 	{
 		if (arg_types[i] == DIR_CODE)
 		{
@@ -121,7 +124,7 @@ int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 		if (vm->v_flag & VERBOSE_PC)
 		{
 			ft_printf("ADV %u (0x%04x -> 0x%04x) ",
-					  c.cursor, old_pc, old_pc + c.cursor);
+					c.cursor, old_pc, old_pc + c.cursor);
 			while (old_pc != proc->pc)
 			{
 				put_hex(vm->mem[old_pc], 2);

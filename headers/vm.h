@@ -100,6 +100,7 @@ int t_op_exec(t_op *op, t_proc *proc, t_vm *vm);
 t_op *read_op(const byte *ptr);
 void t_vm_init(t_vm *vm, int n_champs, t_args args);
 void t_vm_add_champ(t_vm *vm, const char *f_name);
+static void	t_vm_death_check(t_vm *vm);
 void t_vm_step(t_vm *vm);
 void t_vm_destruct(t_vm *vm);
 void t_vm_print(t_vm *vm);

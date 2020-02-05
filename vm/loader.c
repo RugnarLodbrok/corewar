@@ -14,42 +14,35 @@
 #include "libft.h"
 #include "vm.h"
 
-static void fd_read_uint(int fd, uint *buff, const char* f_name)
+static void	fd_read_uint(int fd, uint *buff, const char *f_name)
 {
 	ft_assert(read(fd, buff, 4) == 4, "can't read '%s'", f_name);
 	if (endian() == LITTLE_ENDIAN)
 		ft_memrev((void *)buff, 4);
 }
 
-size_t load_bytecode(const char *f_name, void *ptr, t_champ *champ)
+size_t		load_bytecode(const char *f_name, void *ptr, t_champ *champ)
 {
-	int fd;
-	uint buff;
-	uint code_size;
+	int		fd;
+	uint	buff;
+	uint	code_size;
 
 	if ((fd = open(f_name, O_RDONLY)) < 0)
 		ft_error_exit("can't open file: %s", f_name);
 	champ->name = ft_calloc(PROG_NAME_LENGTH, sizeof(char));
 	champ->comment = ft_calloc(COMMENT_LENGTH, sizeof(char));
-	//magic - 4b;
 	fd_read_uint(fd, &buff, f_name);
 	ft_assert(buff == COREWAR_EXEC_MAGIC, "magic mismatch");
-	//name - 128b;
 	ft_assert(read(fd, champ->name, PROG_NAME_LENGTH) == PROG_NAME_LENGTH,
-			  "can't read '%s'", f_name);
-	//null 4b
+			"can't read '%s'", f_name);
 	fd_read_uint(fd, &buff, f_name);
 	ft_assert(buff == 0, "corrupted file");
-	//code size 4b
 	fd_read_uint(fd, &code_size, f_name);
-	//comment 2048b
 	ft_assert(read(fd, champ->comment, COMMENT_LENGTH) == COMMENT_LENGTH,
-			  "can't read '%s'", f_name);
-	//null 4b
+			"can't read '%s'", f_name);
 	fd_read_uint(fd, &buff, f_name);
 	ft_assert(buff == 0, "corrupted file");
-	//code xb
 	ft_assert(read(fd, ptr, code_size) == code_size,
-			  "can't read '%s'", f_name);
+			"can't read '%s'", f_name);
 	return (code_size);
 }

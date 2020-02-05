@@ -33,12 +33,11 @@ void	write_memory(t_vm *vm)
 {
 	int	i;
 
+	i = 0;
 	ft_printf("type: mem_init\n");
 	ft_printf("data: \"");
-	for (i = 0; i < MEM_SIZE; ++i)
-	{
+	while (++i < MEM_SIZE)
 		put_hex(*&vm->mem[i], 2);
-	}
 	ft_printf("\"\n\n");
 }
 
@@ -46,6 +45,7 @@ void	write_proc_update(t_proc *proc, const char *name)
 {
 	int	i;
 
+	i = -1;
 	ft_printf("type: proc_update\n");
 	ft_printf("id: %d\n", proc->id);
 	if (proc->dead)
@@ -63,7 +63,7 @@ void	write_proc_update(t_proc *proc, const char *name)
 	ft_printf("delay: %d\n", proc->delay);
 	ft_printf("pc: %d\n", mem_mod(proc->pc));
 	ft_printf("registers:\n");
-	for (i = 0; i < REG_NUMBER; ++i)
+	while (++i < REG_NUMBER)
 		ft_printf("  - \"%02hhx%02hhx%02hhx%02hhx\"\n",
 				proc->reg[i][0], proc->reg[i][1],
 				proc->reg[i][2], proc->reg[i][3]);
@@ -82,12 +82,13 @@ void	write_mem(byte *mem, uint pc, size_t len, int proc_id)
 {
 	size_t	i;
 
+	i = -1;
 	ft_printf("type: write_mem\n");
 	ft_printf("pc: %d\n", mem_mod(pc));
 	if (proc_id >= 0)
 		ft_printf("proc_id: %d\n", proc_id);
 	ft_printf("data: \"");
-	for (i = 0; i < len; ++i)
+	while (++i < len)
 		put_hex(mem[mem_mod((long)(pc + i))], 2);
 	ft_printf("\"\n\n");
 }

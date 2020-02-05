@@ -14,10 +14,14 @@ add_executable(corewar_vm
 		vm/parse_args.c
         vm/vm_main.c
         vm/vm.c
+		vm/vm2.c
         vm/proc.c
         vm/operation.c
         vm/commands.c
-        vm/loader.c
+		vm/commands_math.c
+		vm/commands_reg1.c
+		vm/commands_reg2.c
+		vm/loader.c
         vm/endian_conversion.c
         vm/state_writer.c
         vm/op.c)

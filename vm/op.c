@@ -13,7 +13,7 @@
 #include "op.h"
 #include "ops.h"
 
-t_op op_tab[17] = {
+t_op	op_tab[17] = {
 	{
 		"live",
 		1,
@@ -225,17 +225,17 @@ t_op op_tab[17] = {
 	{0, 0, {0}, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
-byte arg_type_to_code[5] = {
-		0,
-		REG_CODE,
-		DIR_CODE,
-		0,
-		IND_CODE,
+byte	arg_type_to_code[5] = {
+	0,
+	REG_CODE,
+	DIR_CODE,
+	0,
+	IND_CODE,
 };
-byte code_to_arg_type[5] = {
-		0,
-		T_REG,
-		T_DIR,
-		T_IND,
-		0,
+byte	code_to_arg_type[5] = {
+	0,
+	T_REG,
+	T_DIR,
+	T_IND,
+	0,
 };

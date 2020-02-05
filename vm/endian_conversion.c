@@ -12,7 +12,7 @@
 
 #include "vm.h"
 
-short int read_short_int(t_vm *vm, byte *mem)
+short int	read_short_int(t_vm *vm, byte *mem)
 {
 	short int ret;
 
@@ -26,7 +26,7 @@ short int read_short_int(t_vm *vm, byte *mem)
 	return (ret);
 }
 
-uint read_uint(t_vm *vm, byte *mem, byte len)
+uint		read_uint(t_vm *vm, byte *mem, byte len)
 {
 	uint ret;
 
@@ -40,7 +40,7 @@ uint read_uint(t_vm *vm, byte *mem, byte len)
 	return (ret);
 }
 
-void write_uint(t_vm *vm, uint v, byte *mem, byte len)
+void		write_uint(t_vm *vm, uint v, byte *mem, byte len)
 {
 	if (VM_ENDIAN != vm->host_endian)
 		ft_memrev(&v, 4);
@@ -50,26 +50,29 @@ void write_uint(t_vm *vm, uint v, byte *mem, byte len)
 		t_vm_memcpy(vm, mem, &v, len);
 }
 
-byte *apply_idx_mod(t_op_context *c, byte *ptr)
+byte		*apply_idx_mod(t_op_context *c, byte *ptr)
 {
-	long int pc;
-	int proc_pc;
+	long int	pc;
+	int			proc_pc;
 
 	pc = ptr - c->vm->mem;
 	if (pc < 0 || pc >= MEM_SIZE)
 		return (ptr);
 	proc_pc = c->proc->pc;
-	return &c->vm->mem[mem_mod((pc - proc_pc) % IDX_MOD + proc_pc)];
+	return (&c->vm->mem[mem_mod((pc - proc_pc) % IDX_MOD + proc_pc)]);
 }
 
-void t_vm_memcpy(t_vm *vm, void *dst, const void *src, long int n)
+void		t_vm_memcpy(t_vm *vm, void *dst, const void *src, long int n)
 {
-	long int i;
-	byte *ds;
-	const byte *sr = src;
-	const long int s = ((byte *)src - vm->mem);
-	const long int d = ((byte *)dst - vm->mem);
+	long int	i;
+	byte		*ds;
+	const byte	*sr;
+	long int	s;
+	long int	d;
 
+	sr = src;
+	s = ((byte *)src - vm->mem);
+	d = ((byte *)dst - vm->mem);
 	ds = dst;
 	i = -1;
 	if (d >= 0 && d <= MEM_SIZE)
@@ -87,5 +90,4 @@ void t_vm_memcpy(t_vm *vm, void *dst, const void *src, long int n)
 	else
 		while (++i < n)
 			ds[i] = sr[i];
-
 }
