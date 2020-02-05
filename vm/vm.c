@@ -70,11 +70,21 @@ void		t_vm_add_champ(t_vm *vm, const char *f_name)
 	else if (vm->mode & (MODE_DEFAULT | MODE_DUMP))
 		ft_printf("* Player %d, weighing %lu bytes, \"%s\" (\"%s\") !\n",
 				n + 1, len, vm->champs[n].name, vm->champs[n].comment);
+	free(proc);
 }
 
 void		t_vm_destruct(t_vm *vm)
 {
+	int n;
+
 	free(vm->mem);
+	n = (int)vm->n_champs;
+	while (n > 0)
+	{
+		free(vm->champs[n].name);
+		free(vm->champs[n].comment);
+		n--;
+	}
 	t_arrayp_del(&vm->procs);
 }
 

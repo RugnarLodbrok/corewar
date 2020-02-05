@@ -20,7 +20,7 @@
 
 # define IND_SIZE				2
 # define REG_SIZE				4
-# define DIR_SIZE				REG_SIZE  // why?
+# define DIR_SIZE				REG_SIZE
 
 # define REG_ARG_SIZE			1
 
@@ -81,9 +81,9 @@ typedef struct		s_op
 	char				*comment;
 	int					(*f)();
 	int					need_types;
-	int 				dir_size;
-	int					a; //to be defined
-	int					b; //to be defined
+	int					dir_size;
+	int					a;
+	int					b;
 }					t_op;
 
 #endif

@@ -93,6 +93,15 @@ static void	print_winner(t_vm *vm)
 	}
 }
 
+void		t_args_destruct(t_args args)
+{
+	int i;
+
+	i = -1;
+	while (args.champs[++i])
+		free(args.champs);
+}
+
 int			main(int ac, char **av)
 {
 	int		i;
@@ -110,5 +119,6 @@ int			main(int ac, char **av)
 	if (vm.shutdown)
 		print_winner(&vm);
 	t_vm_destruct(&vm);
+	//t_args_destruct(args);
 	return (0);
 }

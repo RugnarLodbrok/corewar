@@ -33,7 +33,7 @@ void	write_memory(t_vm *vm)
 {
 	int	i;
 
-	i = 0;
+	i = -1;
 	ft_printf("type: mem_init\n");
 	ft_printf("data: \"");
 	while (++i < MEM_SIZE)
