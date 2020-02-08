@@ -13,87 +13,45 @@
 #include "libft.h"
 #include "vm.h"
 
-static void	t_vm_kill_proc(t_vm *vm, t_proc *proc)
+void		t_vm_destruct(t_vm *vm)
+{
+	free(vm->mem);
+	t_arrayp_del(&vm->procs);
+}
+
+uint		mem_mod(long int pc)
+{
+	while (pc < 0)
+		pc += MEM_SIZE;
+	return (pc % MEM_SIZE);
+}
+
+void		t_vm_init(t_vm *vm, int n_champs, t_args args)
+{
+	ft_bzero(vm, sizeof(t_vm));
+	vm->mode = args.mode;
+	vm->v_flag = args.v_flag;
+	vm->n_champs = n_champs;
+	vm->mem = ft_calloc(MEM_SIZE, sizeof(char));
+	vm->host_endian = endian();
+	vm->cycles_to_die = CYCLE_TO_DIE;
+	vm->i_before_check = vm->cycles_to_die;
+	t_arrayp_init(&vm->procs);
+	if (vm->mode == MODE_VIS)
+		write_memory(vm);
+}
+
+void		t_vm_print(t_vm *vm)
 {
 	int	i;
-	int	found_alive;
 
-	proc->dead = 1;
-	if (vm->v_flag & VERBOSE_DEATHS)
-		ft_printf("Process %u hasn't lived for %u cycles (CTD %d)\n",
-				proc->id + 1, vm->i - proc->last_live - 1, vm->cycles_to_die);
-	found_alive = 0;
-	i = -1;
-	while (++i < (int)vm->procs.count)
+	for (i = 0; i < MEM_SIZE; ++i)
 	{
-		proc = vm->procs.data[i];
-		found_alive += !proc->dead;
+		if (!(i % OCTETS_PER_LINE))
+			ft_printf("0x%04x : ", i);
+		put_hex(vm->mem[i], 2);
+		ft_printf(" ");
+		if (!((i + 1) % OCTETS_PER_LINE))
+			ft_printf("\n");
 	}
-	vm->shutdown = !found_alive;
-}
-
-static void	t_vm_death_check(t_vm *vm)
-{
-	int		i;
-	t_proc	*proc;
-
-	i = vm->procs.count;
-	while (--i >= 0)
-	{
-		if ((proc = vm->procs.data[i])->dead)
-			continue;
-		if ((int)(vm->i - proc->last_live) > vm->cycles_to_die
-			|| !proc->last_live)
-			t_vm_kill_proc(vm, proc);
-	}
-	vm->checks_without_delta++;
-	if (vm->live_ops_since_check >= NBR_LIVE ||
-		vm->checks_without_delta >= MAX_CHECKS)
-	{
-		vm->checks_without_delta = 0;
-		vm->cycles_to_die -= CYCLE_DELTA;
-		if (vm->v_flag & VERBOSE_CYCLES)
-			ft_printf("Cycle to die is now %d\n", vm->cycles_to_die);
-	}
-	vm->i_before_check = vm->cycles_to_die > 0 ? vm->cycles_to_die : 1;
-	vm->live_ops_since_check = 0;
-}
-
-static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
-{
-	if (!proc->op)
-	{
-		if (!(proc->op = read_op(&vm->mem[mem_mod(proc->pc)])))
-		{
-			proc->pc = mem_mod(proc->pc + 1);
-			return ;
-		}
-		proc->delay = proc->op->delay;
-		proc->last_pos = proc->pc;
-	}
-	if (proc->delay)
-		proc->delay--;
-	if (proc->delay)
-		return ;
-	t_op_exec(proc->op, proc, vm);
-	proc->op = 0;
-}
-
-void		t_vm_step(t_vm *vm)
-{
-	int		i;
-	t_proc	*proc;
-
-	if (vm->v_flag & VERBOSE_CYCLES)
-		ft_printf("It is now cycle %u\n", vm->i + 1);
-	i = (int)vm->procs.count;
-	while (--i >= 0)
-	{
-		if ((proc = vm->procs.data[i])->dead)
-			continue;
-		t_vm_proc_step(vm, proc);
-	}
-	vm->i++;
-	if (!--vm->i_before_check)
-		t_vm_death_check(vm);
 }

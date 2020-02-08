@@ -36,7 +36,7 @@ void	write_memory(t_vm *vm)
 	i = -1;
 	ft_printf("type: mem_init\n");
 	ft_printf("data: \"");
-	while (++i < MEM_SIZE)
+	while (i < MEM_SIZE)
 		put_hex(*&vm->mem[i], 2);
 	ft_printf("\"\n\n");
 }
@@ -82,14 +82,17 @@ void	write_mem(byte *mem, uint pc, size_t len, int proc_id)
 {
 	size_t	i;
 
-	i = -1;
+	i = 0;
 	ft_printf("type: write_mem\n");
 	ft_printf("pc: %d\n", mem_mod(pc));
 	if (proc_id >= 0)
 		ft_printf("proc_id: %d\n", proc_id);
 	ft_printf("data: \"");
-	while (++i < len)
-		put_hex(mem[mem_mod((long)(pc + i))], 2);
+	while (i < len)
+	{
+		put_hex(mem[mem_mod((long) (pc + i))], 2);
+		i++;
+	}
 	ft_printf("\"\n\n");
 }
 

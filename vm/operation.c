@@ -32,20 +32,24 @@ void	t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 {
 	uint	i;
 
-	i = -1;
+	i = 0;
 	ft_bzero(arg_codes, sizeof(byte) * 3);
 	if (!c->op->need_types)
-		while (++i < c->op->args_num)
+		while (i < c->op->args_num)
+		{
 			arg_codes[i] = arg_type_to_code[c->op->args_types[i]];
+			i++;
+		}
 	else
 	{
-		i = -1;
-		while (++i < c->op->args_num)
+		i = 0;
+		while (i < c->op->args_num)
 		{
 			arg_codes[i] = (c->vm->mem[mem_mod(c->proc->pc + c->cursor)]
 					>> (2 * (3 - i))) & (byte)0x3; //!achtung
 			if (!(code_to_arg_type[arg_codes[i]] & c->op->args_types[i]))
 				c->invalid_args = 1;
+			i++;
 		}
 		c->cursor++;
 	}
