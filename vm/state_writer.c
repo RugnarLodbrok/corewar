@@ -29,16 +29,10 @@ void	put_hex(uint v, int digits)
 		ft_putchar('a' - 10 + b);
 }
 
-void	write_memory(t_vm *vm)
+void	write_init()
 {
-	int	i;
-
-	i = -1;
 	ft_printf("type: mem_init\n");
-	ft_printf("data: \"");
-	while (i < MEM_SIZE)
-		put_hex(*&vm->mem[i], 2);
-	ft_printf("\"\n\n");
+	ft_printf("size: %d\n\n", MEM_SIZE);
 }
 
 void	write_proc_update(t_proc *proc, const char *name)

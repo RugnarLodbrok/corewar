@@ -105,7 +105,7 @@ void			t_vm_destruct(t_vm *vm);
 void			t_vm_print(t_vm *vm);
 
 void			put_hex(uint v, int digits);
-void			write_memory(t_vm *vm);
+void			write_init();
 void			write_proc_update(t_proc *proc, const char *name);
 void			write_proc_stdout(t_vm *vm, int proc_num, char c);
 void			write_mem(byte *mem, uint pc, size_t len, int proc_id);
