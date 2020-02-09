@@ -45,6 +45,8 @@ static void	parse_arg(t_args *args, int ac, char **av, int *i)
 		ft_assert(++(*i) < ac, VM_USAGE);
 		add_champ(args, idx, av[*i]);
 	}
+	else if (av[*i][0] == '-')
+		ft_error_exit(VM_USAGE);
 	else
 		add_champ(args, ft_len((void **)&args->champs[0]), av[*i]);
 }
