@@ -26,7 +26,7 @@ void		t_vm_add_champ(t_vm *vm, const char *f_name)
 	pc = (MEM_SIZE / vm->n_champs) * n;
 	len = load_bytecode(f_name, (byte *)vm->mem + pc, &vm->champs[n]);
 	ft_assert(len <= CHAMP_MAX_SIZE, "champ `%s` size %d > %d\n",
-			  vm->champs[n].name, len, CHAMP_MAX_SIZE);
+			vm->champs[n].name, len, CHAMP_MAX_SIZE);
 	proc = malloc(sizeof(t_proc));
 	t_proc_init(proc, n, mem_mod(pc));
 	write_uint(vm, UINT_MAX - n, &proc->reg[0][0], 4);
@@ -102,8 +102,6 @@ static void	t_vm_death_check(t_vm *vm)
 		if (vm->v_flag & VERBOSE_CYCLES)
 			ft_printf("Cycle to die is now %d\n", vm->cycles_to_die);
 	}
-//	if (vm->cycles_to_die < 1)
-//		vm->cycles_to_die = 1;
 	vm->i_before_check = vm->cycles_to_die > 0 ? vm->cycles_to_die : 1;
 	vm->live_ops_since_check = 0;
 }

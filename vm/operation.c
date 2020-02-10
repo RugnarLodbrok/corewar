@@ -17,7 +17,7 @@ extern t_op	op_tab[17];
 extern byte	code_to_arg_type[5];
 extern byte	arg_type_to_code[5];
 
-t_op	*read_op(const byte *ptr)
+t_op		*read_op(const byte *ptr)
 {
 	int	i;
 
@@ -28,7 +28,7 @@ t_op	*read_op(const byte *ptr)
 	return (0);
 }
 
-void	t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
+void		t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 {
 	uint	i;
 
@@ -55,14 +55,13 @@ void	t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 	}
 }
 
-void	t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
+void		t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 {
 	int		i;
 	uint	reg_number;
 
 	i = -1;
 	while (++i < c->op->args_num)
-	{
 		if (arg_types[i] == DIR_CODE)
 		{
 			args[i] = &c->vm->mem[mem_mod(c->proc->pc + c->cursor)];
@@ -88,10 +87,9 @@ void	t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 				args[i] = &c->proc->reg[reg_number][0];
 			c->cursor += REG_ARG_SIZE;
 		}
-	}
 }
 
-void	t_op_context_init(t_op_context *c, t_vm *vm, t_proc *proc, t_op *op)
+void		t_op_context_init(t_op_context *c, t_vm *vm, t_proc *proc, t_op *op)
 {
 	ft_bzero(c, sizeof(t_op_context));
 	c->op = op;
@@ -101,7 +99,33 @@ void	t_op_context_init(t_op_context *c, t_vm *vm, t_proc *proc, t_op *op)
 	c->changed_memory = -1;
 }
 
-int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
+static void	t_op_adv(t_op_context *c)
+{
+	const t_op	*op = c->op;
+	const t_vm	*vm = c->vm;
+	t_proc		*proc;
+
+	proc = c->proc;
+	if (op->code != 9 || !proc->carry)
+	{
+		if (vm->v_flag & VERBOSE_PC)
+		{
+			ft_printf("ADV %u (0x%04x -> 0x%04x) ",
+					c->cursor, proc->pc, proc->pc + c->cursor);
+			while (c->cursor--)
+			{
+				put_hex(vm->mem[proc->pc], 2);
+				proc->pc = mem_mod(proc->pc + 1);
+				ft_printf(" ");
+			}
+			ft_printf("\n");
+		}
+		else
+			proc->pc = mem_mod(proc->pc + c.cursor);
+	}
+}
+
+void		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 {
 	t_op_context	c;
 	byte			*args[3];
@@ -120,22 +144,5 @@ int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 			vm->mode == MODE_VIS)
 			write_mem(vm->mem, c.changed_memory, REG_SIZE, proc->id);
 	}
-	if (op->code != 9 || !proc->carry)
-	{
-		if (vm->v_flag & VERBOSE_PC)
-		{
-			ft_printf("ADV %u (0x%04x -> 0x%04x) ",
-					c.cursor, proc->pc, proc->pc + c.cursor);
-			while (c.cursor--)
-			{
-				put_hex(vm->mem[proc->pc], 2);
-				proc->pc = mem_mod(proc->pc + 1);
-				ft_printf(" ");
-			}
-			ft_printf("\n");
-		}
-		else
-			proc->pc = mem_mod(proc->pc + c.cursor);
-	}
-	return (0);
+	t_op_adv(&c);
 }

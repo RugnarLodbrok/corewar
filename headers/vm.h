@@ -100,7 +100,7 @@ typedef struct	s_op_context
 void			parse_args(t_args *args, int ac, char **av);
 size_t			load_bytecode(const char *f_name, void *ptr, t_champ *champ);
 void			t_proc_init(t_proc *proc, int id, uint pc);
-int				t_op_exec(t_op *op, t_proc *proc, t_vm *vm);
+void			t_op_exec(t_op *op, t_proc *proc, t_vm *vm);
 t_op			*read_op(const byte *ptr);
 void			t_vm_init(t_vm *vm, int n_champs, t_args args);
 void			t_vm_add_champ(t_vm *vm, const char *f_name);
