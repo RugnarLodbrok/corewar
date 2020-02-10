@@ -78,7 +78,7 @@ void		main_loop(t_vm *vm, int dump)
 			if (dump-- <= 0)
 			{
 				t_vm_print(vm);
-				break;
+				break ;
 			}
 			t_vm_step(vm);
 		}

@@ -13,23 +13,7 @@
 #include "libft.h"
 #include "vm.h"
 
-void	put_hex(uint v, int digits)
-{
-	unsigned int	a;
-	unsigned int	b;
-
-	if (!digits)
-		return ;
-	a = v / 16;
-	b = v - a * 16;
-	put_hex(a, digits - 1);
-	if (b < 10)
-		ft_putchar('0' + b);
-	else
-		ft_putchar('a' - 10 + b);
-}
-
-void	write_init()
+void	write_init(void)
 {
 	ft_printf("type: mem_init\n");
 	ft_printf("size: %d\n\n", MEM_SIZE);
@@ -76,15 +60,15 @@ void	write_mem(byte *mem, uint pc, size_t len, int proc_id)
 {
 	size_t	i;
 
-	i = 0;
 	ft_printf("type: write_mem\n");
 	ft_printf("pc: %d\n", mem_mod(pc));
 	if (proc_id >= 0)
 		ft_printf("proc_id: %d\n", proc_id);
 	ft_printf("data: \"");
+	i = 0;
 	while (i < len)
 	{
-		put_hex(mem[mem_mod((long) (pc + i))], 2);
+		put_hex(mem[mem_mod((long)(pc + i))], 2);
 		i++;
 	}
 	ft_printf("\"\n\n");

@@ -19,10 +19,8 @@ static void	add_champ(t_args *args, int idx, const char *champ_name)
 	args->champs[idx] = champ_name;
 }
 
-static void	parse_arg(t_args *args, int ac, char **av, int *i)
+static void	parse_flag(t_args *args, int ac, char **av, int *i)
 {
-	int	idx;
-
 	if (!ft_strcmp("-i", av[*i]))
 		args->mode = MODE_VIS;
 	else if (!ft_strcmp("-v", av[*i]))
@@ -41,14 +39,11 @@ static void	parse_arg(t_args *args, int ac, char **av, int *i)
 	else if (!ft_strcmp("-n", av[*i]))
 	{
 		ft_assert(++(*i) < ac, VM_USAGE);
-		idx = ft_atoi(av[*i]) - 1;
 		ft_assert(++(*i) < ac, VM_USAGE);
-		add_champ(args, idx, av[*i]);
+		add_champ(args, ft_atoi(av[*i - 1]) - 1, av[*i]);
 	}
-	else if (av[*i][0] == '-')
-		ft_error_exit(VM_USAGE);
 	else
-		add_champ(args, ft_len((void **)&args->champs[0]), av[*i]);
+		ft_error_exit(VM_USAGE);
 }
 
 void		parse_args(t_args *args, int ac, char **av)
@@ -61,7 +56,10 @@ void		parse_args(t_args *args, int ac, char **av)
 	args->mode = MODE_DEFAULT;
 	while (i < ac)
 	{
-		parse_arg(args, ac, av, &i);
+		if (av[i][0] == '-')
+			parse_flag(args, ac, av, &i);
+		else
+			add_champ(args, ft_len((void **)&args->champs[0]), av[i]);
 		++i;
 	}
 }

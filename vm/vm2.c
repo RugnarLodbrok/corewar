@@ -45,7 +45,8 @@ void		t_vm_print(t_vm *vm)
 {
 	int	i;
 
-	for (i = 0; i < MEM_SIZE; ++i)
+	i = -1;
+	while (++i < MEM_SIZE)
 	{
 		if (!(i % OCTETS_PER_LINE))
 			ft_printf("0x%04x : ", i);
@@ -54,4 +55,20 @@ void		t_vm_print(t_vm *vm)
 		if (!((i + 1) % OCTETS_PER_LINE))
 			ft_printf("\n");
 	}
+}
+
+void		put_hex(uint v, int digits)
+{
+	unsigned int	a;
+	unsigned int	b;
+
+	if (!digits)
+		return ;
+	a = v / 16;
+	b = v - a * 16;
+	put_hex(a, digits - 1);
+	if (b < 10)
+		ft_putchar('0' + b);
+	else
+		ft_putchar('a' - 10 + b);
 }
