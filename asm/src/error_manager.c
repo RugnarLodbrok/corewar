@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_manager.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cormund <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/24 12:28:36 by cormund           #+#    #+#             */
-/*   Updated: 2020/01/15 16:09:32 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/10 16:02:10 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	error_manager(char *error, unsigned char oper_code, char *wrong_label)
 		ft_printf("%s: %s\n", error, wrong_label);
 	else
 	{
-		check_ln_col(&ln, &col, ASM_INPUT, ASM_EOL ? ASM_EOL : ASM_DATA);
+		check_ln_col(&ln, &col, g_data.input, g_data.eol ? g_data.eol : g_data.data);
 		ft_printf("%s [%d:%d]\n", error, ln, col);
 	}
 	exit(-1);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   translator.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cormund <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/14 14:31:53 by cormund           #+#    #+#             */
-/*   Updated: 2020/01/17 10:32:44 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/10 15:35:52 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,13 @@ void				translate_in_byte_code(t_champ *champ)
 	fd = open(champ->file_name, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR |\
 											S_IWUSR | S_IRGRP | S_IROTH);
 	if (fd == ASM_ERROR)
-		error(strerror(errno));
+		ERROR(strerror(errno));
 	champ->code_size = champ->last_oper->offset + champ->last_oper->size;
 	size_byte_code = ASM_MAGIC_SIZE + PROG_NAME_LENGTH + COMMENT_LENGTH +\
 					ASM_NULL_SIZE * 2 + ASM_CODE_SIZE + champ->code_size;
 	byte_code = ft_memalloc(size_byte_code);
 	if (!(tmp = byte_code))
-		error(strerror(errno));
+		ERROR(strerror(errno));
 	translate_num(&tmp, COREWAR_EXEC_MAGIC, ASM_MAGIC_SIZE);
 	ft_strncpy((char *)tmp, champ->prog_name, PROG_NAME_LENGTH + ASM_NULL_SIZE);
 	tmp += PROG_NAME_LENGTH + ASM_NULL_SIZE;
@@ -83,8 +83,7 @@ void				translate_in_byte_code(t_champ *champ)
 	ft_strncpy((char *)tmp, champ->comment, COMMENT_LENGTH + ASM_NULL_SIZE);
 	tmp += COMMENT_LENGTH + ASM_NULL_SIZE;
 	translate_opers(tmp, champ->first_oper);
-	if (!write(fd, byte_code, size_byte_code))
-		error("can't write");
+	write(fd, byte_code, size_byte_code);
 	free(byte_code);
 	close(fd);
 }
