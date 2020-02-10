@@ -38,7 +38,7 @@ void		t_vm_add_champ(t_vm *vm, const char *f_name)
 	}
 	else if (vm->mode & (MODE_DEFAULT | MODE_DUMP))
 		ft_printf("* Player %d, weighing %lu bytes, \"%s\" (\"%s\") !\n",
-				  n + 1, len, vm->champs[n].name, vm->champs[n].comment);
+				n + 1, len, vm->champs[n].name, vm->champs[n].comment);
 }
 
 static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
@@ -57,7 +57,7 @@ static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 		proc->delay--;
 	if (proc->delay)
 		return ;
-	t_op_exec(proc->op, proc, vm);
+	t_opc_exec(proc->op, proc, vm);
 	proc->op = 0;
 }
 
@@ -69,7 +69,7 @@ static void	t_vm_kill_proc(t_vm *vm, t_proc *proc)
 	proc->dead = 1;
 	if (vm->v_flag & VERBOSE_DEATHS)
 		ft_printf("Process %u hasn't lived for %u cycles (CTD %d)\n",
-				  proc->id + 1, vm->i - proc->last_live - 1, vm->cycles_to_die);
+				proc->id + 1, vm->i - proc->last_live - 1, vm->cycles_to_die);
 	found_alive = 0;
 	i = -1;
 	while (++i < (int)vm->procs.count)
@@ -90,7 +90,8 @@ static void	t_vm_death_check(t_vm *vm)
 	{
 		if ((proc = vm->procs.data[i])->dead)
 			continue;
-		if ((int)(vm->i - proc->last_live) > vm->cycles_to_die || !proc->last_live)
+		if ((int)(vm->i - proc->last_live) > vm->cycles_to_die ||
+			!proc->last_live)
 			t_vm_kill_proc(vm, proc);
 	}
 	vm->checks_without_delta++;

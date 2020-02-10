@@ -12,7 +12,7 @@
 
 #include "vm.h"
 
-short int	read_short_int(t_vm *vm, byte *mem)
+short int	read_int16(t_vm *vm, byte *mem)
 {
 	short int ret;
 
@@ -66,11 +66,10 @@ void		t_vm_memcpy(t_vm *vm, void *dst, const void *src, long int n)
 {
 	long int	i;
 	byte		*ds;
-	const byte	*sr;
+	const byte	*sr = src;
 	long int	s;
 	long int	d;
 
-	sr = src;
 	s = ((byte *)src - vm->mem);
 	d = ((byte *)dst - vm->mem);
 	ds = dst;

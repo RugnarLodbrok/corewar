@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "vm.h"
 
 int	op_lld(t_op_context *c, void *arg1, void *arg2, void *arg3)
@@ -32,8 +31,8 @@ int	op_ldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	int n2;
 	int target;
 
-	n1 = read_short_int(c->vm, arg1);
-	n2 = read_short_int(c->vm, arg2);
+	n1 = read_int16(c->vm, arg1);
+	n2 = read_int16(c->vm, arg2);
 	target = (int)c->proc->pc + (n1 + n2) % IDX_MOD;
 	if (c->vm->v_flag & VERBOSE_OPS)
 		ft_printf("       | -> load from %d + %d = %d (with pc and mod %d)\n",
@@ -49,8 +48,8 @@ int	op_lldi(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	int n2;
 	int target;
 
-	n1 = read_short_int(c->vm, arg1);
-	n2 = read_short_int(c->vm, arg2);
+	n1 = read_int16(c->vm, arg1);
+	n2 = read_int16(c->vm, arg2);
 	target = (int)c->proc->pc + n1 + n2;
 	if (c->vm->v_flag & VERBOSE_OPS)
 		ft_printf("       | -> load from %d + %d = %d (with pc and mod %d)",

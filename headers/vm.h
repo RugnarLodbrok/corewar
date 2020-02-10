@@ -97,10 +97,15 @@ typedef struct	s_op_context
 	int			invalid_args;
 }				t_op_context;
 
+t_op			g_op_tab[17];
+byte			g_code_to_arg_type[5];
+byte			g_arg_type_to_code[5];
+
 void			parse_args(t_args *args, int ac, char **av);
 size_t			load_bytecode(const char *f_name, void *ptr, t_champ *champ);
 void			t_proc_init(t_proc *proc, int id, uint pc);
-void			t_op_exec(t_op *op, t_proc *proc, t_vm *vm);
+void			t_opc_init(t_op_context *c, t_vm *vm, t_proc *proc, t_op *op);
+void			t_opc_exec(t_op *op, t_proc *proc, t_vm *vm);
 t_op			*read_op(const byte *ptr);
 void			t_vm_init(t_vm *vm, int n_champs, t_args args);
 void			t_vm_add_champ(t_vm *vm, const char *f_name);
@@ -115,7 +120,7 @@ void			write_proc_stdout(t_vm *vm, int proc_num, char c);
 void			write_mem(byte *mem, uint pc, size_t len, int proc_id);
 void			write_cycle(uint i);
 
-short int		read_short_int(t_vm *vm, byte *mem);
+short int		read_int16(t_vm *vm, byte *mem);
 uint			read_uint(t_vm *vm, byte *mem, byte len);
 void			write_uint(t_vm *vm, uint v, byte *mem, byte len);
 byte			*apply_idx_mod(t_op_context *c, byte *ptr);

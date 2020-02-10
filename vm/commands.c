@@ -40,7 +40,7 @@ int	op_zjmp(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	(void)arg3;
 	if (c->proc->carry)
 		c->proc->pc = mem_mod(
-				c->proc->pc + read_short_int(c->vm, arg1) % IDX_MOD);
+				c->proc->pc + read_int16(c->vm, arg1) % IDX_MOD);
 	return (1);
 }
 
@@ -53,7 +53,7 @@ int	op_lfork(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	p = (t_proc *)malloc(sizeof(t_proc));
 	t_vm_memcpy(c->vm, p, c->proc, sizeof(t_proc));
 	p->id = c->vm->procs.count;
-	p->pc = mem_mod(p->pc + read_short_int(c->vm, arg1));
+	p->pc = mem_mod(p->pc + read_int16(c->vm, arg1));
 	p->op = 0;
 	if (c->vm->mode == MODE_VIS)
 		write_proc_update(p, c->vm->champs[p->champ_id].name);

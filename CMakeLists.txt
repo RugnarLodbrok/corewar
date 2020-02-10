@@ -17,6 +17,7 @@ add_executable(corewar_vm
 		vm/vm2.c
         vm/proc.c
         vm/operation.c
+        vm/operation1.c
         vm/commands.c
 		vm/commands_math.c
 		vm/commands_reg1.c

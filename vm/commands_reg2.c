@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "vm.h"
 
 int	op_st(t_op_context *c, void *arg1, void *arg2, void *arg3)
@@ -28,8 +27,8 @@ int	op_sti(t_op_context *c, void *arg1, void *arg2, void *arg3)
 	int n3;
 	int target;
 
-	n2 = read_short_int(c->vm, arg2);
-	n3 = read_short_int(c->vm, arg3);
+	n2 = read_int16(c->vm, arg2);
+	n3 = read_int16(c->vm, arg3);
 	target = (int)mem_mod(c->proc->pc) + (n2 + n3) % IDX_MOD;
 	if (c->vm->v_flag & VERBOSE_OPS)
 		ft_printf("       | -> store to %d + %d = %d (with pc and mod %d)\n",

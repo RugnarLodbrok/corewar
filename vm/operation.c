@@ -13,22 +13,7 @@
 #include "libft_compat.h"
 #include "vm.h"
 
-extern t_op	op_tab[17];
-extern byte	code_to_arg_type[5];
-extern byte	arg_type_to_code[5];
-
-t_op		*read_op(const byte *ptr)
-{
-	int	i;
-
-	i = -1;
-	while (op_tab[++i].name)
-		if (op_tab[i].code == *ptr)
-			return (&op_tab[i]);
-	return (0);
-}
-
-void		t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
+static void	t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 {
 	uint	i;
 
@@ -37,7 +22,7 @@ void		t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 	if (!c->op->need_types)
 		while (i < c->op->args_num)
 		{
-			arg_codes[i] = arg_type_to_code[c->op->args_types[i]];
+			arg_codes[i] = g_arg_type_to_code[c->op->args_types[i]];
 			i++;
 		}
 	else
@@ -46,8 +31,8 @@ void		t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 		while (i < c->op->args_num)
 		{
 			arg_codes[i] = (c->vm->mem[mem_mod(c->proc->pc + c->cursor)]
-					>> (2 * (3 - i))) & (byte)0x3; //!achtung
-			if (!(code_to_arg_type[arg_codes[i]] & c->op->args_types[i]))
+					>> (2 * (3 - i))) & (byte)0x3;
+			if (!(g_code_to_arg_type[arg_codes[i]] & c->op->args_types[i]))
 				c->invalid_args = 1;
 			i++;
 		}
@@ -55,10 +40,24 @@ void		t_op_parse_arg_types(t_op_context *c, byte *arg_codes)
 	}
 }
 
-void		t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
+static void	parse_arg_reg(t_op_context *c, byte **args)
+{
+	uint reg_number;
+
+	reg_number = read_uint(
+			c->vm,
+			&c->vm->mem[mem_mod(c->proc->pc + c->cursor)],
+			REG_ARG_SIZE) - 1;
+	if (reg_number >= REG_NUMBER)
+		c->invalid_args = 1;
+	else
+		*args = &c->proc->reg[reg_number][0];
+	c->cursor += REG_ARG_SIZE;
+}
+
+static void	t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 {
 	int		i;
-	uint	reg_number;
 
 	i = -1;
 	while (++i < c->op->args_num)
@@ -71,32 +70,12 @@ void		t_op_parse_args(t_op_context *c, const byte *arg_types, byte **args)
 		{
 			args[i] = &c->vm->mem[
 					mem_mod(c->proc->pc +
-							read_short_int(c->vm, &c->vm->mem[mem_mod(
-									c->proc->pc + c->cursor)]))];
+									read_int16(c->vm, &c->vm->mem[mem_mod(
+											c->proc->pc + c->cursor)]))];
 			c->cursor += IND_SIZE;
 		}
 		else if (arg_types[i] == REG_CODE)
-		{
-			reg_number = read_uint(c->vm,
-								&c->vm->mem[mem_mod(
-										c->proc->pc + c->cursor)],
-								REG_ARG_SIZE) - 1;
-			if (reg_number >= REG_NUMBER)
-				c->invalid_args = 1;
-			else
-				args[i] = &c->proc->reg[reg_number][0];
-			c->cursor += REG_ARG_SIZE;
-		}
-}
-
-void		t_op_context_init(t_op_context *c, t_vm *vm, t_proc *proc, t_op *op)
-{
-	ft_bzero(c, sizeof(t_op_context));
-	c->op = op;
-	c->proc = proc;
-	c->vm = vm;
-	c->cursor = 1;
-	c->changed_memory = -1;
+			parse_arg_reg(c, args + i);
 }
 
 static void	t_op_adv(t_op_context *c)
@@ -121,17 +100,17 @@ static void	t_op_adv(t_op_context *c)
 			ft_printf("\n");
 		}
 		else
-			proc->pc = mem_mod(proc->pc + c.cursor);
+			proc->pc = mem_mod(proc->pc + c->cursor);
 	}
 }
 
-void		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
+void		t_opc_exec(t_op *op, t_proc *proc, t_vm *vm)
 {
 	t_op_context	c;
 	byte			*args[3];
 	byte			arg_types[3];
 
-	t_op_context_init(&c, vm, proc, op);
+	t_opc_init(&c, vm, proc, op);
 	ft_bzero(&args[0], 3);
 	t_op_parse_arg_types(&c, &arg_types[0]);
 	t_op_parse_args(&c, &arg_types[0], &args[0]);
