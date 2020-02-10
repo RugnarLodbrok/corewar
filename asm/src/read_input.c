@@ -6,7 +6,7 @@
 /*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/23 17:06:28 by cormund           #+#    #+#             */
-/*   Updated: 2020/02/10 16:01:39 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/10 16:43:33 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,16 @@ char		*read_data(char *file)
 	int		fd;
 	int		n;
 
-	if ((fd = open(file, O_RDONLY)) == ASM_ERROR)
-		ERROR(strerror(errno));
-	if (!(g_data.data = ft_strnew(1)))
+	if ((fd = open(file, O_RDONLY)) == ASM_ERROR ||\
+						!(g_data.data = ft_strnew(1)))
 		ERROR(strerror(errno));
 	n = 0;
 	while ((count_read = read(fd, buf, ASM_SIZE_BUF)) > 0)
 	{
 		buf[count_read] = ASM_END_OF_STR;
 		tmp = g_data.data;
-		g_data.data = ft_memnjoin(g_data.data, buf, ASM_SIZE_BUF * n, count_read + 1);
+		g_data.data = ft_memnjoin(g_data.data, buf, ASM_SIZE_BUF * n,\
+														count_read + 1);
 		if (!g_data.data)
 			ERROR(strerror(errno));
 		free(tmp);

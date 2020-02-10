@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cormund <marvin@42.fr>                     +#+  +:+       +#+         #
+#    By: cormund <cormund@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/23 17:26:57 by cormund           #+#    #+#              #
-#    Updated: 2020/01/16 11:21:08 by cormund          ###   ########.fr        #
+#    Updated: 2020/02/10 16:50:52 by cormund          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,6 @@ $(NAME) : $(LIBFT) $(OBJ_NAME)
 	@printf "\r\e[J\e[32m$@\e[0m done!\n\e[?25h"
 
 %.o : %.c
-	@mkdir -p $(DIR_BIN)/$(NAME)
 	@$(CC) $(CFLAGS) -c $(<) $(DIR_INCLUDE) -o $(@)
 	@printf "\r\e[?25l\e[Jcompiling \e[32m$(notdir $<)\e[0m"
 
@@ -59,7 +58,7 @@ $(LIBFT):
 	@$(MAKE) -C $(DIR_LIBFT) clean
 
 clean:
-	@rm -rf $(DIR_BIN)
+	@rm -f $(OBJ_NAME)
 	@$(MAKE) -C $(DIR_LIBFT) fclean
 
 fclean: clean

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-OG_ASM="../vm_champs/asm"
-MY_ASM="../asm"
+OG_ASM="../asm/vm_champs/asm"
+MY_ASM="../asm/asm"
 
 if [ -z "$1" ] ; then
 	echo "Usage: asm_comparator.sh dirname"
