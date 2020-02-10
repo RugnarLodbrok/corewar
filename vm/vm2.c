@@ -13,12 +13,6 @@
 #include "libft.h"
 #include "vm.h"
 
-void		t_vm_destruct(t_vm *vm)
-{
-	free(vm->mem);
-	t_arrayp_del(&vm->procs);
-}
-
 uint		mem_mod(long int pc)
 {
 	while (pc < 0)
