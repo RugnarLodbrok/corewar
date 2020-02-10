@@ -3,28 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   op.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cormund <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/23 16:14:41 by cormund           #+#    #+#             */
-/*   Updated: 2020/01/16 14:00:54 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/10 15:59:23 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define IND_SIZE				2
-#define REG_SIZE				4
-#define DIR_SIZE				REG_SIZE
+#define IND_SIZE	2
+#define REG_SIZE	4
+#define DIR_SIZE	REG_SIZE
 
+# define REG_CODE	1
+# define DIR_CODE	2
+# define IND_CODE	3
 
-# define REG_CODE				1
-# define DIR_CODE				2
-# define IND_CODE				3
-
-
-#define MAX_ARGS_NUMBER			4
-#define MAX_PLAYERS				4
-#define MEM_SIZE				(4*1024)
-#define IDX_MOD					(MEM_SIZE / 8)
-#define CHAMP_MAX_SIZE			(MEM_SIZE / 6)
+#define MAX_ARGS_NUMBER	4
+#define MAX_PLAYERS	4
+#define MEM_SIZE	(4*1024)
+#define IDX_MOD		(MEM_SIZE / 8)
+#define CHAMP_MAX_SIZE	(MEM_SIZE / 6)
 
 #define COMMENT_CHAR			'#'
 #define ALT_COMMENT_CHAR		';'

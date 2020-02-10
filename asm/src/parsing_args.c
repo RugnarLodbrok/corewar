@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_args.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cormund <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/13 15:31:50 by cormund           #+#    #+#             */
-/*   Updated: 2020/01/17 12:41:10 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/10 16:01:39 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,15 @@ static char				*get_arg(void)
 	int					len;
 
 	len = 0;
-	while (ASM_DATA[len] && !ft_isspace(ASM_DATA[len]) &&\
-							ASM_DATA[len] != SEPARATOR_CHAR)
+	while (g_data.data[len] && !ft_isspace(g_data.data[len]) &&\
+							g_data.data[len] != SEPARATOR_CHAR)
 		++len;
 	arg = ft_strnew(len);
 	if (!arg)
-		error(strerror(errno));
-	ft_strncpy(arg, ASM_DATA, len);
+		ERROR(strerror(errno));
+	ft_strncpy(arg, g_data.data, len);
 	validation_arg(arg);
-	ASM_DATA += len;
+	g_data.data += len;
 	return (arg);
 }
 
@@ -96,8 +96,8 @@ void					pars_args(t_oper *oper)
 			if (skip_spaces())
 				error_manager(ASM_ERR_INVALID_PARAM, oper->op->code,\
 														ASM_NOT_LABEL);
-			if (*ASM_DATA == SEPARATOR_CHAR)
-				++ASM_DATA;
+			if (*g_data.data == SEPARATOR_CHAR)
+				++g_data.data;
 			else
 				error_manager(ASM_ERR_LEXICAL, ASM_NOT_OPER, ASM_NOT_LABEL);
 		}

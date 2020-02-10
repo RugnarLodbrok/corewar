@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   asm.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cormund <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/23 16:15:42 by cormund           #+#    #+#             */
-/*   Updated: 2020/01/17 10:31:53 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/10 16:02:55 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include "libft.h"
 # include "op.h"
 
-# define error ft_error_exit
+# define ERROR ft_error_exit
 
 # define ASM_SIZE_BUF 1024
 # define ASM_NOT_OPER 0
@@ -44,10 +44,6 @@
 # define ASM_DISASM_OPTION 'd'
 # define ASM_HELP_OPTION 'h'
 # define ASM_ON_DISSASM_OPTION 1
-
-# define ASM_DATA g_data.data
-# define ASM_INPUT g_data.input
-# define ASM_EOL g_data.eol
 
 struct s_data		g_data;
 t_op				g_op_tab[17];
