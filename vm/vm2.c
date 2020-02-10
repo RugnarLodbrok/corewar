@@ -32,7 +32,7 @@ void		t_vm_init(t_vm *vm, int n_champs, t_args args)
 	vm->i_before_check = vm->cycles_to_die;
 	t_arrayp_init(&vm->procs);
 	if (vm->mode == MODE_VIS)
-		write_memory(vm);
+		write_init();
 }
 
 void		t_vm_print(t_vm *vm)

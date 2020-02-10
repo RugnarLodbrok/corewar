@@ -73,9 +73,15 @@ void		main_loop(t_vm *vm, int dump)
 		loop_print(vm);
 	else if (vm->mode == MODE_DUMP)
 	{
-		while (dump-- > 0 && !vm->shutdown)
+		while (!vm->shutdown)
+		{
+			if (dump-- <= 0)
+			{
+				t_vm_print(vm);
+				break;
+			}
 			t_vm_step(vm);
-		t_vm_print(vm);
+		}
 	}
 }
 
@@ -110,6 +116,5 @@ int			main(int ac, char **av)
 	if (vm.shutdown)
 		print_winner(&vm);
 	t_vm_destruct(&vm);
-	//t_args_destruct(args);
 	return (0);
 }

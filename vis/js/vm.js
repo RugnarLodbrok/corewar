@@ -41,13 +41,15 @@ class VM {
                 continue;
             best = i;
         }
+        // console.log("best", best);
+        best = 64;
         return [len / best, best]
     }
 
-    mem_init(data) {
+    mem_init(size) {
         this.mem = [];
-        [this.cols, this.rows] = this.choose_row_cols(data.length);
-        console.log(this.rows, this.cols, this.rows * this.cols, data.length);
+        [this.cols, this.rows] = this.choose_row_cols(size);
+        console.log(this.rows, this.cols, this.rows * this.cols, size);
         let table = document.createElement('table');
         table.className = "byte_table";
         this.e.appendChild(table);
@@ -56,7 +58,7 @@ class VM {
             table.appendChild(row);
             for (let j = 0; j < this.cols; ++j) {
                 let n = i * this.cols + j;
-                let byte = new Byte(data[n]);
+                let byte = new Byte("00");
                 this.mem.push(byte);
                 row.appendChild(byte.e);
             }
@@ -92,7 +94,7 @@ class VM {
             let proc = this.procs[proc_id];
             bg = proc.colors.bg_bright;
             for (let i = 0; i < proc.last_mem_write_len; ++i) {
-                byte = this.mem[proc.last_mem_write + i];
+                byte = this.mem[(proc.last_mem_write + i) % this.mem.length];
                 if (byte.bg === proc.colors.bg_bright)
                     byte.draw({bg: proc.colors.bg})
             }
@@ -100,7 +102,7 @@ class VM {
             proc.last_mem_write_len = data.length;
         }
         for (let i = 0; i < data.length; ++i) {
-            byte = this.mem[pc + i];
+            byte = this.mem[(pc + i) % this.mem.length];
             byte.v = data[i];
             byte.draw({bg: bg});
         }
@@ -119,7 +121,7 @@ class VM {
         else if (msg.type === "arr")
             console.log('STDOUT:', msg.char);
         else if (msg.type === "mem_init")
-            this.mem_init(chunks(msg.data, 2));
+            this.mem_init(msg.size);
         else if (msg.type === "end") {
             this.stopped = true;
             console.log('command: end')

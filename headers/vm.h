@@ -17,11 +17,15 @@
 # include "libft_compat.h"
 # include "op.h"
 
-# define VM_USAGE "USGE: ./corewar [-i | -p] [-v V] [-d N] [[-n N] CHAMP] ..."
+# define VM_USAGE_0 "USGE: ./corewar [-i | -p] [-v V] [-d N] [[-n N] CHAMP] ..."
+# define VM_USAGE_1 "\n\t-i yaml-output; used for vis\n\t-d dump after N cycles"
+# define VM_USAGE_2 "\n\t-v verbosity; show: \t1 lives\n\t\t\t\t2 cycles"
+# define VM_USAGE_3 "\n\t\t\t\t4 ops\n\t\t\t\t8 deaths\n\t\t\t\t16 pc"
+# define VM_USAGE VM_USAGE_0 VM_USAGE_1 VM_USAGE_2 VM_USAGE_3
+
 # define OCTETS_PER_LINE 64
 
 # define VM_ENDIAN BIG_ENDIAN
-# define MODE_VERBOSE 16
 # define MODE_DUMP 8
 # define MODE_PRINT 4
 # define MODE_VIS 2
@@ -105,7 +109,7 @@ void			t_vm_destruct(t_vm *vm);
 void			t_vm_print(t_vm *vm);
 
 void			put_hex(uint v, int digits);
-void			write_memory(t_vm *vm);
+void			write_init();
 void			write_proc_update(t_proc *proc, const char *name);
 void			write_proc_stdout(t_vm *vm, int proc_num, char c);
 void			write_mem(byte *mem, uint pc, size_t len, int proc_id);
