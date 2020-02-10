@@ -14,7 +14,7 @@ void		t_vm_destruct(t_vm *vm)
 		free(vm->champs[i].comment);
 	}
 	i = -1;
-	while (++i < vm->procs.count)
+	while (++i < (int)vm->procs.count)
 		free(vm->procs.data[i]);
 	t_arrayp_del(&vm->procs);
 	free(vm->mem);
