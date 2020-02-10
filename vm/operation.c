@@ -104,13 +104,11 @@ void	t_op_context_init(t_op_context *c, t_vm *vm, t_proc *proc, t_op *op)
 int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 {
 	t_op_context	c;
-	uint			old_pc; //todo: remove this variable
 	byte			*args[3];
 	byte			arg_types[3];
 
 	t_op_context_init(&c, vm, proc, op);
 	ft_bzero(&args[0], 3);
-	old_pc = mem_mod(proc->pc);
 	t_op_parse_arg_types(&c, &arg_types[0]);
 	t_op_parse_args(&c, &arg_types[0], &args[0]);
 	if (!c.invalid_args)
@@ -124,19 +122,20 @@ int		t_op_exec(t_op *op, t_proc *proc, t_vm *vm)
 	}
 	if (op->code != 9 || !proc->carry)
 	{
-		proc->pc = mem_mod(proc->pc + c.cursor);
 		if (vm->v_flag & VERBOSE_PC)
 		{
 			ft_printf("ADV %u (0x%04x -> 0x%04x) ",
-					c.cursor, old_pc, old_pc + c.cursor);
-			while (old_pc != proc->pc)
+					c.cursor, proc->pc, proc->pc + c.cursor);
+			while (c.cursor--)
 			{
-				put_hex(vm->mem[old_pc], 2);
-				old_pc = mem_mod(old_pc + 1);
+				put_hex(vm->mem[proc->pc], 2);
+				proc->pc = mem_mod(proc->pc + 1);
 				ft_printf(" ");
 			}
 			ft_printf("\n");
 		}
+		else
+			proc->pc = mem_mod(proc->pc + c.cursor);
 	}
 	return (0);
 }
