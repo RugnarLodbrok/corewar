@@ -1,6 +1,6 @@
 #!/bin/bash
-MY_DASM="../asm -d"
-MY_ASM="../asm"
+MY_DASM="../asm/asm -d"
+MY_ASM="../asm/asm"
 if [ -z "$1" ] ; then
 	echo "Usage: dasm_comparator.sh dirname"
 	exit 1
