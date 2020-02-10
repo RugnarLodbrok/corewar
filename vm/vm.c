@@ -15,6 +15,33 @@
 #include "vm.h"
 #include "stdio.h"
 
+/*
+void		t_vm_add_champ(t_vm *vm, const char *f_name)
+{
+	uint	pc;
+	t_proc	proc;
+	int		n;
+	size_t	len;
+
+	n = (int)vm->procs.count;
+	pc = (MEM_SIZE / vm->n_champs) * n;
+	len = load_bytecode(f_name, (byte *)vm->mem + pc, &vm->champs[n]);
+	ft_assert(len <= CHAMP_MAX_SIZE, "champ `%s` size %d > %d\n",
+			  vm->champs[n].name, len, CHAMP_MAX_SIZE);
+	t_proc_init(&proc, n, mem_mod(pc));
+	write_uint(vm, UINT_MAX - n, &proc.reg[0][0], 4);
+	t_arrayp_push(&vm->procs, &proc);
+	if (vm->mode == MODE_VIS)
+	{
+		write_proc_update(&proc, vm->champs[n].name);
+		write_mem(vm->mem, proc.pc % MEM_SIZE, len, n);
+	}
+	else if (vm->mode & (MODE_DEFAULT | MODE_DUMP))
+		ft_printf("* Player %d, weighing %lu bytes, \"%s\" (\"%s\") !\n",
+				  n + 1, len, vm->champs[n].name, vm->champs[n].comment);
+}
+*/
+
 void		t_vm_add_champ(t_vm *vm, const char *f_name)
 {
 	uint	pc;
@@ -39,6 +66,7 @@ void		t_vm_add_champ(t_vm *vm, const char *f_name)
 	else if (vm->mode & (MODE_DEFAULT | MODE_DUMP))
 		ft_printf("* Player %d, weighing %lu bytes, \"%s\" (\"%s\") !\n",
 				  n + 1, len, vm->champs[n].name, vm->champs[n].comment);
+	free(proc);
 }
 
 static void	t_vm_proc_step(t_vm *vm, t_proc *proc)

@@ -13,12 +13,6 @@
 #include "libft.h"
 #include "vm.h"
 
-void		t_vm_destruct(t_vm *vm)
-{
-	free(vm->mem);
-	t_arrayp_del(&vm->procs);
-}
-
 uint		mem_mod(long int pc)
 {
 	while (pc < 0)
@@ -45,7 +39,8 @@ void		t_vm_print(t_vm *vm)
 {
 	int	i;
 
-	for (i = 0; i < MEM_SIZE; ++i)
+	i = 0;
+	while (i < MEM_SIZE)
 	{
 		if (!(i % OCTETS_PER_LINE))
 			ft_printf("0x%04x : ", i);
@@ -53,5 +48,6 @@ void		t_vm_print(t_vm *vm)
 		ft_printf(" ");
 		if (!((i + 1) % OCTETS_PER_LINE))
 			ft_printf("\n");
+		i++;
 	}
 }
