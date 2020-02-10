@@ -17,14 +17,13 @@
 # include "libft_compat.h"
 # include "op.h"
 
-# define VM_USAGE "USGE: ./corewar [-i | -p] [-v V] [-d N] [[-n N] CHAMP] ..." \
-"\n\t-i yaml-output; used for vis\n\t-d dump after N cycles" \
-"\n\t-v verbosity; show: \t1 lives\n\t\t\t\t2 cycles" \
-"\n\t\t\t\t4 ops\n\t\t\t\t8 deaths\n\t\t\t\t16 pc"
-//# define VM_USAGE_1 "\n\t-i yaml-output; used for vis\n\t-d dump after N cycles"
-//# define VM_USAGE_2 "\n\t-v verbosity; show: \t1 lives\n\t\t\t\t2 cycles"
-//# define VM_USAGE_3 "\n\t\t\t\t4 ops\n\t\t\t\t8 deaths\n\t\t\t\t16 pc"
-//# define VM_USAGE VM_USAGE_0 VM_USAGE_1 VM_USAGE_2 VM_USAGE_3
+/*
+** # define VM_USAGE "USGE: ./corewar [-i | -p] [-v V] [-d N] [[-n N] CHAMP]" \
+** "\n\t-i yaml-output; used for vis\n\t-d dump after N cycles" \
+** "\n\t-v verbosity; show: \t1 lives\n\t\t\t\t2 cycles" \
+** "\n\t\t\t\t4 ops\n\t\t\t\t8 deaths\n\t\t\t\t16 pc"
+*/
+# define VM_USAGE "USGE: ./corewar [-i | -p] [-v V] [-d N] [[-n N] CHAMP]"
 
 # define OCTETS_PER_LINE 64
 
