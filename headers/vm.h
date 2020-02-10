@@ -51,17 +51,13 @@ typedef struct	s_champs
 {
 	char		*name;
 	char		*comment;
-	uint		live;
 }				t_champ;
 
 typedef struct	s_proc
 {
-	uint		mark;
 	uint		id;
 	uint		champ_id;
 	uint		pc;
-	uint		last_pos;
-	byte		args[3];
 	byte		reg[REG_NUMBER][REG_SIZE];
 	uint		carry;
 	uint		last_live;
@@ -73,7 +69,6 @@ typedef struct	s_proc
 typedef struct	s_vm
 {
 	uint		mode;
-	int			dump;
 	int			v_flag;
 	int			n_champs;
 	t_champ		champs[4];

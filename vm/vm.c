@@ -51,7 +51,6 @@ static void	t_vm_proc_step(t_vm *vm, t_proc *proc)
 			return ;
 		}
 		proc->delay = proc->op->delay;
-		proc->last_pos = proc->pc;
 	}
 	if (proc->delay)
 		proc->delay--;
