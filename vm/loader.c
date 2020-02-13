@@ -44,5 +44,6 @@ size_t		load_bytecode(const char *f_name, void *ptr, t_champ *champ)
 	ft_assert(buff == 0, "corrupted file");
 	ft_assert(read(fd, ptr, code_size) == code_size,
 			"can't read '%s'", f_name);
+	ft_assert(read(fd, &buff, 4) == 0, "code length mismatch");
 	return (code_size);
 }
