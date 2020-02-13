@@ -6,7 +6,7 @@
 /*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/13 15:53:02 by cormund           #+#    #+#             */
-/*   Updated: 2020/02/13 11:57:02 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/13 12:12:19 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ static t_op		*is_operation(char *data)
 		}
 		--i;
 	}
+	g_data.eol = NULL;
 	return (0);
 }
 

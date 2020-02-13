@@ -6,7 +6,7 @@
 /*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/13 16:40:03 by cormund           #+#    #+#             */
-/*   Updated: 2020/02/10 16:02:10 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/13 12:04:53 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int			is_label(char *data)
 		{
 			if (!g_data.eol)
 				error_manager(ASM_ERR_WRONG_LABEL, ASM_NOT_OPER, ASM_NOT_LABEL);
+			g_data.eol = NULL;
 			check_label(g_data.data);
 			return (len);
 		}
