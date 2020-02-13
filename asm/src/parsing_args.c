@@ -6,7 +6,7 @@
 /*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/13 15:31:50 by cormund           #+#    #+#             */
-/*   Updated: 2020/02/13 11:57:02 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/13 12:03:23 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,12 @@ void					validation_args_types(t_oper *oper)
 	while (n_arg < oper->op->args_num)
 	{
 		if (!(oper->args_types[n_arg] & oper->op->args_types[n_arg]))
-			error_manager(ASM_ERR_WRONG_TYPE, oper->op->code, ASM_NOT_LABEL);
+			error_manager(ASM_ERR_WRONG_TYPE, oper->op, ASM_NOT_LABEL);
 		++n_arg;
 	}
 }
 
-static unsigned char	set_arg_type(char *arg, int code)
+static unsigned char	set_arg_type(char *arg, t_op *op)
 {
 	unsigned char		type;
 
@@ -74,7 +74,7 @@ static unsigned char	set_arg_type(char *arg, int code)
 	else if (ft_isdigit((int)*arg) || *arg == LABEL_CHAR)
 		type = T_IND;
 	else
-		error_manager(ASM_ERR_WRONG_TYPE, code, ASM_NOT_LABEL);
+		error_manager(ASM_ERR_WRONG_TYPE, op, ASM_NOT_LABEL);
 	return (type);
 }
 
@@ -86,16 +86,15 @@ void					pars_args(t_oper *oper)
 	while (n_arg < oper->op->args_num)
 	{
 		if (skip_spaces())
-			error_manager(ASM_ERR_INVALID_PARAM, oper->op->code, ASM_NOT_LABEL);
+			error_manager(ASM_ERR_INVALID_PARAM, oper->op, ASM_NOT_LABEL);
 		oper->args[n_arg] = get_arg();
 		oper->args_types[n_arg] = set_arg_type(oper->args[n_arg],\
-												oper->op->code);
+												oper->op);
 		++n_arg;
 		if (n_arg < oper->op->args_num)
 		{
 			if (skip_spaces())
-				error_manager(ASM_ERR_INVALID_PARAM, oper->op->code,\
-														ASM_NOT_LABEL);
+				error_manager(ASM_ERR_INVALID_PARAM, oper->op, ASM_NOT_LABEL);
 			if (*g_data.data == SEPARATOR_CHAR)
 				++g_data.data;
 			else
