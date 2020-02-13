@@ -6,7 +6,7 @@
 /*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/13 15:53:02 by cormund           #+#    #+#             */
-/*   Updated: 2020/02/10 16:01:39 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/13 11:57:02 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,9 @@ static void		set_size_oper(t_oper *oper)
 	n_arg = 0;
 	while (n_arg < oper->op->args_num)
 	{
-		if (oper->args_types[n_arg] == REG_CODE)
+		if (oper->args_types[n_arg] == T_REG)
 			oper->size += 1;
-		else if (oper->args_types[n_arg] == IND_CODE)
+		else if (oper->args_types[n_arg] == T_IND)
 			oper->size += 2;
 		else
 			oper->size += oper->op->dir_size ? 2 : 4;
