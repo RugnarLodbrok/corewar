@@ -6,7 +6,7 @@
 /*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/23 16:15:42 by cormund           #+#    #+#             */
-/*   Updated: 2020/02/13 12:01:40 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/14 12:23:29 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ typedef struct		s_data
 	char			*input;
 	char			*data;
 	char			*eol;
+	int				data_size;
 }					t_data;
 
 char				*read_data(char *file);

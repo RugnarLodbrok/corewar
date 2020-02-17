@@ -6,11 +6,20 @@
 /*   By: cormund <cormund@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/23 17:06:28 by cormund           #+#    #+#             */
-/*   Updated: 2020/02/10 16:43:33 by cormund          ###   ########.fr       */
+/*   Updated: 2020/02/14 12:24:39 by cormund          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "asm.h"
+
+static void	init_data(void)
+{
+	g_data.data = ft_strnew(1);
+	if (!g_data.data)
+		ERROR(strerror(errno));
+	g_data.eol = NULL;
+	g_data.data_size = 0;
+}
 
 void		clean_comments(char *data)
 {
@@ -34,22 +43,20 @@ char		*read_data(char *file)
 	char	*tmp;
 	int		count_read;
 	int		fd;
-	int		n;
 
-	if ((fd = open(file, O_RDONLY)) == ASM_ERROR ||\
-						!(g_data.data = ft_strnew(1)))
+	if ((fd = open(file, O_RDONLY)) == ASM_ERROR)
 		ERROR(strerror(errno));
-	n = 0;
+	init_data();
 	while ((count_read = read(fd, buf, ASM_SIZE_BUF)) > 0)
 	{
 		buf[count_read] = ASM_END_OF_STR;
 		tmp = g_data.data;
-		g_data.data = ft_memnjoin(g_data.data, buf, ASM_SIZE_BUF * n,\
+		g_data.data = ft_memnjoin(g_data.data, buf, g_data.data_size,\
 														count_read + 1);
 		if (!g_data.data)
 			ERROR(strerror(errno));
 		free(tmp);
-		++n;
+		g_data.data_size += count_read;
 	}
 	if (count_read == ASM_ERROR)
 		ERROR(strerror(errno));
