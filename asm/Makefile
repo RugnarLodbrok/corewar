@@ -6,7 +6,7 @@
 #    By: cormund <cormund@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/23 17:26:57 by cormund           #+#    #+#              #
-#    Updated: 2020/02/10 16:50:52 by cormund          ###   ########.fr        #
+#    Updated: 2020/02/25 14:30:51 by cormund          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,14 +17,12 @@ HEADERS := asm.h op.h
 CC := gcc
 CFLAGS := -Wall -Wextra -Werror -O3
 REMOVE := /bin/rm -rf
-DIR_BIN := bin
 DIR_INCLUDE := -Iinclude -I../libft
-DIR_SRC := src/$(NAME)
+DIR_SRC := src/
 
 vpath %.c $(DIR_SRC)
-vpath %.o $(DIR_BIN)
+vpath %.o $(DIR_SRC)
 vpath %.h $(DIR_INCLUDE)
-#vpath %.a $(DIR_LIBFT)
 
 SRC_NAME := src/asm.c \
 			src/read_input.c \
